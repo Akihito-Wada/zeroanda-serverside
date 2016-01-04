@@ -11,12 +11,15 @@ To show heartbeat, replace [options] by -b or --displayHeartBeat
 import requests
 import json
 import logging
+import datetime
+import time
 
 logger =logging.getLogger("django")
 
 from optparse import OptionParser
+from settings import local_settings
 
-def connect_to_stream():
+def connect_to_stream(url):
     """
 
     Environment           <Domain>
@@ -27,22 +30,24 @@ def connect_to_stream():
 
     # Replace the following variables with your personal ones
     # domain = 'stream-fxpractice.oanda.com'
-    domain = 'api-sandbox.oanda.com'
+    # domain = 'api-sandbox.oanda.com'
     access_token = 'ACCESS-TOKEN'
     account_id = '1234567'
-    instruments = "EUR_USD,USD_CAD"
+    # instruments = "EUR_USD,USD_CAD"
 
     try:
         s = requests.Session()
         # url = "https://" + domain + "/v1/prices"
-        url = "http://" + domain + "/v1/prices"
         headers = {'Authorization' : 'Bearer ' + access_token,
                    # 'X-Accept-Datetime-Format' : 'unix'
                    'Content-type': 'application/x-www-form-urlencoded',
-                   'X-Accept-Datetime-Format':'UNIX',
+                   # 'X-Accept-Datetime-Format':'rfc3339',
+                   'X-Accept-Datetime-Format':'unix',
+                   'Connection': 'keep-alive',
+                   'Accept-Encoding': 'gzip,deflate',
                   }
         # params = {'instruments' : instruments, 'accountId' : account_id}
-        params = {'instruments' : instruments}
+        params = {'instruments' : ','.join(local_settings.INSTRUMENTS)}
         req = requests.Request('GET', url, headers = headers, params = params)
         pre = req.prepare()
         resp = s.send(pre, stream = True, verify = False)
@@ -50,18 +55,18 @@ def connect_to_stream():
     except Exception as e:
         s.close()
 
-        logger.info("Caught exception when connecting to stream\n" + str(e))
+        print("Caught exception when connecting to stream\n" + str(e))
 
 def demo(displayHeartbeat):
-    response = connect_to_stream()
+    url = "http://" + local_settings.domain + "/v1/prices"
+    response = connect_to_stream(url)
     if response.status_code != 200:
-        logger.error(response.text)
+        print(response.text)
         return
-    print(response.text)
     test = json.loads(response.text)
-    print(len(test["prices"]))
     # print(test["prices"][0]["instrument"])
     print(test["prices"])
+    # print(datetime.datetime.fromtimestamp(int(test["prices"][0]["time"])))
     # for line in response.iter_lines(1):
     #     if line:
     #         try:
@@ -76,6 +81,21 @@ def demo(displayHeartbeat):
     #         else:
     #             if msg.has_key("instrument") or msg.has_key("tick"):
     #                 print(line)
+
+def get_prices():
+    url = "http://" + local_settings.domain + "/v1/prices"
+    response = connect_to_stream(url)
+    if response.status_code != 200:
+        print(response.text)
+        return
+    test = json.loads(response.text)
+    print(test["prices"][0])
+    # print(datetime.datetime.now())
+    print(test["prices"][0]["time"])
+    milliseconds = test["prices"][0]["time"][10:]
+    unixtime = test["prices"][0]["time"][0:10]
+    print(unixtime)
+    print(datetime.datetime.fromtimestamp(int(unixtime)).strftime('%Y-%m-%d %H:%M:%S') + "." + milliseconds)
 
 def main():
     usage = "usage: %prog [options]"

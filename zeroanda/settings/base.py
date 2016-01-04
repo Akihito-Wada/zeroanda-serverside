@@ -27,6 +27,10 @@ SECRET_KEY = '9qzl7g@vw%p9bxz=3x(bliha(-unm@rzt6)(4%d%m!t-d@c1@o'
 
 ALLOWED_HOSTS = []
 
+# INSTRUMENTS = ('USD_JPY','EUR_USD','USD_CAD')
+INSTRUMENTS = ('EUR_USD',)
+
+WAIT_TIME = 1/2
 
 # Application definition
 

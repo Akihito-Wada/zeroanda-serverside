@@ -3,6 +3,8 @@ from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+domain = 'api-sandbox.oanda.com'
+
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
