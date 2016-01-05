@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'snippets',
     'rest_framework',
     'django_user_agents',
+    'zeroanda',
 )
 
 MIDDLEWARE_CLASSES = (

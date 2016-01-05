@@ -1,3 +1,7 @@
 from django.contrib import admin
+from zeroanda.models import ScheduleModel
 
-# Register your models here.
+class ScheduleModelAdmin(admin.ModelAdmin):
+    list_display = ('title','presentation_time')
+
+admin.site.register(ScheduleModel, ScheduleModelAdmin)

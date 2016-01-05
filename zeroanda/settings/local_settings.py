@@ -13,7 +13,7 @@ DATABASES = {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': os.path.join(BASE_DIR, 'dev_reversid'),
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'dev_snippets',
+        'NAME': 'dev_zeroanda',
         'USER': 'wadaakihito',
         'PASSWORD': '',
         'HOST': 'localhost',
