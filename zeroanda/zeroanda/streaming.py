@@ -83,6 +83,7 @@ def demo(displayHeartbeat):
     #                 print(line)
 
 def get_prices():
+    print('get_prices')
     url = "http://" + local_settings.domain + "/v1/prices"
     response = connect_to_stream(url)
     if response.status_code != 200:
@@ -91,11 +92,12 @@ def get_prices():
     test = json.loads(response.text)
     print(test["prices"][0])
     # print(datetime.datetime.now())
-    print(test["prices"][0]["time"])
+    # print(test["prices"][0]["time"])
     milliseconds = test["prices"][0]["time"][10:]
     unixtime = test["prices"][0]["time"][0:10]
-    print(unixtime)
-    print(datetime.datetime.fromtimestamp(int(unixtime)).strftime('%Y-%m-%d %H:%M:%S') + "." + milliseconds)
+    # print(unixtime)
+    # print(datetime.datetime.fromtimestamp(int(unixtime)).strftime('%Y-%m-%d %H:%M:%S') + "." + milliseconds)
+    return test["prices"][0]
 
 def main():
     usage = "usage: %prog [options]"
