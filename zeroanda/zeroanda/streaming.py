@@ -118,3 +118,89 @@ if __name__ == "__main__":
     main()
 
 
+class Streaming:
+    access_token = 'ACCESS-TOKEN'
+    account_id = '1234567'
+    headers = {'Authorization' : 'Bearer ' + access_token,
+               'Content-type': 'application/x-www-form-urlencoded',
+               # 'X-Accept-Datetime-Format':'rfc3339',
+               'X-Accept-Datetime-Format':'unix',
+               'Connection': 'keep-alive',
+               'Accept-Encoding': 'gzip,deflate',
+              }
+
+    @staticmethod
+    def prices():
+        url = "http://" + local_settings.domain + "/v1/prices"
+        params = {'instruments' : ','.join(local_settings.INSTRUMENTS)}
+        response = Streaming.get(url, params)
+        if response.status_code != 200:
+            print(response.text)
+            return
+        result = json.loads(response.text)
+        return result["prices"][0]
+
+    @staticmethod
+    def order_ifdoco(side, price, lowerBound, upperBound):
+        print('order_ifdoco')
+        payload = {'instrument': 'EUR_USD',
+                   'units': 2,
+                   'side': side,
+                   'type': 'marketIfTouched',
+                   'expiry': '',
+                   'price': price,
+                   'lowerBound': lowerBound,
+                   'upperBound': upperBound,
+                   }
+        url = "http://" + local_settings.domain + "/v1/accounts/12345/orders"
+        response = Streaming.post(url, payload)
+        if response.status_code != 200:
+            print(response.text)
+            return
+        result = json.loads(response.text)
+        print(result)
+
+    @staticmethod
+    def orders():
+        print('orders')
+        payload = {'instrument': 'EUR_USD',
+                   'units': 2,
+                   'side': 'sell',
+                   'type': 'marketIfTouched',
+                   'expiry': '',
+                   'price': '',
+                   'lowerBound': '',
+                   'upperBound': ''
+                   }
+        url = "http://" + local_settings.domain + "/v1/accounts/12345/orders"
+        response = Streaming.post(url, payload)
+        if response.status_code != 200:
+            print(response.text)
+            return
+        result = json.loads(response.text)
+        print(result)
+
+    @staticmethod
+    def post(url, payload):
+        try:
+            s = requests.Session()
+            headers = Streaming.headers
+            req = requests.post(url=url, data=payload)
+            return req
+            # req = requests.Request('POST', url, headers = headers, params = payload)
+            # pre = req.prepare()
+            # resp = s.send(pre, stream = True, verify = False)
+            # return resp
+        except Exception as e:
+            s.close()
+
+    @staticmethod
+    def get(url, params):
+        try:
+            s = requests.Session()
+            req = requests.Request('GET', url, headers = Streaming.headers, params = params)
+            pre = req.prepare()
+            resp = s.send(pre, stream = True, verify = False)
+            return resp
+        except Exception as e:
+            s.close()

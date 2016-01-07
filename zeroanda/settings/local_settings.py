@@ -93,3 +93,5 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
 }
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')

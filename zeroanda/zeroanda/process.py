@@ -7,6 +7,8 @@ from multiprocessing import Process
 from zeroanda.models import ProcessModel, PricesModel
 from zeroanda import utils
 from zeroanda import streaming
+from zeroanda.streaming import Streaming
+from zeroanda.constant import PRIORITY, Priority
 
 # class OrderProcess(multiprocessing.Process):
 #     _schedule = None
@@ -63,15 +65,18 @@ class OrderProcess:
             try:
                 remain_time = self._targetdate.timestamp() - datetime.now().timestamp()
                 print(remain_time)
-                if remain_time > 5:
+                if remain_time > self._schedule.priority:
                     self.collect_prices()
+                else:
+                    self.order()
+
                 i += 1
 
                 nexttime = math.floor((datetime.now() + timedelta(seconds=1)).timestamp())
                 duration = nexttime - datetime.now().timestamp()
 
                 time.sleep(duration)
-                
+
                 if i >= 3:
                     break
             except:
@@ -82,7 +87,8 @@ class OrderProcess:
         model = PricesModel(schedule=self._schedule, begin=datetime.now())
         model.save()
 
-        result = streaming.get_prices()
+        # result = streaming.get_prices()
+        result = Streaming.prices()
 
         model.ask   = self._latest_ask = result["ask"]
         model.bid   = self._latest_bid = result["bid"]
@@ -90,3 +96,9 @@ class OrderProcess:
         model.time = datetime.fromtimestamp(utils.format_unixtime(result["time"]))
         model.end = datetime.now()
         model.save()
+
+    def order(self):
+        buy_target_price = self._latest_ask + 0.2
+        sell_target_price = self._latest_ask - 0.2
+        Streaming.order_ifdoco('buy', buy_target_price, buy_target_price + 0.5, buy_target_price - 0.5)
+        Streaming.order_ifdoco('sell', sell_target_price, sell_target_price - 0.5, sell_target_price + 0.5)
