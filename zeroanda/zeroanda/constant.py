@@ -1,6 +1,35 @@
 from enum import Enum
 
-class Priority(Enum):
-    5,4,3,2,1
+SIDE = (
+    ("sell", "Sell"),
+    ("buy", "Buy"),
+)
 
-PRIORITY = (1, 2, 3, 4, 5)
+PRIORITY = (
+    (1, "Lowest"),
+    (2, "Low"),
+    (3, "Intermediate"),
+    (4, "High"),
+    (5, "Highest"),
+)
+
+ORDER_STATUS    = (
+    (True, "available"),
+    (False, "disable"),
+)
+
+ACTUAL_ORDER_STATUS =(
+    (1, "Progress"),
+    (2, "Finish"),
+)
+
+INSTRUMENTS = (
+    ("USD_JPY", "us"),
+)
+
+TYPE = (
+    ("limit", "Limit"),
+    ("stop", "Stop"),
+    ("marketIfTouched", "MarketIfTouched"),
+    ("market", "Market"),
+)

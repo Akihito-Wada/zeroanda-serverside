@@ -1,8 +1,6 @@
 from zeroanda.models import ScheduleModel, ProcessModel
 from zeroanda.process import OrderProcess
 from datetime import datetime, timedelta
-from multiprocessing import Process
-import  time
 
 def watch_schedule():
     now = datetime.now()

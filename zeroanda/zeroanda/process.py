@@ -8,7 +8,7 @@ from zeroanda.models import ProcessModel, PricesModel
 from zeroanda import utils
 from zeroanda import streaming
 from zeroanda.streaming import Streaming
-from zeroanda.constant import PRIORITY, Priority
+from zeroanda.constant import PRIORITY
 
 # class OrderProcess(multiprocessing.Process):
 #     _schedule = None
