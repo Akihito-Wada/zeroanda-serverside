@@ -1,11 +1,20 @@
 from datetime import datetime, timezone, timedelta
 from django.utils   import dateformat
 from django.contrib import admin
-from zeroanda.models import ScheduleModel, ProcessModel, PricesModel
+from zeroanda.models import ScheduleModel, ProcessModel, PricesModel, OrderModel
 from zeroanda import utils
+
+class OrderModelAdmin(admin.StackedInline):
+    model = OrderModel
+    extra = 0
+    readonly_fields = ('update_time',)
+
+    def update_time(self, instance):
+        return utils.format_jst(instance.updated)
 
 class ScheduleModelAdmin(admin.ModelAdmin):
     list_display = ('title','presentation_time')
+    inlines = [OrderModelAdmin]
 
 class ProcessModelAdmin(admin.ModelAdmin):
     list_display = ('pid',)

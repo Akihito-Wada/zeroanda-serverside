@@ -24,7 +24,10 @@ ACTUAL_ORDER_STATUS =(
 )
 
 INSTRUMENTS = (
-    ("USD_JPY", "us"),
+    ("USD_JPY", "us_jp"),
+    ("EUR_JPY", "eu_jp"),
+    ("EUR_USD", "eu_us"),
+    ("EUR_CAD", "eu_ca"),
 )
 
 TYPE = (
@@ -32,4 +35,9 @@ TYPE = (
     ("stop", "Stop"),
     ("marketIfTouched", "MarketIfTouched"),
     ("market", "Market"),
+)
+
+SCHEDULE_STATUS = (
+    (True, "有効"),
+    (False, "無効"),
 )
