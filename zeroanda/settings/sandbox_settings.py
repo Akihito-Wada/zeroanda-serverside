@@ -3,8 +3,6 @@ from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-domain = 'api-sandbox.oanda.com'
-
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
@@ -95,3 +93,13 @@ REST_FRAMEWORK = {
 }
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# zeroanda settings.
+MODE = 'sandbox'
+
+# Domain.
+DOMAIN = 'api-sandbox.oanda.com'
+
+TOKEN = "ACCESS-TOKEN"
+
+ACCOUNT_ID  = "account_id"

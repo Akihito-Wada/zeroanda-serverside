@@ -17,7 +17,7 @@ import time
 logger =logging.getLogger("django")
 
 from optparse import OptionParser
-from settings import local_settings
+from django.conf import settings
 
 def connect_to_stream(url):
     """
@@ -31,14 +31,14 @@ def connect_to_stream(url):
     # Replace the following variables with your personal ones
     # domain = 'stream-fxpractice.oanda.com'
     # domain = 'api-sandbox.oanda.com'
-    access_token = 'ACCESS-TOKEN'
+    # access_token = 'ACCESS-TOKEN'
     account_id = '1234567'
     # instruments = "EUR_USD,USD_CAD"
 
     try:
         s = requests.Session()
         # url = "https://" + domain + "/v1/prices"
-        headers = {'Authorization' : 'Bearer ' + access_token,
+        headers = {'Authorization' : 'Bearer ' + settings.TOKEN,
                    # 'X-Accept-Datetime-Format' : 'unix'
                    'Content-type': 'application/x-www-form-urlencoded',
                    # 'X-Accept-Datetime-Format':'rfc3339',
@@ -47,7 +47,7 @@ def connect_to_stream(url):
                    'Accept-Encoding': 'gzip,deflate',
                   }
         # params = {'instruments' : instruments, 'accountId' : account_id}
-        params = {'instruments' : ','.join(local_settings.INSTRUMENTS)}
+        params = {'instruments' : ','.join(settings.INSTRUMENTS)}
         req = requests.Request('GET', url, headers = headers, params = params)
         pre = req.prepare()
         resp = s.send(pre, stream = True, verify = False)
@@ -58,7 +58,7 @@ def connect_to_stream(url):
         print("Caught exception when connecting to stream\n" + str(e))
 
 def demo(displayHeartbeat):
-    url = "http://" + local_settings.domain + "/v1/prices"
+    url = "http://" + settings.DOMAIN + "/v1/prices"
     response = connect_to_stream(url)
     if response.status_code != 200:
         print(response.text)
@@ -84,7 +84,7 @@ def demo(displayHeartbeat):
 
 def get_prices():
     print('get_prices')
-    url = "http://" + local_settings.domain + "/v1/prices"
+    url = "http://" + settings.DOMAIN + "/v1/prices"
     response = connect_to_stream(url)
     if response.status_code != 200:
         print(response.text)
@@ -119,9 +119,8 @@ if __name__ == "__main__":
 
 
 class Streaming:
-    access_token = 'ACCESS-TOKEN'
     account_id = '1234567'
-    headers = {'Authorization' : 'Bearer ' + access_token,
+    default_headers = {'Authorization' : 'Bearer ' + settings.TOKEN,
                'Content-type': 'application/x-www-form-urlencoded',
                # 'X-Accept-Datetime-Format':'rfc3339',
                'X-Accept-Datetime-Format':'unix',
@@ -130,10 +129,21 @@ class Streaming:
               }
 
     @staticmethod
-    def prices():
-        url = "http://" + local_settings.domain + "/v1/prices"
-        params = {'instruments' : ','.join(local_settings.INSTRUMENTS)}
+    def accounts():
+        url = "http://" + settings.DOMAIN + "/v1/accounts"
+        params = {'instruments' : ','.join(settings.INSTRUMENTS)}
         response = Streaming.get(url, params)
+        if response.status_code != 200:
+            print(response.text)
+            return
+        result = json.loads(response.text)
+        return result["prices"][0]
+
+    @staticmethod
+    def prices():
+        url = "http://" + settings.DOMAIN + "/v1/prices"
+        params = {'instruments' : ','.join(settings.INSTRUMENTS)}
+        response = Streaming.get(url, Streaming.default_headers, params)
         if response.status_code != 200:
             print(response.text)
             return
@@ -152,8 +162,8 @@ class Streaming:
                    'lowerBound': lowerBound,
                    'upperBound': upperBound,
                    }
-        url = "http://" + local_settings.domain + "/v1/accounts/12345/orders"
-        response = Streaming.post(url, payload)
+        url = "http://" + settings.DOMAIN + "/v1/accounts/12345/orders"
+        response = Streaming.post(url, Streaming.default_headers, payload)
         if response.status_code != 200:
             print(response.text)
             return
@@ -162,7 +172,6 @@ class Streaming:
 
     @staticmethod
     def orders():
-        print('orders')
         payload = {'instrument': 'EUR_USD',
                    'units': 2,
                    'side': 'sell',
@@ -172,8 +181,8 @@ class Streaming:
                    'lowerBound': '',
                    'upperBound': ''
                    }
-        url = "http://" + local_settings.domain + "/v1/accounts/12345/orders"
-        response = Streaming.post(url, payload)
+        url = "http://" + settings.DOMAIN + "/v1/accounts/12345/orders"
+        response = Streaming.post(url, Streaming.default_headers, payload)
         if response.status_code != 200:
             print(response.text)
             return
@@ -181,10 +190,10 @@ class Streaming:
         print(result)
 
     @staticmethod
-    def post(url, payload):
+    def post(url, headers, payload):
         try:
             s = requests.Session()
-            headers = Streaming.headers
+            headers = headers
             req = requests.post(url=url, data=payload)
             return req
             # req = requests.Request('POST', url, headers = headers, params = payload)
@@ -195,10 +204,10 @@ class Streaming:
             s.close()
 
     @staticmethod
-    def get(url, params):
+    def get(url, headers, params):
         try:
             s = requests.Session()
-            req = requests.Request('GET', url, headers = Streaming.headers, params = params)
+            req = requests.Request('GET', url, headers = headers, params = params)
             pre = req.prepare()
             resp = s.send(pre, stream = True, verify = False)
             return resp
