@@ -63,3 +63,12 @@ class ActualOrderModel(models.Model):
     time        = models.DateTimeField('対象サーバー時刻', blank=True, null=True)
     created     = models.DateTimeField('登録時刻', auto_now_add=True)
     updated     = models.DateTimeField('更新時刻', null=True, blank=True)
+
+class AccountModel(models.Model):
+    schedule    = models.ForeignKey(ScheduleModel)
+    account_id  = models.IntegerField()
+    margin_rate = models.FloatField()
+    account_currency    = models.CharField(max_length=10)
+    account_name    = models.CharField(max_length=10)
+    created     = models.DateTimeField('登録時刻', auto_now_add=True)
+    updated     = models.DateTimeField('更新時刻', null=True, blank=True)

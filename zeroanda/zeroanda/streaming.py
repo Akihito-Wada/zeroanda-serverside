@@ -116,43 +116,38 @@ if __name__ == "__main__":
     main()
 
 
-class Streaming:
-    account_id = '1234567'
-    default_headers = {
+class Streaming(object):
+    # _account_id = None
+    _default_headers = {
         'Authorization' : 'Bearer ' + settings.TOKEN,
-        # 'Content-type': 'application/x-www-form-urlencoded',
-        # 'X-Accept-Datetime-Format':'unix',
-        # 'Connection': 'keep-alive',
-        # 'Accept-Encoding': 'gzip,deflate',
+        'Content-type': 'application/x-www-form-urlencoded',
+        'X-Accept-Datetime-Format':'unix',
+        'Connection': 'keep-alive',
+        'Accept-Encoding': 'gzip,deflate',
     }
 
-    @staticmethod
-    def accounts():
+    def accounts(self):
         url = settings.DOMAIN + "/v1/accounts"
         # params = {'instruments' : ','.join(settings.INSTRUMENTS)}
-        response = Streaming.get(url, Streaming.default_headers)
+        response = self.get(url, self._default_headers)
         if response.status_code != 200:
             print(response.text)
             return
         result = json.loads(response.text)
-        print(result['accounts'][0]['accountId'])
-        print(result)
-        return
+        return result
         # return result["prices"][0]
 
-    @staticmethod
-    def prices():
+    def prices(self):
         url = settings.DOMAIN + "/v1/prices"
         params = {'instruments' : ','.join(settings.INSTRUMENTS)}
-        response = Streaming.get(url, Streaming.default_headers, params)
+        response = self.get(url, self._default_headers, params)
         if response.status_code != 200:
             print(response.text)
             return
         result = json.loads(response.text)
         return result["prices"][0]
 
-    @staticmethod
-    def order_ifdoco(side, price, lowerBound, upperBound):
+    def order_ifdoco(self, side, price, lowerBound, upperBound):
         print('order_ifdoco')
         payload = {'instrument': 'EUR_USD',
                    'units': 2,
@@ -163,16 +158,17 @@ class Streaming:
                    'lowerBound': lowerBound,
                    'upperBound': upperBound,
                    }
-        url = settings.DOMAIN + "/v1/accounts/12345/orders"
-        response = Streaming.post(url, Streaming.default_headers, payload)
+        if self._account_id == None:
+            raise Exception('account_id is None.')
+        url = settings.DOMAIN + "/v1/accounts/" + self._account_id + "/orders"
+        response = self.post(url, self._default_headers, payload)
         if response.status_code != 200:
             print(response.text)
             return
         result = json.loads(response.text)
         print(result)
 
-    @staticmethod
-    def orders():
+    def orders(self):
         payload = {'instrument': 'EUR_USD',
                    'units': 2,
                    'side': 'sell',
@@ -182,16 +178,20 @@ class Streaming:
                    'lowerBound': '',
                    'upperBound': ''
                    }
-        url = settings.DOMAIN + "/v1/accounts/12345/orders"
-        response = Streaming.post(url, Streaming.default_headers, payload)
+        if self._account_id == None:
+            raise Exception('account_id is None.')
+        url = settings.DOMAIN + "/v1/accounts/" + self._account_id + "/orders"
+        response = self.post(url, self._default_headers, payload)
         if response.status_code != 200:
             print(response.text)
             return
         result = json.loads(response.text)
         print(result)
 
-    @staticmethod
-    def post(url, headers, payload):
+    def events(self):
+        url = settings.DOMAIN + "/v1/events/"
+
+    def post(self, url, headers, payload):
         try:
             s = requests.Session()
             headers = headers
@@ -204,8 +204,7 @@ class Streaming:
         except Exception as e:
             s.close()
 
-    @staticmethod
-    def get(url, headers, params = None):
+    def get(self, url, headers, params = None):
         try:
             print(url)
             print(headers)

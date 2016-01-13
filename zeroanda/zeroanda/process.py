@@ -4,7 +4,7 @@ import time
 import math
 import random
 from multiprocessing import Process
-from zeroanda.models import ProcessModel, PricesModel
+from zeroanda.models import ProcessModel, PricesModel, AccountModel
 from zeroanda import utils
 from zeroanda import streaming
 from zeroanda.streaming import Streaming
@@ -46,22 +46,33 @@ from zeroanda.constant import PRIORITY
 
 class OrderProcess:
     _schedule   = None
+    _account    = None
     _latest_ask = None
     _latest_bid = None
     _targetdate = None
+    _streaming  = None
 
     def __init__(self, schedule):
         super(OrderProcess,self).__init__()
         self._schedule = schedule
         self._targetdate = datetime.now() + timedelta(minutes=1)
-        Streaming.accounts()
+        self._streaming = Streaming()
+        result = self._streaming.accounts()
+        self._account = AccountModel(
+                            schedule    = schedule,
+                            account_id = result['accounts'][0]['accountId'],
+                            margin_rate = result['accounts'][0]['marginRate'],
+                            account_currency = result['accounts'][0]['accountCurrency'],
+                            account_name = result['accounts'][0]['accountName']
+        )
+        self._account.save()
 
     @staticmethod
     def create(schedule):
         return OrderProcess(schedule)
 
     def run(self):
-        return
+        # return
         i = 0
         while True:
             try:
@@ -69,8 +80,8 @@ class OrderProcess:
                 print(remain_time)
                 if remain_time > self._schedule.priority:
                     self.collect_prices()
-                else:
-                    self.order()
+                # else:
+                #     self.order()
 
                 i += 1
 
@@ -90,7 +101,7 @@ class OrderProcess:
         model.save()
 
         # result = streaming.get_prices()
-        result = Streaming.prices()
+        result = self._streaming.prices()
 
         model.ask   = self._latest_ask = result["ask"]
         model.bid   = self._latest_bid = result["bid"]

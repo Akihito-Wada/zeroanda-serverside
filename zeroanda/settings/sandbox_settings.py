@@ -99,7 +99,7 @@ MODE = 'sandbox'
 
 # Domain.
 DOMAIN = 'http://api-sandbox.oanda.com'
-STREAMING_DOMAIN = 'http://stream-sandbox.oanda.com/'
+STREAMING_DOMAIN = 'http://stream-sandbox.oanda.com'
 
 TOKEN = "ACCESS-TOKEN"
 
