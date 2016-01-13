@@ -98,7 +98,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MODE = 'sandbox'
 
 # Domain.
-DOMAIN = 'api-sandbox.oanda.com'
+DOMAIN = 'http://api-sandbox.oanda.com'
+STREAMING_DOMAIN = 'http://stream-sandbox.oanda.com/'
 
 TOKEN = "ACCESS-TOKEN"
 

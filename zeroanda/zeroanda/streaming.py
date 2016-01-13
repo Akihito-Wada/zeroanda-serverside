@@ -39,9 +39,7 @@ def connect_to_stream(url):
         s = requests.Session()
         # url = "https://" + domain + "/v1/prices"
         headers = {'Authorization' : 'Bearer ' + settings.TOKEN,
-                   # 'X-Accept-Datetime-Format' : 'unix'
                    'Content-type': 'application/x-www-form-urlencoded',
-                   # 'X-Accept-Datetime-Format':'rfc3339',
                    'X-Accept-Datetime-Format':'unix',
                    'Connection': 'keep-alive',
                    'Accept-Encoding': 'gzip,deflate',
@@ -84,7 +82,7 @@ def demo(displayHeartbeat):
 
 def get_prices():
     print('get_prices')
-    url = "http://" + settings.DOMAIN + "/v1/prices"
+    url = settings.DOMAIN + "/v1/prices"
     response = connect_to_stream(url)
     if response.status_code != 200:
         print(response.text)
@@ -120,28 +118,31 @@ if __name__ == "__main__":
 
 class Streaming:
     account_id = '1234567'
-    default_headers = {'Authorization' : 'Bearer ' + settings.TOKEN,
-               'Content-type': 'application/x-www-form-urlencoded',
-               # 'X-Accept-Datetime-Format':'rfc3339',
-               'X-Accept-Datetime-Format':'unix',
-               'Connection': 'keep-alive',
-               'Accept-Encoding': 'gzip,deflate',
-              }
+    default_headers = {
+        'Authorization' : 'Bearer ' + settings.TOKEN,
+        # 'Content-type': 'application/x-www-form-urlencoded',
+        # 'X-Accept-Datetime-Format':'unix',
+        # 'Connection': 'keep-alive',
+        # 'Accept-Encoding': 'gzip,deflate',
+    }
 
     @staticmethod
     def accounts():
-        url = "http://" + settings.DOMAIN + "/v1/accounts"
-        params = {'instruments' : ','.join(settings.INSTRUMENTS)}
-        response = Streaming.get(url, params)
+        url = settings.DOMAIN + "/v1/accounts"
+        # params = {'instruments' : ','.join(settings.INSTRUMENTS)}
+        response = Streaming.get(url, Streaming.default_headers)
         if response.status_code != 200:
             print(response.text)
             return
         result = json.loads(response.text)
-        return result["prices"][0]
+        print(result['accounts'][0]['accountId'])
+        print(result)
+        return
+        # return result["prices"][0]
 
     @staticmethod
     def prices():
-        url = "http://" + settings.DOMAIN + "/v1/prices"
+        url = settings.DOMAIN + "/v1/prices"
         params = {'instruments' : ','.join(settings.INSTRUMENTS)}
         response = Streaming.get(url, Streaming.default_headers, params)
         if response.status_code != 200:
@@ -162,7 +163,7 @@ class Streaming:
                    'lowerBound': lowerBound,
                    'upperBound': upperBound,
                    }
-        url = "http://" + settings.DOMAIN + "/v1/accounts/12345/orders"
+        url = settings.DOMAIN + "/v1/accounts/12345/orders"
         response = Streaming.post(url, Streaming.default_headers, payload)
         if response.status_code != 200:
             print(response.text)
@@ -181,7 +182,7 @@ class Streaming:
                    'lowerBound': '',
                    'upperBound': ''
                    }
-        url = "http://" + settings.DOMAIN + "/v1/accounts/12345/orders"
+        url = settings.DOMAIN + "/v1/accounts/12345/orders"
         response = Streaming.post(url, Streaming.default_headers, payload)
         if response.status_code != 200:
             print(response.text)
@@ -204,8 +205,11 @@ class Streaming:
             s.close()
 
     @staticmethod
-    def get(url, headers, params):
+    def get(url, headers, params = None):
         try:
+            print(url)
+            print(headers)
+            print(params)
             s = requests.Session()
             req = requests.Request('GET', url, headers = headers, params = params)
             pre = req.prepare()

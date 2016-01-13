@@ -54,13 +54,14 @@ class OrderProcess:
         super(OrderProcess,self).__init__()
         self._schedule = schedule
         self._targetdate = datetime.now() + timedelta(minutes=1)
+        Streaming.accounts()
 
     @staticmethod
     def create(schedule):
         return OrderProcess(schedule)
 
     def run(self):
-
+        return
         i = 0
         while True:
             try:
@@ -78,7 +79,7 @@ class OrderProcess:
 
                 time.sleep(duration)
 
-                if i >= 3:
+                if i >= 1:
                     break
             except:
                 print("exception.")

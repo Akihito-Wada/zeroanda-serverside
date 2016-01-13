@@ -4,6 +4,7 @@ from .sandbox_settings import *
 
 MODE    = 'practice'
 
-DOMAIN = 'api-fxpractice.oanda.com'
+DOMAIN = 'https://api-fxpractice.oanda.com'
+STREAMING_DOMAIN = 'https://stream-fxpractice.oanda.com/'
 
-TOKEN = "6af797a21c0b3a2fa2125469f5ee06cd-39f081542197124f099ce0d6dbba0082"
+TOKEN = "8713400a434b3f4cfd2e2f9580da45ed-41a3452617aa84f441be90ca6ab0fc55"
