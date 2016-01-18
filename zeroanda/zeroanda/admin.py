@@ -1,7 +1,7 @@
 from datetime import datetime, timezone, timedelta
 from django.utils   import dateformat
 from django.contrib import admin
-from zeroanda.models import ScheduleModel, ProcessModel, PricesModel, OrderModel
+from zeroanda.models import ScheduleModel, ProcessModel, PricesModel, OrderModel, ErrorModel
 from zeroanda import utils
 
 class OrderModelAdmin(admin.StackedInline):
@@ -63,6 +63,14 @@ class PriceModelAdmin(admin.ModelAdmin):
     def end_time(self, instance):
         return utils.format_jst(instance.end)
 
+class ErrorModelAdmin(admin.ModelAdmin):
+    list_display = ('code', 'message', 'created_time')
+    readonly_fields = ('code', 'message', 'info', 'created_time')
+
+    def created_time(self, instance):
+        return utils.format_jst(instance.created)
+
 admin.site.register(ScheduleModel, ScheduleModelAdmin)
 admin.site.register(ProcessModel, ProcessModelAdmin)
 admin.site.register(PricesModel, PriceModelAdmin)
+admin.site.register(ErrorModel, ErrorModelAdmin)

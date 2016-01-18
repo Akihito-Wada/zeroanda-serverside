@@ -115,6 +115,7 @@ def main():
 if __name__ == "__main__":
     main()
 
+from zeroanda.errors import ZeroandaError
 
 class Streaming(object):
     # _account_id = None
@@ -138,14 +139,15 @@ class Streaming(object):
         # return result["prices"][0]
 
     def prices(self):
-        url = settings.DOMAIN + "/v1/prices"
+        url = settings.STREAMING_DOMAIN + "/v1/prices"
         params = {'instruments' : ','.join(settings.INSTRUMENTS)}
         response = self.get(url, self._default_headers, params)
         if response.status_code != 200:
-            print(response.text)
-            return
-        result = json.loads(response.text)
-        return result["prices"][0]
+            error = json.loads(response.text)
+            raise ZeroandaError(error)
+        else:
+            result = json.loads(response.text)
+            return result["prices"][0]
 
     def order_ifdoco(self, side, price, lowerBound, upperBound):
         print('order_ifdoco')

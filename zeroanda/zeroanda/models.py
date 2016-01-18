@@ -72,3 +72,9 @@ class AccountModel(models.Model):
     account_name    = models.CharField(max_length=10)
     created     = models.DateTimeField('登録時刻', auto_now_add=True)
     updated     = models.DateTimeField('更新時刻', null=True, blank=True)
+
+class ErrorModel(models.Model):
+    code        = models.IntegerField()
+    message      = models.CharField(max_length=200)
+    info        = models.CharField(max_length=200)
+    created     = models.DateTimeField('登録時刻', auto_now_add=True)

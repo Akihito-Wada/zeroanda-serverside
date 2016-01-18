@@ -4,45 +4,13 @@ import time
 import math
 import random
 from multiprocessing import Process
-from zeroanda.models import ProcessModel, PricesModel, AccountModel
+from zeroanda.models import ProcessModel, PricesModel, AccountModel, ErrorModel
 from zeroanda import utils
 from zeroanda import streaming
 from zeroanda.streaming import Streaming
+from zeroanda.errors import ZeroandaError
 from zeroanda.constant import PRIORITY
 
-# class OrderProcess(multiprocessing.Process):
-#     _schedule = None
-#
-#     def __init__(self, schedule):
-#         self._schedule = schedule
-#         super(OrderProcess,self).__init__()
-#
-#     def run(self):
-#         print(self._schedule.title)
-#         print(self.pid)
-        # streaming.get_prices()
-        # streaming.get_prices()
-        # model = ProcessModel(schedule=self._schedule, pid=self.pid)
-        # model.save()
-        # i = 0
-        # model.status = False
-        # model.save()
-        # objects.filter(pid=self.pid).update(endtime=datetime.now(), status=False)
-        # ProcessModel.objects.filter(pid=self.pid).update(status=False)
-        # while i < 3:
-        #     print(self.pid)
-        #     a = ProcessModel.objects.get(pid=self.pid)
-        #     a.endtime=datetime.now()
-        #     a.save()
-        #     print(a.status)
-        #     time.sleep(5)
-        #     i += 1
-        #     time.sleep(random.uniform(0.1, 1))
-        #     print(i)
-        #     if i == 1:
-        #         print(self.pid)
-                # ProcessModel.objects.filter(pid=self.pid).update(endtime=datetime.now(), status=False)
-        # print(self.pid)
 
 class OrderProcess:
     _schedule   = None
@@ -101,14 +69,18 @@ class OrderProcess:
         model.save()
 
         # result = streaming.get_prices()
-        result = self._streaming.prices()
+        try :
+            result = self._streaming.prices()
 
-        model.ask   = self._latest_ask = result["ask"]
-        model.bid   = self._latest_bid = result["bid"]
-        model.instrument    = result["instrument"]
-        model.time = datetime.fromtimestamp(utils.format_unixtime(result["time"]))
-        model.end = datetime.now()
-        model.save()
+            model.ask   = self._latest_ask = result["ask"]
+            model.bid   = self._latest_bid = result["bid"]
+            model.instrument    = result["instrument"]
+            model.time = datetime.fromtimestamp(utils.format_unixtime(result["time"]))
+            model.end = datetime.now()
+            model.save()
+        except ZeroandaError as e:
+            print('error')
+            e.save()
 
     def order(self):
         buy_target_price = self._latest_ask + 0.2
