@@ -1,4 +1,5 @@
-from zeroanda.models import ScheduleModel, ProcessModel
+from zeroanda.models import ScheduleModel
+from zeroanda.errors import ZeroandaError
 from zeroanda.process import OrderProcess
 from datetime import datetime, timedelta
 
@@ -11,4 +12,8 @@ def watch_schedule():
 
     if len(schedules) >= 1:
         for schedule in schedules:
-            OrderProcess.create(schedule).run()
+            try:
+                OrderProcess.create(schedule).run()
+            except ZeroandaError as e:
+                print('error')
+                e.save()

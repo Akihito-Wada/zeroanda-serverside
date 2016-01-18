@@ -127,31 +127,37 @@ class Streaming(object):
         'Accept-Encoding': 'gzip,deflate',
     }
 
-    def accounts(self):
-        url = settings.DOMAIN + "/v1/accounts"
-        # params = {'instruments' : ','.join(settings.INSTRUMENTS)}
+    def accounts(self, accountId = None):
+        if accountId == None:
+            url = settings.DOMAIN + "/v1/accounts"
+        else:
+            url = settings.DOMAIN + "/v1/accounts/" + str(accountId)
+        print(url)
         response = self.get(url, self._default_headers)
         if response.status_code != 200:
-            print(response.text)
-            return
+            error = json.loads(response.text)
+            print(error)
+            raise ZeroandaError(error)
         result = json.loads(response.text)
         return result
-        # return result["prices"][0]
 
-    def prices(self):
-        url = settings.STREAMING_DOMAIN + "/v1/prices"
-        params = {'instruments' : ','.join(settings.INSTRUMENTS)}
+    def prices(self, instruments):
+        # url = settings.STREAMING_DOMAIN + "/v1/accounts/6818465/prices"
+        url = settings.DOMAIN + "/v1/prices"
+        # params = {'instruments' : ','.join(settings.INSTRUMENTS)}
+        params = {'instruments' : instruments}
         response = self.get(url, self._default_headers, params)
         if response.status_code != 200:
             error = json.loads(response.text)
+            print(error)
             raise ZeroandaError(error)
         else:
             result = json.loads(response.text)
+            print(result)
             return result["prices"][0]
 
-    def order_ifdoco(self, side, price, lowerBound, upperBound):
-        print('order_ifdoco')
-        payload = {'instrument': 'EUR_USD',
+    def order_ifdoco(self, account, side, price, lowerBound, upperBound):
+        payload = {'instrument': 'USD_JPY',
                    'units': 2,
                    'side': side,
                    'type': 'marketIfTouched',
@@ -160,18 +166,32 @@ class Streaming(object):
                    'lowerBound': lowerBound,
                    'upperBound': upperBound,
                    }
-        if self._account_id == None:
+        if account.account_id == None:
             raise Exception('account_id is None.')
-        url = settings.DOMAIN + "/v1/accounts/" + self._account_id + "/orders"
+        url = settings.DOMAIN + "/v1/accounts/" + account.account_id + "/orders"
         response = self.post(url, self._default_headers, payload)
         if response.status_code != 200:
-            print(response.text)
-            return
-        result = json.loads(response.text)
-        print(result)
+            error = json.loads(response.text)
+            print(error)
+            raise ZeroandaError(error)
+        else:
+            result = json.loads(response.text)
 
-    def orders(self):
-        payload = {'instrument': 'EUR_USD',
+    def get_orders(self, account):
+        if account.account_id == None:
+            raise Exception('account_id is None.')
+        url = settings.DOMAIN + "/v1/accounts/" + account.account_id + "/orders"
+        response = self.get(url, self._default_headers)
+        if response.status_code != 200:
+            error = json.loads(response.text)
+            print(error)
+            raise ZeroandaError(error)
+        else:
+            result = json.loads(response.text)
+            print(result)
+
+    def post_orders(self, account):
+        payload = {'instrument': 'USD_JPY',
                    'units': 2,
                    'side': 'sell',
                    'type': 'marketIfTouched',
@@ -180,15 +200,17 @@ class Streaming(object):
                    'lowerBound': '',
                    'upperBound': ''
                    }
-        if self._account_id == None:
+        if account.account_id == None:
             raise Exception('account_id is None.')
-        url = settings.DOMAIN + "/v1/accounts/" + self._account_id + "/orders"
+        url = settings.DOMAIN + "/v1/accounts/" + account.account_id + "/orders"
         response = self.post(url, self._default_headers, payload)
         if response.status_code != 200:
-            print(response.text)
-            return
-        result = json.loads(response.text)
-        print(result)
+            error = json.loads(response.text)
+            print(error)
+            raise ZeroandaError(error)
+        else:
+            result = json.loads(response.text)
+            print(result)
 
     def events(self):
         url = settings.DOMAIN + "/v1/events/"

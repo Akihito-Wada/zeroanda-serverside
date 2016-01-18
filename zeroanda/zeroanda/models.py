@@ -1,15 +1,19 @@
 from django.db import models
-from zeroanda.constant import ORDER_STATUS, PRIORITY, SIDE, ACTUAL_ORDER_STATUS, INSTRUMENTS, TYPE, SCHEDULE_STATUS
+from zeroanda.constant import ORDER_STATUS, PRIORITY, SIDE, ACTUAL_ORDER_STATUS, INSTRUMENTS, TYPE, SCHEDULE_STATUS, COUNTRY_LIST
+
 
 # Create your models here.
 
 class ScheduleModel(models.Model):
     created     = models.DateTimeField(auto_now_add=True)
     title       = models.CharField('イベント名', max_length=200)
-    country     = models.CharField('対象国', max_length=200)
+    country     = models.CharField('対象国', max_length=200, choices=COUNTRY_LIST)
     priority    = models.IntegerField('イベントの重要性', choices=PRIORITY, default=PRIORITY[2][0])
     target      = models.BooleanField('対象の可否', choices=SCHEDULE_STATUS, default=SCHEDULE_STATUS[0][0])
     presentation_time   = models.DateTimeField('イベント時刻')
+
+    def get_instrument(self):
+        return
 
 class ProcessModel(models.Model):
     schedule    = models.ForeignKey(ScheduleModel)
@@ -26,6 +30,7 @@ class PricesModel(models.Model):
     time        = models.DateTimeField('対象サーバー時刻', blank=True, null=True)
     begin       = models.DateTimeField('開始時刻')
     end         = models.DateTimeField('終了時刻', blank=True, null=True)
+    elapsed     = models.CharField('経過時間', blank=True, null=True, max_length=20)
     created     = models.DateTimeField('DB生成時刻', auto_now_add=True)
 
 class OrderModel(models.Model):
@@ -67,9 +72,16 @@ class ActualOrderModel(models.Model):
 class AccountModel(models.Model):
     schedule    = models.ForeignKey(ScheduleModel)
     account_id  = models.IntegerField()
-    margin_rate = models.FloatField()
     account_currency    = models.CharField(max_length=10)
     account_name    = models.CharField(max_length=10)
+    balance     = models.IntegerField(default=0)
+    margin_rate = models.FloatField(default=0)
+    margin_used = models.FloatField(default=0)
+    margin_avail= models.IntegerField(default=0)
+    open_orders = models.IntegerField(default=0)
+    open_trades = models.IntegerField(default=0)
+    unrealized_pl= models.FloatField(default=0)
+    realized_pl = models.FloatField(default=0)
     created     = models.DateTimeField('登録時刻', auto_now_add=True)
     updated     = models.DateTimeField('更新時刻', null=True, blank=True)
 

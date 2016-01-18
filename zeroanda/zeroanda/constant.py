@@ -41,3 +41,7 @@ SCHEDULE_STATUS = (
     (True, "有効"),
     (False, "無効"),
 )
+
+COUNTRY_LIST = (
+    ("USD_JPY", "US"),
+)
