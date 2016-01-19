@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from zeroanda.api import order
 
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -38,6 +39,7 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/', include("api.urls")),
     url(r'^', include('snippets.urls')),
+    url(r'^zeroanda/api/order', order),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
