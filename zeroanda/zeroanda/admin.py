@@ -14,7 +14,7 @@ class OrderModelAdmin(admin.StackedInline):
 
 class ScheduleModelAdmin(admin.ModelAdmin):
     change_form_template = 'zeroanda/schedule/change_form.html'
-    
+
     list_display = ('title','presentation_time')
     inlines = [OrderModelAdmin]
 

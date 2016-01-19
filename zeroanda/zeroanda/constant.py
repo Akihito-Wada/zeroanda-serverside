@@ -21,6 +21,7 @@ ORDER_STATUS    = (
 ACTUAL_ORDER_STATUS =(
     (1, "Progress"),
     (2, "Finish"),
+    (3, "Fail"),
 )
 
 INSTRUMENTS = (

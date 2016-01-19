@@ -1,56 +1,41 @@
-
-from datetime import datetime, timedelta
-import time
+import  logging
 import math
-from zeroanda.models import ProcessModel, PricesModel, AccountModel, ErrorModel
+import time
+from datetime import datetime, timedelta
+
 from zeroanda import utils
-from zeroanda.streaming import Streaming
+from zeroanda.proxy.streaming import Streaming
 from zeroanda.errors import ZeroandaError
+from zeroanda.models import PricesModel, AccountModel
+from zeroanda.proxy.account import AccountProxyModel
+from zeroanda.proxy.order import OrderProxyModel
+
+logger =logging.getLogger("django")
 
 class OrderProcess:
-    _schedule   = None
-    _account    = None
+    _scheduleModel   = None
+    _accountModel    = None
     _latest_ask = None
     _latest_bid = None
     _targetdate = None
     _streaming  = None
+    _order      = None
 
     def __init__(self, schedule):
         super(OrderProcess,self).__init__()
-        self._schedule = schedule
+        self._scheduleModel = schedule
         self._targetdate = datetime.now() + timedelta(minutes=1)
         self._streaming = Streaming()
+        self._order = OrderProxyModel()
 
-        result = self._streaming.accounts()
-        result = self._streaming.accounts(result['accounts'][0]['accountId'])
-        self._account = AccountModel(
-                            schedule    = schedule,
-                            account_id = result['accountId'],
-                            margin_rate = result['marginRate'],
-                            account_currency = result['accountCurrency'],
-                            account_name = result['accountName'],
-                            balance    = result['balance'],
-                            open_orders= result['openOrders'],
-                            open_trades= result['openTrades'],
-                            unrealized_pl= result['unrealizedPl'],
-                            realized_pl= result['realizedPl'],
-                            margin_avail= result['marginAvail'],
-                            margin_used= result['marginUsed'],
-        )
-        # self._account['balance']    = result['balance']
-        # self._account['open_orders']= result['openOrders']
-        # self._account['open_trades']= result['openTrades']
-        # self._account['unrealized_pl']= result['unrealizedPl']
-        # self._account['realized_pl']= result['realizedPl']
-        # self._account['margin_avail']= result['marginAvail']
-        # self._account['margin_used']= result['marginUsed']
-
-        print(result)
-        self._account.save()
+        self.get_account()
 
     @staticmethod
     def create(schedule):
         return OrderProcess(schedule)
+
+    def get_account(self):
+        self._accountModel = AccountProxyModel().get_account()
 
     def run(self):
         # return
@@ -59,7 +44,7 @@ class OrderProcess:
             try:
                 remain_time = self._targetdate.timestamp() - datetime.now().timestamp()
                 print(remain_time)
-                if remain_time > self._schedule.priority:
+                if remain_time > self._scheduleModel.priority:
                     self.collect_prices()
                 # else:
                 self.demo_buy()
@@ -78,11 +63,11 @@ class OrderProcess:
                 break
 
     def collect_prices(self):
-        model = PricesModel(schedule=self._schedule, begin=datetime.now())
+        model = PricesModel(schedule=self._scheduleModel, begin=datetime.now())
         model.save()
         try :
-            result = self._streaming.prices(self._schedule.country)
-
+            result = self._streaming.prices(self._scheduleModel.country)
+            logger.info(result)
             model.ask   = self._latest_ask = result["ask"]
             model.bid   = self._latest_bid = result["bid"]
             model.instrument    = result["instrument"]
@@ -109,25 +94,47 @@ class OrderProcess:
     def order(self):
         buy_target_price = self._latest_ask + 0.2
         sell_target_price = self._latest_ask - 0.2
-        try :
-            self.buy_ifdoco(buy_target_price)
-            self.sell_ifdoco(sell_target_price)
-        except ZeroandaError as e:
-            print('error')
-            e.save()
-    def demo_buy(self):
-        self.buy_ifdoco(self._latest_ask + 1, self._schedule.country)
+        # try :
+        #     self.buy_ifdoco(buy_target_price)
+        #     self.sell_ifdoco(sell_target_price)
+        # except ZeroandaError as e:
+        #     print('error')
+        #     e.save()
 
-    def buy_ifdoco(self, target_price, instrument):
-        try :
-            result = self._streaming.order_ifdoco(self._account, instrument, 'buy', target_price, target_price - 0.5, target_price + 0.5)
-        except ZeroandaError as e:
-            print('error')
-            e.save()
+    # def buy_ifdoco(self, target_price, instrument, units):
+    #     try :
+    #         # [logger.info(item) for item in INSTRUMENTS if item[0] == instrument]
+    #         # return
+    #         model = OrderModel(schedule=self._schedule,
+    #                            # instruments = [instrument for item in INSTRUMENTS if item[0] == instrument],
+    #                            instruments = instrument,
+    #                            units = units,
+    #                            side = SIDE[0][0],
+    #                            type = TYPE[2][1],
+    #                            # expirey= '',
+    #                            price=target_price,
+    #                            upperBound=target_price + 10.0,
+    #                            lowerBound=target_price - 10.0,
+    #                            status=ACTUAL_ORDER_STATUS[0][0]
+    #                            )
+    #
+    #         model.save()
+    #         result = self._streaming.order_ifdoco(self._account, model)
+    #     except ZeroandaError as e:
+    #         print('error')
+    #         e.save()
 
-    def sell_ifdoco(self, target_price, instrument):
-        try :
-            result = self._streaming.order_ifdoco(self._account, instrument, 'buy', target_price, target_price - 0.5, target_price + 0.5)
-        except ZeroandaError as e:
-            print('error')
-            e.save()
+    # def sell_ifdoco(self, target_price, instrument):
+    #
+    #     try :
+    #         result = self._streaming.order_ifdoco(self._account, instrument, 'buy', target_price, target_price - 0.5, target_price + 0.5)
+    #     except ZeroandaError as e:
+    #         print('error')
+    #         e.save()
+
+    def test_order_buy(self):
+        self.collect_prices()
+        self._order.buy_ifdoco(self._accountModel, self._scheduleModel, self._latest_ask + 10, 2)
+
+    # def test_get_orders(self):
+    #     self._streaming.get_orders(self._accountModel)
