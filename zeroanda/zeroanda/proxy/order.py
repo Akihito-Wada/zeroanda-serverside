@@ -3,10 +3,9 @@ from zeroanda.constant import SIDE, TYPE, ACTUAL_ORDER_STATUS
 from zeroanda.errors import ZeroandaError
 from zeroanda.proxy.streaming import Streaming
 from zeroanda.constant import INSTRUMENTS
-from zeroanda import utils
 
-from datetime import datetime, timezone, timedelta
-import logging, calendar, pytz
+from datetime import timedelta
+import logging
 logger =logging.getLogger("django")
 
 class OrderProxyModel:

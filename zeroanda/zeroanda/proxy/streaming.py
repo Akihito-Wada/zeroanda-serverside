@@ -114,7 +114,7 @@ if __name__ == "__main__":
     main()
 
 from zeroanda.errors import ZeroandaError
-import logging, calendar, pytz
+from zeroanda   import utils
 
 class Streaming(object):
     # _account_id = None
@@ -165,12 +165,14 @@ class Streaming(object):
             return result["prices"][0]
 
     def order_ifdoco(self, accountModel, orderModel):
+
         payload = {'instrument': orderModel.instruments,
                    'units': orderModel.units,
                    'side': orderModel.side,
                    'type': orderModel.type,
                    # 'expiry': orderModel.expirey,
-                   'expiry': calendar.timegm(orderModel.expirey.astimezone(pytz.utc).timetuple()),
+                   # 'expiry': calendar.timegm(orderModel.expirey.astimezone(pytz.utc).timetuple()),
+                   'expiry': utils.convert_rfc2unixtime(orderModel.expirey),
                    'price': orderModel.price,
                    'lowerBound': orderModel.lowerBound,
                    'upperBound': orderModel.upperBound,
