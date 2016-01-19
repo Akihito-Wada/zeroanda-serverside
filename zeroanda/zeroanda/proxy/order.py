@@ -1,4 +1,4 @@
-from zeroanda.models import OrderModel
+from zeroanda.models import OrderModel, ActualOrderModel
 from zeroanda.constant import SIDE, TYPE, ACTUAL_ORDER_STATUS
 from zeroanda.errors import ZeroandaError
 from zeroanda.proxy.streaming import Streaming
@@ -32,6 +32,24 @@ class OrderProxyModel:
                         )
         orderModel.save()
         result = self._streaming.order_ifdoco(accountModel, orderModel)
+        logger.info(result)
+        actualOrderModel = ActualOrderModel(
+            schedule= scheduleModel,
+            order = orderModel,
+            id=result["orderOpened"]["id"],
+            instruments = result["instrument"],
+            units = result["orderOpened"]["units"],
+            side = result["orderOpened"]["side"],
+            expiry = result["orderOpened"]["expiry"],
+            price = result["price"],
+            upperBound = result["orderOpened"]["upperBound"],
+            lowerBound = result["orderOpened"]["lowerBound"],
+            stopLoss = result["orderOpened"]["stopLoss"],
+            takeProfit = result["orderOpened"]["takeProfit"],
+            trailingStop = result["orderOpened"]["trailingStop"],
+            time = result["time"],
+        )
+        actualOrderModel.save()
 
     def sell_ifdoco(self, accountModel, target_price, instrument):
         try :

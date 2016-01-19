@@ -190,8 +190,6 @@ class Streaming(object):
             raise ZeroandaError(error)
         else:
             result = json.loads(response.text)
-            print(result)
-            logger.info(result)
             return result
 
     def get_orders(self, accountModel):
