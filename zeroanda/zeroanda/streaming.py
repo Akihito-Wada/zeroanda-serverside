@@ -132,7 +132,6 @@ class Streaming(object):
             url = settings.DOMAIN + "/v1/accounts"
         else:
             url = settings.DOMAIN + "/v1/accounts/" + str(accountId)
-        print(url)
         response = self.get(url, self._default_headers)
         if response.status_code != 200:
             error = json.loads(response.text)
@@ -156,8 +155,11 @@ class Streaming(object):
             print(result)
             return result["prices"][0]
 
-    def order_ifdoco(self, account, side, price, lowerBound, upperBound):
-        payload = {'instrument': 'USD_JPY',
+    # def authorize(self):
+
+
+    def order_ifdoco(self, account, instrument, side, price, lowerBound, upperBound):
+        payload = {'instrument': instrument,
                    'units': 2,
                    'side': side,
                    'type': 'marketIfTouched',
@@ -168,7 +170,7 @@ class Streaming(object):
                    }
         if account.account_id == None:
             raise Exception('account_id is None.')
-        url = settings.DOMAIN + "/v1/accounts/" + account.account_id + "/orders"
+        url = settings.DOMAIN + "/v1/accounts/" + str(account.account_id) + "/orders"
         response = self.post(url, self._default_headers, payload)
         if response.status_code != 200:
             error = json.loads(response.text)
@@ -176,12 +178,15 @@ class Streaming(object):
             raise ZeroandaError(error)
         else:
             result = json.loads(response.text)
+            print(result)
 
     def get_orders(self, account):
         if account.account_id == None:
             raise Exception('account_id is None.')
-        url = settings.DOMAIN + "/v1/accounts/" + account.account_id + "/orders"
+        url = settings.DOMAIN + "/v1/accounts/" + str(account.account_id) + "/orders"
+        print(url)
         response = self.get(url, self._default_headers)
+
         if response.status_code != 200:
             error = json.loads(response.text)
             print(error)
@@ -203,7 +208,8 @@ class Streaming(object):
         if account.account_id == None:
             raise Exception('account_id is None.')
         url = settings.DOMAIN + "/v1/accounts/" + account.account_id + "/orders"
-        response = self.post(url, self._default_headers, payload)
+
+        response = self.post(url, self._default_headers + payload)
         if response.status_code != 200:
             error = json.loads(response.text)
             print(error)
@@ -215,12 +221,13 @@ class Streaming(object):
     def events(self):
         url = settings.DOMAIN + "/v1/events/"
 
-    def post(self, url, headers, payload):
+    def post(self, url, payload):
         try:
             s = requests.Session()
-            headers = headers
-            req = requests.post(url=url, data=payload)
-            return req
+            print(payload)
+            # req = requests.post(url=url, data=json.dumps(payload))
+            # return req
+
             # req = requests.Request('POST', url, headers = headers, params = payload)
             # pre = req.prepare()
             # resp = s.send(pre, stream = True, verify = False)

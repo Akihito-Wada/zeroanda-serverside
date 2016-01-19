@@ -92,8 +92,6 @@ REST_FRAMEWORK = {
     ]
 }
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
 # zeroanda settings.
 MODE = 'sandbox'
 

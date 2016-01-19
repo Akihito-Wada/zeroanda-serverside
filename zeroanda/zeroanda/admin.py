@@ -13,6 +13,8 @@ class OrderModelAdmin(admin.StackedInline):
         return utils.format_jst(instance.updated)
 
 class ScheduleModelAdmin(admin.ModelAdmin):
+    change_form_template = 'zeroanda/schedule/change_form.html'
+    
     list_display = ('title','presentation_time')
     inlines = [OrderModelAdmin]
 

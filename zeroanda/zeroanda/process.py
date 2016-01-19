@@ -67,8 +67,8 @@ class OrderProcess:
                 if remain_time > self._schedule.priority:
                     self.collect_prices()
                 # else:
-                #     self.order()
-
+                self.demo_buy()
+                # self.get_orders()
                 i += 1
 
                 nexttime = math.floor((datetime.now() + timedelta(seconds=1)).timestamp())
@@ -76,7 +76,7 @@ class OrderProcess:
 
                 time.sleep(duration)
 
-                if i >= 3:
+                if i >= 1:
                     break
             except:
                 print("exception.")
@@ -103,14 +103,36 @@ class OrderProcess:
             print(e)
 
     def get_orders(self):
-        self._streaming.get_orders()
+        try:
+            result = self._streaming.get_orders(self._account)
+        except ZeroandaError as e:
+            print('error')
+            e.save()
+        except Exception as e:
+            print(e)
 
-    def order(self, account):
+    def order(self):
         buy_target_price = self._latest_ask + 0.2
         sell_target_price = self._latest_ask - 0.2
         try :
-            self._streaming.order_ifdoco('buy', buy_target_price, buy_target_price + 0.5, buy_target_price - 0.5)
-            self._streaming.order_ifdoco('sell', sell_target_price, sell_target_price - 0.5, sell_target_price + 0.5)
+            self.buy_ifdoco(buy_target_price)
+            self.sell_ifdoco(sell_target_price)
+        except ZeroandaError as e:
+            print('error')
+            e.save()
+    def demo_buy(self):
+        self.buy_ifdoco(self._latest_ask + 1, self._schedule.country)
+
+    def buy_ifdoco(self, target_price, instrument):
+        try :
+            result = self._streaming.order_ifdoco(self._account, instrument, 'buy', target_price, target_price - 0.5, target_price + 0.5)
+        except ZeroandaError as e:
+            print('error')
+            e.save()
+
+    def sell_ifdoco(self, target_price, instrument):
+        try :
+            result = self._streaming.order_ifdoco(self._account, instrument, 'buy', target_price, target_price - 0.5, target_price + 0.5)
         except ZeroandaError as e:
             print('error')
             e.save()
