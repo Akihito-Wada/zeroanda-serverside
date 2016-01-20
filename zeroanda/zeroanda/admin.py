@@ -1,10 +1,14 @@
 from django.contrib import admin
 from zeroanda.models import ScheduleModel, ProcessModel, PricesModel, OrderModel, ErrorModel, AccountModel, ActualOrderModel
 from zeroanda import utils
+from zeroanda.constant import ACTUAL_ORDER_STATUS
+
+import logging
+logger =logging.getLogger("django")
 
 class ActualOrderModelAdmin(admin.StackedInline):
     model = ActualOrderModel
-    exclude = ['expiry', 'time',]
+    exclude = ['schedule', 'expiry', 'time','updated']
     readonly_fields = (
         'actual_order_id',
         'instruments',
@@ -18,7 +22,7 @@ class ActualOrderModelAdmin(admin.StackedInline):
         'trailingStop',
         'error_code',
         'status',
-        'updated',
+        'updated_date',
         'actual_datetime',
         'expiry_date',
         )
@@ -26,28 +30,26 @@ class ActualOrderModelAdmin(admin.StackedInline):
         return utils.format_jst(instance.time)
     def expiry_date(self, instance):
         return utils.format_jst(instance.expiry)
+    def updated_date(self, instance):
+        return utils.format_jst(instance.updated)
 
 class OrderModelAdmin(admin.ModelAdmin):
+    _actualOrderModel = None
     change_form_template = 'zeroanda/order/change_form.html'
     change_list_template = 'zeroanda/order/change_list.html'
     # model = OrderModel
     # extra = 0
+    exclude = ['expiry','updated']
     list_display = ('schedule', 'updated',)
     readonly_fields = (
         'id',
         'instruments',
-        'units',
         'side',
         'type',
-        'expirey',
-        'price',
-        'upperBound',
-        'lowerBound',
-        'stopLoss',
+        'expiry_time',
         'takeProfit',
         'traillingStop',
         'status',
-        'updated',
         'update_time',
     )
     inlines = [ActualOrderModelAdmin]
@@ -55,13 +57,36 @@ class OrderModelAdmin(admin.ModelAdmin):
     def update_time(self, instance):
         return utils.format_jst(instance.updated)
 
+    def expiry_time(self, instance):
+        return utils.format_jst(instance.expiry)
+
     def change_view(self, request, object_id, form_url='', extra_context=None):
-        model= ActualOrderModel.objects.get(order=object_id)
+        self._actualOrderModel= ActualOrderModel.objects.get(order=object_id)
         extra_context = extra_context or {}
-        extra_context['actual_order_id'] = model.actual_order_id
+        extra_context['actual_order_id'] = self._actualOrderModel.actual_order_id
         return super(OrderModelAdmin, self).change_view(request, object_id,
             form_url, extra_context=extra_context)
 
+    def get_readonly_fields(self, request, obj=None):
+        if self._actualOrderModel.status != ACTUAL_ORDER_STATUS[0][0]:
+            return (
+                'id',
+                'instruments',
+                'units',
+                'side',
+                'type',
+                'expiry_time',
+                'price',
+                'upperBound',
+                'lowerBound',
+                'stopLoss',
+                'takeProfit',
+                'traillingStop',
+                'status',
+                'update_time',
+            )
+        else:
+            return super(OrderModelAdmin, self).get_readonly_fields(request, obj)
 
 class ScheduleModelAdmin(admin.ModelAdmin):
     change_form_template = 'zeroanda/schedule/change_form.html'
@@ -92,7 +117,8 @@ class ProcessModelAdmin(admin.ModelAdmin):
 class PriceModelAdmin(admin.ModelAdmin):
     list_display = ('schecule_title', 'instrument', 'ask', 'bid','begin_time',
                     # 'elapsed'
-                    )
+                 )
+    exclude = ('begin', 'time', 'end')
     readonly_fields = ('schecule_title',
                        'schedule_presentation_time',
                        'ask',

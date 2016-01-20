@@ -1,9 +1,6 @@
 from django.db import models
 from zeroanda.constant import ORDER_STATUS, PRIORITY, SIDE, ACTUAL_ORDER_STATUS, INSTRUMENTS, TYPE, SCHEDULE_STATUS, COUNTRY_LIST, ERROR_CODE
 
-
-# Create your models here.
-
 class ScheduleModel(models.Model):
     created     = models.DateTimeField(auto_now_add=True)
     title       = models.CharField('イベント名', max_length=200)
@@ -39,7 +36,7 @@ class OrderModel(models.Model):
     units       = models.IntegerField(default=1)
     side        = models.CharField(max_length=4, choices=SIDE)
     type        = models.CharField(max_length=20, choices=TYPE)
-    expirey     = models.DateTimeField(blank=True, null=True)
+    expiry      = models.DateTimeField(blank=True, null=True)
     price       = models.FloatField(default=1)
     upperBound = models.FloatField("成立上限価格", default=0)
     lowerBound  = models.FloatField("成立下限価格", default=0)

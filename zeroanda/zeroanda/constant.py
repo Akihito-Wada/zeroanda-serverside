@@ -1,5 +1,3 @@
-from enum import Enum
-
 SIDE = (
     ("sell", "Sell"),
     ("buy", "Buy"),
