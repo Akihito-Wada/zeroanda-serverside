@@ -1,5 +1,7 @@
 from datetime import datetime, timezone, timedelta
 import calendar, pytz, logging
+import json
+import json
 logger =logging.getLogger("django")
 
 def format_jst(date_time):
@@ -17,6 +19,14 @@ def convert_rfc2unixtime(date_time):
 def convert_timestamp2datetime(timestamp_data):
     return datetime.fromtimestamp(format_unixtime(timestamp_data))
 
-def output(string):
-    print(string)
-    logger.info(string)
+def info(value):
+    # if isinstance(value, dict):
+    #     value = json.loads(value)
+    logger.info(value)
+    # print(value)
+
+def error(value):
+    # if isinstance(value, dict):
+    #     value = json.loads(value)
+    logger.error(value)
+    # print("error: " + value)

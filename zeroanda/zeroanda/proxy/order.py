@@ -16,6 +16,7 @@ class OrderProxyModel:
 
     def get_orders(self, accountModel):
         result = self._streaming.get_orders(accountModel)
+
         return result
 
     def buy_ifdoco(self, accountModel, scheduleModel, target_price, units):
@@ -63,7 +64,7 @@ class OrderProxyModel:
         try :
             result = self._streaming.order_ifdoco(accountModel, instrument, 'buy', target_price, target_price - 0.5, target_price + 0.5)
         except ZeroandaError as e:
-            utils.output(e)
+            utils.info(e)
             e.save()
 
     def traders(self, accountModel):
@@ -85,7 +86,7 @@ class OrderProxyModel:
             self._update_order(actualOrderModel.order.id)
             e.save()
         except Exception as e:
-            utils.output(e)
+            utils.error(e)
         finally:
             return
 

@@ -134,7 +134,7 @@ class Streaming(object):
         response = self.get(url, self._default_headers)
         if response.status_code != 200:
             error = json.loads(response.text)
-            utils.output(error)
+            utils.error(error)
             raise ZeroandaError(error)
         result = json.loads(response.text)
         return result
@@ -145,7 +145,7 @@ class Streaming(object):
         response = self.get(url, self._default_headers, params)
         if response.status_code != 200:
             error = json.loads(response.text)
-            utils.output(error)
+            utils.error(error)
             raise ZeroandaError(error)
         else:
             return json.loads(response.text)
@@ -156,7 +156,7 @@ class Streaming(object):
         response = self.get(url, self._default_headers, params)
         if response.status_code != 200:
             error = json.loads(response.text)
-            utils.output(error)
+            utils.error(error)
             raise ZeroandaError(error)
         else:
             result = json.loads(response.text)
@@ -182,7 +182,7 @@ class Streaming(object):
 
         if response.status_code != 201:
             error = json.loads(response.text)
-            utils.output(error)
+            utils.error(error)
             raise ZeroandaError(error)
         else:
             return json.loads(response.text)
@@ -195,7 +195,7 @@ class Streaming(object):
 
         if response.status_code != 200:
             error = json.loads(response.text)
-            utils.output(error)
+            utils.error(error)
             raise ZeroandaError(error)
         else:
             return json.loads(response.text)
@@ -209,7 +209,7 @@ class Streaming(object):
             raise ZeroandaError(error)
         else:
             result = json.loads(response.text)
-            utils.output(result)
+            utils.info(result)
 
     def events(self):
         url = settings.DOMAIN + "/v1/events/"

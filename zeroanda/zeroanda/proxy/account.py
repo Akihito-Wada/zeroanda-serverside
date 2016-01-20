@@ -37,5 +37,5 @@ class AccountProxyModel:
         if self.accountModel == None:
             return 0
         units = self.accountModel.balance * settings.LEVERAGE / rate / settings.CURRENCY;
-        utils.output("balance: " + str(self.accountModel.balance) + ", leverage: " + str(settings.LEVERAGE) + ", rate: " + str(rate) + ", currency: " + str(settings.CURRENCY) + ", units: " + str(units))
+        utils.info("balance: " + str(self.accountModel.balance) + ", leverage: " + str(settings.LEVERAGE) + ", rate: " + str(rate) + ", currency: " + str(settings.CURRENCY) + ", units: " + str(units))
         return math.floor(units)

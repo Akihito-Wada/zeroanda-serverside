@@ -11,7 +11,6 @@ from zeroanda.proxy.account import AccountProxyModel
 
 logger =logging.getLogger("django")
 
-
 @csrf_exempt
 def order(request):
     if request.method == 'GET':
