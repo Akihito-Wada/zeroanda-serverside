@@ -67,11 +67,10 @@ class OrderProcess:
         model.save()
         try :
             result = self._streaming.prices(self._scheduleModel.country)
-            logger.info(result)
             model.ask   = self._latest_ask = result["ask"]
             model.bid   = self._latest_bid = result["bid"]
             model.instrument    = result["instrument"]
-            model.time = datetime.fromtimestamp(utils.format_unixtime(result["time"]))
+            model.time = utils.convert_timestamp2datetime(result["time"])
             model.end = datetime.now()
             elapsed = model.end - model.begin
             model.elapsed = str(elapsed)

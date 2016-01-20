@@ -18,8 +18,8 @@ def order(request):
         logger.info('get')
         accountModel = AccountProxyModel().get_account()
         orderClass = OrderProxyModel()
-        # orderClass.get(accountModel)
-        orderClass.traders(accountModel)
+        orderClass.get(accountModel)
+        # orderClass.traders(accountModel)
     elif request.method == 'POST':
         logger.info(request.POST["schedule_id"])
         try:

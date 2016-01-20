@@ -8,7 +8,7 @@ $(function(){
         $.ajax({
             type: "POST",
             url: "http://" + location.host + "/zeroanda/api/order",
-            data: "schedule_id="+$("#id_ordermodel_set-__prefix__-schedule").val(),
+            data: "schedule_id="+$("#scheduleModelId").val(),
             success: function(msg){
 //                alert( "Data Saved: " + msg );
             },

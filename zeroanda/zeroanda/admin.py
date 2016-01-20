@@ -1,22 +1,50 @@
-from datetime import datetime, timezone, timedelta
-from django.utils   import dateformat
 from django.contrib import admin
-from zeroanda.models import ScheduleModel, ProcessModel, PricesModel, OrderModel, ErrorModel, AccountModel
+from zeroanda.models import ScheduleModel, ProcessModel, PricesModel, OrderModel, ErrorModel, AccountModel, ActualOrderModel
 from zeroanda import utils
 
-class OrderModelAdmin(admin.StackedInline):
-    model = OrderModel
-    extra = 0
-    readonly_fields = ('update_time',)
+class ActualOrderModelAdmin(admin.StackedInline):
+    model = ActualOrderModel
+    exclude = ['expiry', 'time',]
+    readonly_fields = (
+        'actual_order_id',
+        'instruments',
+        'units',
+        'side',
+        'price',
+        'upperBound',
+        'lowerBound',
+        'stopLoss',
+        'takeProfit',
+        'trailingStop',
+        'status',
+        'updated',
+        'actual_datetime',
+        'expiry_date',
+        )
+    def actual_datetime(self, instance):
+        return utils.format_jst(instance.time)
+    def expiry_date(self, instance):
+        return utils.format_jst(instance.expiry)
 
+class OrderModelAdmin(admin.ModelAdmin):
+    # model = OrderModel
+    # extra = 0
+    list_display = ('schedule', 'updated',)
+    readonly_fields = ('instruments', 'units', 'side', 'type', 'expirey', 'price', 'upperBound', 'lowerBound', 'stopLoss', 'takeProfit', 'traillingStop', 'status', 'updated', 'update_time',)
+    inlines = [ActualOrderModelAdmin]
     def update_time(self, instance):
         return utils.format_jst(instance.updated)
 
 class ScheduleModelAdmin(admin.ModelAdmin):
     change_form_template = 'zeroanda/schedule/change_form.html'
-
+    # readonly_fields = ('id',)
     list_display = ('title','presentation_time')
-    inlines = [OrderModelAdmin]
+    # inlines = [OrderModelAdmin]
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+        extra_context['schedule_model_id'] = object_id
+        return super(ScheduleModelAdmin, self).change_view(request, object_id,
+            form_url, extra_context=extra_context)
 
 class ProcessModelAdmin(admin.ModelAdmin):
     list_display = ('pid',)
@@ -106,3 +134,4 @@ admin.site.register(ProcessModel, ProcessModelAdmin)
 admin.site.register(PricesModel, PriceModelAdmin)
 admin.site.register(ErrorModel, ErrorModelAdmin)
 admin.site.register(AccountModel, AccountModelAdmin)
+admin.site.register(OrderModel, OrderModelAdmin)

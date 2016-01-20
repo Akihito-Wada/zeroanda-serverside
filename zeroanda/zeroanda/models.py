@@ -53,7 +53,7 @@ class OrderModel(models.Model):
 class ActualOrderModel(models.Model):
     schedule    = models.ForeignKey(ScheduleModel)
     order       = models.OneToOneField(OrderModel)
-    actual_order_id    = models.IntegerField(default=0)
+    actual_order_id    = models.BigIntegerField(default=0)
     instruments = models.CharField(max_length=200)
     units       = models.IntegerField(default=1)
     side        = models.CharField(max_length=200)

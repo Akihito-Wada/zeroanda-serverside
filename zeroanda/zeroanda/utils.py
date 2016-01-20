@@ -12,3 +12,6 @@ def format_unixtime(time):
 
 def convert_rfc2unixtime(date_time):
     return calendar.timegm(date_time.astimezone(pytz.utc).timetuple())
+
+def convert_timestamp2datetime(timestamp_data):
+    return datetime.fromtimestamp(format_unixtime(timestamp_data))
