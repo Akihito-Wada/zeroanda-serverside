@@ -1,8 +1,7 @@
 from zeroanda.models import OrderModel, ActualOrderModel
-from zeroanda.constant import SIDE, TYPE, ACTUAL_ORDER_STATUS
+from zeroanda.constant import SIDE, TYPE, ACTUAL_ORDER_STATUS, INSTRUMENTS, ERROR_CODE, ORDER_STATUS
 from zeroanda.errors import ZeroandaError
 from zeroanda.proxy.streaming import Streaming
-from zeroanda.constant import INSTRUMENTS, ERROR_CODE
 from zeroanda   import utils
 
 from datetime import timedelta, datetime
@@ -20,37 +19,45 @@ class OrderProxyModel:
         return result
 
     def buy_ifdoco(self, accountModel, scheduleModel, target_price, units):
-        orderModel = OrderModel(
-                        schedule=scheduleModel,
-                        instruments = scheduleModel.country,
-                        units = units,
-                        side = SIDE[1][0],
-                        type = TYPE[2][0],
-                        expirey = scheduleModel.presentation_time + timedelta(minutes=1),
-                        price=target_price,
-                        upperBound=target_price + 10.0,
-                        lowerBound=target_price - 10.0,
-                        status=ACTUAL_ORDER_STATUS[0][0]
-                        )
-        orderModel.save()
-        result = self._streaming.order_ifdoco(accountModel, orderModel)
-        actualOrderModel = ActualOrderModel(
-            schedule= scheduleModel,
-            order = orderModel,
-            actual_order_id=result["orderOpened"]["id"],
-            instruments = result["instrument"],
-            units = result["orderOpened"]["units"],
-            side = result["orderOpened"]["side"],
-            expiry = utils.convert_timestamp2datetime(result["orderOpened"]["expiry"]),
-            price = result["price"],
-            upperBound = result["orderOpened"]["upperBound"],
-            lowerBound = result["orderOpened"]["lowerBound"],
-            stopLoss = result["orderOpened"]["stopLoss"],
-            takeProfit = result["orderOpened"]["takeProfit"],
-            trailingStop = result["orderOpened"]["trailingStop"],
-            time = utils.convert_timestamp2datetime(result["time"]),
-        )
-        actualOrderModel.save()
+        try :
+            orderModel = OrderModel(
+                            schedule=scheduleModel,
+                            instruments = scheduleModel.country,
+                            units = str(units),
+                            side = SIDE[1][0],
+                            type = TYPE[2][0],
+                            expiry = scheduleModel.presentation_time + timedelta(minutes=1),
+                            price=target_price,
+                            upperBound=self._get_upper_bound(target_price),
+                            lowerBound=self._get_lower_bound(target_price),
+                            status=ORDER_STATUS[0][0]
+                            )
+            orderModel.save()
+            result = self._streaming.order_ifdoco(accountModel, orderModel)
+
+            actualOrderModel = ActualOrderModel(
+                schedule= scheduleModel,
+                order = orderModel,
+                actual_order_id=result["orderOpened"]["id"],
+                instruments = result["instrument"],
+                units = result["orderOpened"]["units"],
+                side = result["orderOpened"]["side"],
+                expiry = utils.convert_timestamp2datetime(result["orderOpened"]["expiry"]),
+                price = result["price"],
+                upperBound = result["orderOpened"]["upperBound"],
+                lowerBound = result["orderOpened"]["lowerBound"],
+                stopLoss = result["orderOpened"]["stopLoss"],
+                takeProfit = result["orderOpened"]["takeProfit"],
+                trailingStop = result["orderOpened"]["trailingStop"],
+                time = utils.convert_timestamp2datetime(result["time"]),
+            )
+            actualOrderModel.save()
+        except ZeroandaError as e:
+            e.save()
+            orderModel.status = ORDER_STATUS[1][0]
+            orderModel.updated  = datetime.now()
+            orderModel.save()
+            return
 
     def sell_ifdoco(self, accountModel, target_price, instrument):
         try :
@@ -129,3 +136,9 @@ class OrderProxyModel:
         actualOrderModel.status = ACTUAL_ORDER_STATUS[2][0]
         actualOrderModel.updated    = datetime.now()
         actualOrderModel.save()
+
+    def _get_upper_bound(self, reference_value):
+        return reference_value + 10.0,
+
+    def _get_lower_bound(self, reference_value):
+        return reference_value - 10.0,

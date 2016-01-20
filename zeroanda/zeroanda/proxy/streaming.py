@@ -169,7 +169,7 @@ class Streaming(object):
                    'units': orderModel.units,
                    'side': orderModel.side,
                    'type': orderModel.type,
-                   'expiry': utils.convert_rfc2unixtime(orderModel.expirey),
+                   'expiry': utils.convert_rfc2unixtime(orderModel.expiry),
                    'price': orderModel.price,
                    'lowerBound': orderModel.lowerBound,
                    'upperBound': orderModel.upperBound,
@@ -177,7 +177,7 @@ class Streaming(object):
 
         if accountModel.account_id == None:
             raise Exception('account_id is None.')
-        url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/orders"
+        url = settings.STREAMING_DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/orders"
         response = self.post(url, self._default_headers, payload)
 
         if response.status_code != 201:

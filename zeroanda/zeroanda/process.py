@@ -1,4 +1,4 @@
-import  logging
+import logging
 import math
 import time
 from datetime import datetime, timedelta
@@ -14,7 +14,7 @@ logger =logging.getLogger("django")
 
 class OrderProcess:
     _scheduleModel   = None
-    _accountModel    = None
+    _accountModelProxy    = None
     _latest_ask = None
     _latest_bid = None
     _targetdate = None
@@ -35,7 +35,7 @@ class OrderProcess:
         return OrderProcess(schedule)
 
     def get_account(self):
-        self._accountModel = AccountProxyModel().get_account()
+        self._accountModelProxy = AccountProxyModel()
 
     def run(self):
         # return
@@ -133,7 +133,8 @@ class OrderProcess:
 
     def test_order_buy(self):
         self.collect_prices()
-        self._order.buy_ifdoco(self._accountModel, self._scheduleModel, self._latest_ask + 10, 2)
+        units = self._accountModelProxy.get_max_units(self._latest_ask)
+        # self._order.buy_ifdoco(self._accountModelProxy.get_account(), self._scheduleModel, self._latest_ask + 10, units)
 
     # def test_get_orders(self):
     #     self._streaming.get_orders(self._accountModel)

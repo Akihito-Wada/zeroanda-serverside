@@ -128,3 +128,7 @@ REST_FRAMEWORK = {
         # 'rest_framework.permissions.IsAuthenticated',
     ]
 }
+
+# rate
+LEVERAGE    = 25
+CURRENCY    = 10000

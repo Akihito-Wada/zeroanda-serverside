@@ -19,6 +19,7 @@ from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from zeroanda.api import order, cancel, cancelAll
+from zeroanda.views import TicketListView
 
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -42,6 +43,7 @@ urlpatterns = [
     url(r'^zeroanda/api/order$', order),
     url(r'^zeroanda/api/order/cancel$', cancel),
     url(r'^zeroanda/api/order/cancelall$', cancelAll),
+    url(r'^zeroanda/orders$', TicketListView.as_view()),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

@@ -1,5 +1,10 @@
 from zeroanda.models import AccountModel
 from zeroanda.proxy.streaming import Streaming
+from zeroanda import utils
+
+from django.conf import settings
+
+import math
 
 class AccountProxyModel:
     accountModel = None
@@ -26,3 +31,11 @@ class AccountProxyModel:
         )
         self.accountModel.save()
         return self.accountModel
+
+    def get_max_units(self, rate):
+        self.get_account()
+        if self.accountModel == None:
+            return 0
+        units = self.accountModel.balance * settings.LEVERAGE / rate / settings.CURRENCY;
+        utils.output("balance: " + str(self.accountModel.balance) + ", leverage: " + str(settings.LEVERAGE) + ", rate: " + str(rate) + ", currency: " + str(settings.CURRENCY) + ", units: " + str(units))
+        return math.floor(units)

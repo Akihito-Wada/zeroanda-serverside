@@ -35,8 +35,8 @@ class ActualOrderModelAdmin(admin.StackedInline):
 
 class OrderModelAdmin(admin.ModelAdmin):
     _actualOrderModel = None
-    change_form_template = 'zeroanda/order/change_form.html'
-    change_list_template = 'zeroanda/order/change_list.html'
+    change_form_template = 'zeroanda/admin/order/change_form.html'
+    change_list_template = 'zeroanda/admin/order/change_list.html'
     # model = OrderModel
     # extra = 0
     exclude = ['expiry','updated']
@@ -61,14 +61,19 @@ class OrderModelAdmin(admin.ModelAdmin):
         return utils.format_jst(instance.expiry)
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
-        self._actualOrderModel= ActualOrderModel.objects.get(order=object_id)
-        extra_context = extra_context or {}
-        extra_context['actual_order_id'] = self._actualOrderModel.actual_order_id
-        return super(OrderModelAdmin, self).change_view(request, object_id,
-            form_url, extra_context=extra_context)
+        try :
+            extra_context = extra_context or {}
+
+            self._actualOrderModel= ActualOrderModel.objects.get(order=object_id)
+            extra_context['actual_order_id'] = self._actualOrderModel.actual_order_id
+        except ActualOrderModel.DoesNotExist as e:
+            logger.error(e)
+        finally:
+            return super(OrderModelAdmin, self).change_view(request, object_id,
+                form_url, extra_context=extra_context)
 
     def get_readonly_fields(self, request, obj=None):
-        if self._actualOrderModel.status != ACTUAL_ORDER_STATUS[0][0]:
+        if self._actualOrderModel == None or self._actualOrderModel.status != ACTUAL_ORDER_STATUS[0][0]:
             return (
                 'id',
                 'instruments',
@@ -89,7 +94,7 @@ class OrderModelAdmin(admin.ModelAdmin):
             return super(OrderModelAdmin, self).get_readonly_fields(request, obj)
 
 class ScheduleModelAdmin(admin.ModelAdmin):
-    change_form_template = 'zeroanda/schedule/change_form.html'
+    change_form_template = 'zeroanda/admin/schedule/change_form.html'
     list_display = ('title','presentation_time')
     # inlines = [OrderModelAdmin]
     def change_view(self, request, object_id, form_url='', extra_context=None):
