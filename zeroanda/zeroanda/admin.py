@@ -16,6 +16,7 @@ class ActualOrderModelAdmin(admin.StackedInline):
         'stopLoss',
         'takeProfit',
         'trailingStop',
+        'error_code',
         'status',
         'updated',
         'actual_datetime',
@@ -27,17 +28,43 @@ class ActualOrderModelAdmin(admin.StackedInline):
         return utils.format_jst(instance.expiry)
 
 class OrderModelAdmin(admin.ModelAdmin):
+    change_form_template = 'zeroanda/order/change_form.html'
+    change_list_template = 'zeroanda/order/change_list.html'
     # model = OrderModel
     # extra = 0
     list_display = ('schedule', 'updated',)
-    readonly_fields = ('instruments', 'units', 'side', 'type', 'expirey', 'price', 'upperBound', 'lowerBound', 'stopLoss', 'takeProfit', 'traillingStop', 'status', 'updated', 'update_time',)
+    readonly_fields = (
+        'id',
+        'instruments',
+        'units',
+        'side',
+        'type',
+        'expirey',
+        'price',
+        'upperBound',
+        'lowerBound',
+        'stopLoss',
+        'takeProfit',
+        'traillingStop',
+        'status',
+        'updated',
+        'update_time',
+    )
     inlines = [ActualOrderModelAdmin]
+
     def update_time(self, instance):
         return utils.format_jst(instance.updated)
 
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        model= ActualOrderModel.objects.get(order=object_id)
+        extra_context = extra_context or {}
+        extra_context['actual_order_id'] = model.actual_order_id
+        return super(OrderModelAdmin, self).change_view(request, object_id,
+            form_url, extra_context=extra_context)
+
+
 class ScheduleModelAdmin(admin.ModelAdmin):
     change_form_template = 'zeroanda/schedule/change_form.html'
-    # readonly_fields = ('id',)
     list_display = ('title','presentation_time')
     # inlines = [OrderModelAdmin]
     def change_view(self, request, object_id, form_url='', extra_context=None):

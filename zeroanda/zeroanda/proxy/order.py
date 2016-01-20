@@ -2,10 +2,10 @@ from zeroanda.models import OrderModel, ActualOrderModel
 from zeroanda.constant import SIDE, TYPE, ACTUAL_ORDER_STATUS
 from zeroanda.errors import ZeroandaError
 from zeroanda.proxy.streaming import Streaming
-from zeroanda.constant import INSTRUMENTS
+from zeroanda.constant import INSTRUMENTS, ERROR_CODE
 from zeroanda   import utils
 
-from datetime import timedelta
+from datetime import timedelta, datetime
 import logging
 logger =logging.getLogger("django")
 
@@ -15,8 +15,9 @@ class OrderProxyModel:
     def __init__(self):
         self._streaming = Streaming()
 
-    def get(self, accountModel):
-        self._streaming.get_orders(accountModel)
+    def get_orders(self, accountModel):
+        result = self._streaming.get_orders(accountModel)
+        return result
 
     def buy_ifdoco(self, accountModel, scheduleModel, target_price, units):
         orderModel = OrderModel(
@@ -33,7 +34,6 @@ class OrderProxyModel:
                         )
         orderModel.save()
         result = self._streaming.order_ifdoco(accountModel, orderModel)
-        logger.info(result)
         actualOrderModel = ActualOrderModel(
             schedule= scheduleModel,
             order = orderModel,
@@ -56,8 +56,76 @@ class OrderProxyModel:
         try :
             result = self._streaming.order_ifdoco(accountModel, instrument, 'buy', target_price, target_price - 0.5, target_price + 0.5)
         except ZeroandaError as e:
-            print('error')
+            utils.output(e)
             e.save()
 
     def traders(self, accountModel):
         self._streaming.traders(accountModel, INSTRUMENTS[0][0])
+        # self._streaming.traders(accountModel, scheduleModel.instruments, INSTRUMENTS[0][0])
+
+    def cancel(self, accountModel, actual_order_id):
+        try:
+            result = self._streaming.cancel_order(accountModel, actual_order_id)
+            logger.info(result)
+
+            self._cancel_actual_order(actual_order_id);
+            actualOrderModel = self._get_actual_order_model(actual_order_id)
+            self._update_order(actualOrderModel.order.id)
+        except ZeroandaError as e:
+            actualOrderModel = self._get_active_actual_order_model(actual_order_id)
+            if ERROR_CODE[1][0] == e.get_code():
+                self._update_error_code(actual_order_id, e.get_code())
+            self._update_order(actualOrderModel.order.id)
+            e.save()
+        except Exception as e:
+            utils.output(e)
+        finally:
+            return
+
+    def cancel_all(self, accountModel):
+        result = self.get_orders(accountModel)
+        for v in result['orders']:
+            self.cancel(accountModel, v["id"])
+
+    def _update_order(self, order_id):
+        orderModel = OrderModel.objects.get(pk=order_id)
+        orderModel.updated  = datetime.now()
+        orderModel.save()
+
+    '''
+    アクティブなActualOrderModelを取得
+    args: {actual_order_id}
+    '''
+    def _get_active_actual_order_model(self, actual_order_id):
+        try :
+            return ActualOrderModel.objects.get(actual_order_id=actual_order_id, status=ACTUAL_ORDER_STATUS[0][0])
+        except ActualOrderModel.DoesNotExist as e:
+            raise Exception(e)
+
+
+    '''
+    ActualOrderModelを取得
+    args: {actual_order_id}
+    '''
+    def _get_actual_order_model(self, actual_order_id):
+        try:
+            return ActualOrderModel.objects.get(actual_order_id=actual_order_id)
+        except ActualOrderModel.DoesNotExist as e:
+            raise Exception(e)
+
+    '''
+    ActualOrderModelのエラーコードを更新
+    args: {actual_order_id, error_code}
+    '''
+    def _update_error_code(self, actual_order_id, error_code):
+        actualOrderModel = self._get_actual_order_model(actual_order_id)
+        actualOrderModel.status = ACTUAL_ORDER_STATUS[1][0]
+        actualOrderModel.error_code = error_code
+        actualOrderModel.updated    = datetime.now()
+        actualOrderModel.save()
+
+    def _cancel_actual_order(self, actual_order_id):
+        actualOrderModel = self._get_actual_order_model(actual_order_id)
+        actualOrderModel.status = ACTUAL_ORDER_STATUS[2][0]
+        actualOrderModel.updated    = datetime.now()
+        actualOrderModel.save()

@@ -1,5 +1,5 @@
 from django.db import models
-from zeroanda.constant import ORDER_STATUS, PRIORITY, SIDE, ACTUAL_ORDER_STATUS, INSTRUMENTS, TYPE, SCHEDULE_STATUS, COUNTRY_LIST
+from zeroanda.constant import ORDER_STATUS, PRIORITY, SIDE, ACTUAL_ORDER_STATUS, INSTRUMENTS, TYPE, SCHEDULE_STATUS, COUNTRY_LIST, ERROR_CODE
 
 
 # Create your models here.
@@ -65,6 +65,7 @@ class ActualOrderModel(models.Model):
     takeProfit  = models.FloatField(default=0)
     trailingStop   = models.FloatField(default=0)
     status      = models.IntegerField(choices=ACTUAL_ORDER_STATUS, default=ACTUAL_ORDER_STATUS[0][0])
+    error_code  = models.IntegerField(choices=ERROR_CODE, default=0)
     time        = models.DateTimeField('対象サーバー時刻', blank=True, null=True)
     created     = models.DateTimeField('登録時刻', auto_now_add=True)
     updated     = models.DateTimeField('更新時刻', null=True, blank=True)

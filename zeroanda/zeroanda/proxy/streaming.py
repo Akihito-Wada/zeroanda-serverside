@@ -134,7 +134,7 @@ class Streaming(object):
         response = self.get(url, self._default_headers)
         if response.status_code != 200:
             error = json.loads(response.text)
-            print(error)
+            utils.output(error)
             raise ZeroandaError(error)
         result = json.loads(response.text)
         return result
@@ -145,11 +145,10 @@ class Streaming(object):
         response = self.get(url, self._default_headers, params)
         if response.status_code != 200:
             error = json.loads(response.text)
-            print(error)
+            utils.output(error)
             raise ZeroandaError(error)
         else:
-            result = json.loads(response.text)
-            print(result)
+            return json.loads(response.text)
 
     def prices(self, instruments):
         url = settings.DOMAIN + "/v1/prices"
@@ -157,7 +156,7 @@ class Streaming(object):
         response = self.get(url, self._default_headers, params)
         if response.status_code != 200:
             error = json.loads(response.text)
-            print(error)
+            utils.output(error)
             raise ZeroandaError(error)
         else:
             result = json.loads(response.text)
@@ -170,8 +169,6 @@ class Streaming(object):
                    'units': orderModel.units,
                    'side': orderModel.side,
                    'type': orderModel.type,
-                   # 'expiry': orderModel.expirey,
-                   # 'expiry': calendar.timegm(orderModel.expirey.astimezone(pytz.utc).timetuple()),
                    'expiry': utils.convert_rfc2unixtime(orderModel.expirey),
                    'price': orderModel.price,
                    'lowerBound': orderModel.lowerBound,
@@ -185,12 +182,10 @@ class Streaming(object):
 
         if response.status_code != 201:
             error = json.loads(response.text)
-            print(error)
-            logger.info(error)
+            utils.output(error)
             raise ZeroandaError(error)
         else:
-            result = json.loads(response.text)
-            return result
+            return json.loads(response.text)
 
     def get_orders(self, accountModel):
         if accountModel.account_id == None:
@@ -200,50 +195,47 @@ class Streaming(object):
 
         if response.status_code != 200:
             error = json.loads(response.text)
-            print(error)
+            utils.output(error)
+            raise ZeroandaError(error)
+        else:
+            return json.loads(response.text)
+
+    def cancel_order(self, accountModel, actual_order_id):
+        url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/orders/" + str(actual_order_id)
+        response = self.delete(url, self._default_headers)
+
+        if response.status_code != 200:
+            error = json.loads(response.text)
             raise ZeroandaError(error)
         else:
             result = json.loads(response.text)
-            print(result)
-            logger.info(result)
+            utils.output(result)
 
     def events(self):
         url = settings.DOMAIN + "/v1/events/"
 
+    def delete(self, url, headers, params = None):
+        try:
+            s = requests.Session()
+            req = requests.Request('DELETE', url, headers=headers, params=params)
+            pre = req.prepare()
+            resp = s.send(pre, stream = True, verify = False)
+            return resp
+        except Exception as e:
+            s.close()
+
     def post(self, url, headers, payload):
         try:
             s = requests.Session()
-            # headers = {
-            #     'Authorization' : 'Bearer ' + '8713400a434b3f4cfd2e2f9580da45ed-41a3452617aa84f441be90ca6ab0fc55',
-            #
-            #     'Content-type': 'application/x-www-form-urlencoded',
-            #     # 'X-Accept-Datetime-Format':'RFC3339',
-            #     'X-Accept-Datetime-Format':'unix',
-            #     'Connection': 'keep-alive',
-            #     'Accept-Encoding': 'gzip,deflate',
-            # }
-            req = requests.post(url=url, headers = headers, data=payload)
-            # req = requests.post(url=url, headers = headers, payload=payload)
-            logger.info(req)
-
-# curl -X POST -H "Authorization: Bearer 8713400a434b3f4cfd2e2f9580da45ed-41a3452617aa84f441be90ca6ab0fc55" -d "instrument=EUR_USD&units=2&side=sell&type=marketIfTouched&price=1.2&expiry=2016-04-01T00%3A00%3A00Z" "https://api-fxpractice.oanda.com/v1/accounts/6818465/orders"
-            return req
-
-            # req = requests.Request('POST', url, headers = headers, params = payload)
-            # pre = req.prepare()
-            # resp = s.send(pre, stream = True, verify = False)
-            # return resp
+            req = requests.Request('POST', url, headers = headers, data = payload)
+            pre = req.prepare()
+            resp = s.send(pre, stream = True, verify = False)
+            return resp
         except Exception as e:
             s.close()
 
     def get(self, url, headers, params = None):
         try:
-            print(url)
-            print(headers)
-            print(params)
-            logger.info(url)
-            logger.info(headers)
-            logger.info(params)
             s = requests.Session()
             req = requests.Request('GET', url, headers = headers, params = params)
             pre = req.prepare()

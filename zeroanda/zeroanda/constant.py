@@ -21,7 +21,7 @@ ORDER_STATUS    = (
 ACTUAL_ORDER_STATUS =(
     (1, "Progress"),
     (2, "Finish"),
-    (3, "Fail"),
+    (3, "Cancel"),
 )
 
 INSTRUMENTS = (
@@ -45,4 +45,9 @@ SCHEDULE_STATUS = (
 
 COUNTRY_LIST = (
     ("USD_JPY", "US"),
+)
+
+ERROR_CODE = (
+    (0, 'None'),
+    (11, 'Order not found'),
 )

@@ -29,7 +29,38 @@ $(function(){
 //                alert( "Data Saved: " + msg );
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
-//                alert("some error");
+            }
+        });
+    });
+})
+
+// cancel the order
+$(function(){
+    $("#cancelButton").click(function() {
+        $.ajax({
+            type: "POST",
+            url: "http://" + location.host + "/zeroanda/api/order/cancel",
+            data: {"actual_order_id": $("#actual_order_id").val()},
+            success: function(msg){
+                location.reload();
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+            }
+        });
+    });
+})
+
+// cancel all of the orders
+$(function(){
+    $("#cancelAllButton").click(function() {
+        logger.info('test')
+        $.ajax({
+            type: "POST",
+            url: "http://" + location.host + "/zeroanda/api/order/cancelall",
+            success: function(msg){
+                location.reload();
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
             }
         });
     });

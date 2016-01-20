@@ -9,6 +9,8 @@ class ZeroandaError(Exception):
         self._info = error["moreInfo"]
 
     def save(self):
-        print('save')
         model = ErrorModel(code=self._code, message = self._message, info = self._info)
         model.save()
+
+    def get_code(self):
+        return self._code
