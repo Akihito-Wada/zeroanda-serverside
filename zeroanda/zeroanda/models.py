@@ -1,5 +1,5 @@
 from django.db import models
-from zeroanda.constant import ORDER_STATUS, PRIORITY, SIDE, ACTUAL_ORDER_STATUS, INSTRUMENTS, TYPE, SCHEDULE_STATUS, COUNTRY_LIST, ERROR_CODE
+from zeroanda.constant import ORDER_STATUS, PRIORITY, SIDE, ACTUAL_ORDER_STATUS, INSTRUMENTS, TYPE, SCHEDULE_STATUS, COUNTRY_LIST, ERROR_CODE, ACCOUNT_STATUS
 
 class ScheduleModel(models.Model):
     created     = models.DateTimeField(auto_now_add=True)
@@ -72,6 +72,18 @@ class AccountModel(models.Model):
     account_id  = models.IntegerField()
     account_currency    = models.CharField(max_length=10)
     account_name    = models.CharField(max_length=10)
+    margin_rate = models.FloatField(default=0)
+    etag        = models.CharField(max_length=100, null=True, blank=True)
+    status      = models.BooleanField(default=ACCOUNT_STATUS[0][0], choices=ACCOUNT_STATUS)
+    created     = models.DateTimeField('登録時刻', auto_now_add=True)
+    updated     = models.DateTimeField('更新時刻', null=True, blank=True)
+
+class AccountInfoModel(models.Model):
+    # schedule    = models.ForeignKey(ScheduleModel)
+    account_model     = models.ForeignKey(AccountModel)
+    account_id  = models.IntegerField()
+    account_currency    = models.CharField(max_length=10)
+    account_name    = models.CharField(max_length=10)
     balance     = models.IntegerField(default=0)
     margin_rate = models.FloatField(default=0)
     margin_used = models.FloatField(default=0)
@@ -80,6 +92,7 @@ class AccountModel(models.Model):
     open_trades = models.IntegerField(default=0)
     unrealized_pl= models.FloatField(default=0)
     realized_pl = models.FloatField(default=0)
+    etag        = models.CharField(max_length=100, null=True, blank=True)
     created     = models.DateTimeField('登録時刻', auto_now_add=True)
     updated     = models.DateTimeField('更新時刻', null=True, blank=True)
 

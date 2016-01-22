@@ -71,6 +71,10 @@ class OrderProxyModel:
         self._streaming.traders(accountModel, INSTRUMENTS[0][0])
         # self._streaming.traders(accountModel, scheduleModel.instruments, INSTRUMENTS[0][0])
 
+    def positions(self, accountModel):
+        result = self._streaming.positions(accountModel)
+        utils.info(result)
+
     def cancel(self, accountModel, actual_order_id):
         try:
             result = self._streaming.cancel_order(accountModel, actual_order_id)

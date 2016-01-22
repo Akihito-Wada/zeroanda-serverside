@@ -20,8 +20,9 @@ class TradesListView(generic.TemplateView):
 class PositionsListView(generic.TemplateView):
     def get_context_data(self, **kwargs):
         accountModel = AccountProxyModel().get_account()
+
         orderClass = OrderProxyModel()
-        orderClass.get_orders(accountModel)
+        orderClass.positions(accountModel)
 
         context = super(PositionsListView, self).get_context_data(**kwargs)
         return context

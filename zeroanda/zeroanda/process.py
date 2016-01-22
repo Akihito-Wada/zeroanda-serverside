@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from zeroanda import utils
 from zeroanda.proxy.streaming import Streaming
 from zeroanda.errors import ZeroandaError
-from zeroanda.models import PricesModel, AccountModel
+from zeroanda.models import PricesModel
 from zeroanda.proxy.account import AccountProxyModel
 from zeroanda.proxy.order import OrderProxyModel
 

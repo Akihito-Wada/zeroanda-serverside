@@ -11,6 +11,11 @@ PRIORITY = (
     (5, "Highest"),
 )
 
+ACCOUNT_STATUS    = (
+    (True, "available"),
+    (False, "disable"),
+)
+
 ORDER_STATUS    = (
     (True, "available"),
     (False, "disable"),
