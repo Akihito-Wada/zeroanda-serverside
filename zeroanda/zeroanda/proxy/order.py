@@ -5,6 +5,7 @@ from zeroanda.proxy.streaming import Streaming
 from zeroanda   import utils
 
 from datetime import timedelta, datetime
+import math
 import logging
 logger =logging.getLogger("django")
 
@@ -14,9 +15,31 @@ class OrderProxyModel:
     def __init__(self):
         self._streaming = Streaming()
 
+    def _add_actual_order(self, response, scheduleModel, orderModel):
+        utils.info(response.get_body())
+        result = response.get_body()
+        # price = response.get_body()['prices'][0]
+        actualOrderModel = ActualOrderModel(
+            schedule= scheduleModel,
+            order = orderModel,
+            actual_order_id=result["orderOpened"]["id"],
+            instruments = result["instrument"],
+            units = result["orderOpened"]["units"],
+            side = result["orderOpened"]["side"],
+            expiry = utils.convert_timestamp2datetime(result["orderOpened"]["expiry"]),
+            price = result["price"],
+            upperBound = result["orderOpened"]["upperBound"],
+            lowerBound = result["orderOpened"]["lowerBound"],
+            stopLoss = result["orderOpened"]["stopLoss"],
+            takeProfit = result["orderOpened"]["takeProfit"],
+            trailingStop = result["orderOpened"]["trailingStop"],
+            time = utils.convert_timestamp2datetime(result["time"]),
+        )
+        actualOrderModel.save()
+        return actualOrderModel
+
     def get_orders(self, accountModel):
         result = self._streaming.get_orders(accountModel)
-
         return result
 
     def buy_ifdoco(self, accountModel, scheduleModel, target_price, units):
@@ -24,7 +47,7 @@ class OrderProxyModel:
             orderModel = OrderModel(
                             schedule=scheduleModel,
                             instruments = scheduleModel.country,
-                            units = str(units),
+                            units = units,
                             side = SIDE[1][0],
                             type = TYPE[2][0],
                             expiry = scheduleModel.presentation_time + timedelta(minutes=1),
@@ -34,25 +57,9 @@ class OrderProxyModel:
                             status=ORDER_STATUS[0][0]
                             )
             orderModel.save()
-            result = self._streaming.order_ifdoco(accountModel, orderModel)
-
-            actualOrderModel = ActualOrderModel(
-                schedule= scheduleModel,
-                order = orderModel,
-                actual_order_id=result["orderOpened"]["id"],
-                instruments = result["instrument"],
-                units = result["orderOpened"]["units"],
-                side = result["orderOpened"]["side"],
-                expiry = utils.convert_timestamp2datetime(result["orderOpened"]["expiry"]),
-                price = result["price"],
-                upperBound = result["orderOpened"]["upperBound"],
-                lowerBound = result["orderOpened"]["lowerBound"],
-                stopLoss = result["orderOpened"]["stopLoss"],
-                takeProfit = result["orderOpened"]["takeProfit"],
-                trailingStop = result["orderOpened"]["trailingStop"],
-                time = utils.convert_timestamp2datetime(result["time"]),
-            )
-            actualOrderModel.save()
+            response = self._streaming.order_ifdoco(accountModel, orderModel)
+            if response.get_code() == 201:
+                self._add_actual_order(response, scheduleModel, orderModel)
         except ZeroandaError as e:
             e.save()
             orderModel.status = ORDER_STATUS[1][0]
@@ -77,9 +84,7 @@ class OrderProxyModel:
 
     def cancel(self, accountModel, actual_order_id):
         try:
-            result = self._streaming.cancel_order(accountModel, actual_order_id)
-            logger.info(result)
-
+            self._streaming.cancel_order(accountModel, actual_order_id)
             self._cancel_actual_order(actual_order_id);
             actualOrderModel = self._get_actual_order_model(actual_order_id)
             self._update_order(actualOrderModel.order.id)
@@ -96,7 +101,7 @@ class OrderProxyModel:
 
     def cancel_all(self, accountModel):
         result = self.get_orders(accountModel)
-        for v in result['orders']:
+        for v in result.get_body()['orders']:
             self.cancel(accountModel, v["id"])
 
     def _update_order(self, order_id):
@@ -143,7 +148,11 @@ class OrderProxyModel:
         actualOrderModel.save()
 
     def _get_upper_bound(self, reference_value):
-        return reference_value + 10.0,
+        # return ('%.3f', reference_value + 10.0)
+        return math.floor((reference_value + 10.0) * 1000) / 1000
+        # return reference_value + 10.0
 
     def _get_lower_bound(self, reference_value):
-        return reference_value - 10.0,
+        # return ('%.3f', reference_value - 10.0)
+        return math.floor((reference_value - 10.0) * 1000) / 1000
+        # return reference_value - 10.0

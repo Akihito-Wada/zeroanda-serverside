@@ -138,9 +138,9 @@ class Streaming(object):
         # 'Accept-Encoding': 'gzip,deflate',
     }
 
-    def get_headers(self, model=None):
+    def get_headers(self, model=None, compressed=False):
         if model == None or model.etag == None:
-            return self._default_headers
+            return self._default_headers if compressed == False else self._compressed_headers
         else:
             self._default_headers['If-None-Match'] = model.etag
             return self._default_headers
@@ -156,7 +156,7 @@ class Streaming(object):
             return result
         else:
             utils.error(result.get_body())
-            raise ZeroandaError(result.get_body())
+            raise ZeroandaError(result)
 
     def account_info(self, accountModel, accountInfoModel = None):
         url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id)
@@ -165,59 +165,50 @@ class Streaming(object):
             return result
         else:
             utils.error(result.get_body())
-            raise ZeroandaError(result.get_body())
+            raise ZeroandaError(result)
 
     def get_orders(self, accountModel):
         if accountModel.account_id == None:
             raise Exception('account_id is None.')
         url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/orders"
-        response = self.get(url, self._compressed_headers)
+        result = self.get(url, self._compressed_headers)
 
-        if response.status_code != 200:
-            error = json.loads(response.text)
-            utils.error(error)
-            raise ZeroandaError(error)
+        if result.get_status():
+            return result
         else:
-            return json.loads(response.text)
+            utils.error(result.get_body())
+            raise ZeroandaError(result)
 
     def traders(self, accountModel, instruments, maxId = None, count=None):
         url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/trades"
         params = {'instruments' : instruments}
-        response = self.get(url, self._compressed_headers, params)
-        if response.status_code != 200:
-            error = json.loads(response.text)
-            utils.error(error)
-            raise ZeroandaError(error)
+        result = self.get(url, self._compressed_headers, params)
+        if result.get_status():
+            return result
         else:
-            return json.loads(response.text)
+            raise ZeroandaError(result)
 
     def positions(self, accountModel):
         url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/positions"
         # params = {'instruments' : instruments}
-        response = self.get(url, self._compressed_headers)
-        if response.status_code != 200:
-            error = json.loads(response.text)
-            utils.error(error)
-            raise ZeroandaError(error)
+        result = self.get(url, self._compressed_headers)
+        if result.get_status():
+            return result
         else:
-            return json.loads(response.text)
+            utils.error(result.get_body())
+            raise ZeroandaError(result)
 
-    def prices(self, accountModel, instruments):
+    def prices(self, instruments, priceModel = None):
         url = settings.DOMAIN + "/v1/prices"
         # url = settings.STREAMING_DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/prices"
         # url = settings.STREAMING_DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/prices"
         params = {'instruments' : instruments}
-        utils.info(self._compressed_headers)
-        return
-        response = self.get(url, self._default_headers, params)
-        if response.status_code != 200:
-            error = json.loads(response.text)
-            utils.error(error)
-            raise ZeroandaError(error)
+        result = self.get(url, self.get_headers(priceModel, True), params)
+        if result.get_status():
+            return result
         else:
-            result = json.loads(response.text)
-            print(result)
-            return result["prices"][0]
+            utils.error(result.get_body())
+            raise ZeroandaError(result)
 
     def order_ifdoco(self, accountModel, orderModel):
 
@@ -230,50 +221,55 @@ class Streaming(object):
                    'lowerBound': orderModel.lowerBound,
                    'upperBound': orderModel.upperBound,
                    }
-
         if accountModel.account_id == None:
             raise Exception('account_id is None.')
-        url = settings.STREAMING_DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/orders"
-        response = self.post(url, self._compressed_headers, payload)
-
-        if response.status_code != 201:
-            error = json.loads(response.text)
-            utils.error(error)
-            raise ZeroandaError(error)
+        # url = settings.STREAMING_DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/orders"
+        url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/orders"
+        result = self.post(url, self.get_headers(None, True), payload)
+        if result.get_status():
+            return result
         else:
-            return json.loads(response.text)
+            utils.error(result.get_body())
+            raise ZeroandaError(result)
 
     def cancel_order(self, accountModel, actual_order_id):
         url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/orders/" + str(actual_order_id)
-        response = self.delete(url, self._compressed_headers)
-
-        if response.status_code != 200:
-            error = json.loads(response.text)
-            raise ZeroandaError(error)
+        result = self.delete(url, self._compressed_headers)
+        utils.info(result)
+        if result.get_status():
+            return result
         else:
-            result = json.loads(response.text)
-            utils.info(result)
+            utils.error(result.get_body())
+            raise ZeroandaError(result)
 
     def events(self):
         url = settings.DOMAIN + "/v1/events/"
 
     def delete(self, url, headers, params = None):
         try:
+            utils.info(headers)
+            utils.info(url)
+            utils.info(params)
+
             s = requests.Session()
             req = requests.Request('DELETE', url, headers=headers, params=params)
             pre = req.prepare()
-            resp = s.send(pre, stream = True, verify = False)
-            return resp
+            response = s.send(pre, stream = True, verify = False)
+            return RequestDataObject(response)
+            # return resp
         except Exception as e:
             s.close()
 
     def post(self, url, headers, payload):
         try:
+            utils.info(headers)
+            utils.info(url)
+            utils.info(payload)
             s = requests.Session()
             req = requests.Request('POST', url, headers = headers, data = payload)
             pre = req.prepare()
             response = s.send(pre, stream = True, verify = False)
-            return response
+            return RequestDataObject(response)
         except Exception as e:
             s.close()
 

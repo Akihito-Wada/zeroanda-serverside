@@ -120,39 +120,45 @@ class ProcessModelAdmin(admin.ModelAdmin):
         return utils.format_jst(instance.endtime)
 
 class PriceModelAdmin(admin.ModelAdmin):
-    list_display = ('schecule_title', 'instrument', 'ask', 'bid','begin_time',
-                    # 'elapsed'
-                 )
-    exclude = ('begin', 'time', 'end')
-    readonly_fields = ('schecule_title',
-                       'schedule_presentation_time',
-                       'ask',
-                       'bid',
-                       'instrument',
-                       'target_server_time',
-                       'begin_time',
-                       'end_time',
-                       'elapsed',
-                       'created_time',
-                       )
-
-    def schecule_title(self, instance):
-        return instance.schedule.title
-
-    def schedule_presentation_time(self, instance):
-        return utils.format_jst(instance.schedule.presentation_time)
-
     def created_time(self, instance):
         return utils.format_jst(instance.created)
 
     def target_server_time(self, instance):
         return utils.format_jst(instance.time)
 
-    def begin_time(self, instance):
-        return utils.format_jst(instance.begin)
+    change_list_template = 'zeroanda/admin/price/change_list.html'
+    # created_time.short_description = 'precise time'
+    list_display = (
+        'instrument',
+        'ask',
+        'bid',
+        'created_time'
+                 )
+    # exclude = ('begin', 'time', 'end')
+    readonly_fields = (
+        # 'schecule_title',
+        # 'schedule_presentation_time',
+        'ask',
+        'bid',
+        'instrument',
+        'target_server_time',
+        # 'begin_time',
+        # 'end_time',
+        # 'elapsed',
+        'created_time',
+                       )
 
-    def end_time(self, instance):
-        return utils.format_jst(instance.end)
+    # def schecule_title(self, instance):
+    #     return instance.schedule.title
+
+    def schedule_presentation_time(self, instance):
+        return utils.format_jst(instance.schedule.presentation_time)
+
+    # def begin_time(self, instance):
+    #     return utils.format_jst(instance.begin)
+    #
+    # def end_time(self, instance):
+    #     return utils.format_jst(instance.end)
 
 class ErrorModelAdmin(admin.ModelAdmin):
     list_display = ('code', 'message', 'created_time')

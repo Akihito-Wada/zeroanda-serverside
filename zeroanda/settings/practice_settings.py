@@ -1,6 +1,9 @@
 from .sandbox_settings import *
 
 # zeroanda settings.
+# DEBUG = False
+#
+# ALLOWED_HOSTS = ['*',]
 
 MODE    = 'practice'
 

@@ -14,10 +14,11 @@ class RequestDataObject:
         return self._code
 
     def get_status(self):
-        return self._code == 200 or self._code == 304
+        utils.info("status_code: " + str(self._code))
+        return self._code == 200 or self._code == 304 or self._code == 201
 
     def get_etag(self):
-        return None if self._headers == None or self._headers["ETag"] == None else self._headers["ETag"]
+        return self._headers["ETag"] if self._headers == None and "ETag" in self._headers == True else None
         # return None if self._headers == None or self._headers["ETag"] == None else self._headers["ETag"].strip('"')
 
     def get_body(self):

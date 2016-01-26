@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'django_user_agents',
     'zeroanda',
+    'debug_toolbar',
 )
 
 MIDDLEWARE_CLASSES = (

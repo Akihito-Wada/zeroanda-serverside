@@ -9,8 +9,8 @@ class ScheduleModel(models.Model):
     target      = models.BooleanField('対象の可否', choices=SCHEDULE_STATUS, default=SCHEDULE_STATUS[0][0])
     presentation_time   = models.DateTimeField('イベント時刻')
 
-    def get_instrument(self):
-        return
+    # def get_instrument(self):
+    #     return
 
 class ProcessModel(models.Model):
     schedule    = models.ForeignKey(ScheduleModel)
@@ -20,20 +20,21 @@ class ProcessModel(models.Model):
     endtime     = models.DateTimeField('終了時刻', blank=True, null=True)
 
 class PricesModel(models.Model):
-    schedule    = models.ForeignKey(ScheduleModel)
+    # schedule    = models.ForeignKey(ScheduleModel)
     ask         = models.FloatField(default=0)
     bid         = models.FloatField(default=0)
     instrument  = models.CharField(max_length=100, blank=True, null=True)
+    etag        = models.CharField(max_length=100, null=True, blank=True)
     time        = models.DateTimeField('対象サーバー時刻', blank=True, null=True)
-    begin       = models.DateTimeField('開始時刻')
-    end         = models.DateTimeField('終了時刻', blank=True, null=True)
-    elapsed     = models.CharField('経過時間', blank=True, null=True, max_length=20)
+    # begin       = models.DateTimeField('開始時刻')
+    # end         = models.DateTimeField('終了時刻', blank=True, null=True)
+    # elapsed     = models.CharField('経過時間', blank=True, null=True, max_length=20)
     created     = models.DateTimeField('DB生成時刻', auto_now_add=True)
 
 class OrderModel(models.Model):
     schedule    = models.ForeignKey(ScheduleModel)
     instruments = models.CharField(max_length=30, choices=INSTRUMENTS)
-    units       = models.IntegerField(default=1)
+    units       = models.IntegerField(default=0)
     side        = models.CharField(max_length=4, choices=SIDE)
     type        = models.CharField(max_length=20, choices=TYPE)
     expiry      = models.DateTimeField(blank=True, null=True)
@@ -97,6 +98,7 @@ class AccountInfoModel(models.Model):
     updated     = models.DateTimeField('更新時刻', null=True, blank=True)
 
 class ErrorModel(models.Model):
+    status_code = models.IntegerField(default=0)
     code        = models.IntegerField()
     message      = models.CharField(max_length=200)
     info        = models.CharField(max_length=200)

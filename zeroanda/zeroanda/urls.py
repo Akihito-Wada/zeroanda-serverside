@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from zeroanda.api import order, cancel, cancelAll
+from zeroanda.api import order, cancel, cancelAll, prices, tick
 from zeroanda.views import TradesListView, PositionsListView
 
 # Serializers define the API representation.
@@ -43,6 +43,8 @@ urlpatterns = [
     url(r'^zeroanda/api/order$', order),
     url(r'^zeroanda/api/order/cancel$', cancel),
     url(r'^zeroanda/api/order/cancelall$', cancelAll),
+    url(r'^zeroanda/api/prices', prices),
+    url(r'^zeroanda/api/tick', tick),
     url(r'^zeroanda/orders$', TradesListView.as_view()),
     url(r'^zeroanda/positions', PositionsListView.as_view()),
 ]

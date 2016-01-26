@@ -7,7 +7,10 @@ from zeroanda.proxy.order import OrderProxyModel
 from zeroanda.errors import ZeroandaError
 from zeroanda.models import ScheduleModel
 from zeroanda.process import OrderProcess
+from zeroanda.proxy.prices import PricesProxyModel
 from zeroanda.proxy.account import AccountProxyModel
+from zeroanda.proxy.schedule import ScheduleProxyModel
+from zeroanda   import utils
 
 logger =logging.getLogger("django")
 
@@ -20,8 +23,10 @@ def order(request):
         # orderClass.traders(accountModel)
     elif request.method == 'POST':
         try:
-            model = ScheduleModel.objects.get(pk=request.POST.get("schedule_id"))
-            OrderProcess.create(model).test_order_buy()
+            scheduleModel = ScheduleModel.objects.get(pk=request.POST.get("schedule_id"))
+            priceModel = PricesProxyModel(scheduleModel)
+            price = priceModel.get_price()
+            OrderProcess.create(scheduleModel).test_order_buy(price.ask)
 
         except ZeroandaError as e:
             print('error')
@@ -46,3 +51,30 @@ def cancelAll(request):
     orderClass = OrderProxyModel()
     orderClass.cancel_all(accountModel)
     return HttpResponse('200')
+
+
+@csrf_exempt
+def prices(request):
+    if request.method == 'GET':
+        try:
+            scheduleModel = ScheduleProxyModel().get_schedule(request.GET.get('schedule_id'))
+            model = PricesProxyModel(scheduleModel)
+            model.get_price()
+            return HttpResponse('200')
+        except Exception as e:
+            utils.info(e)
+            return HttpResponse('403')
+
+
+@csrf_exempt
+def tick(request):
+    if request.method == 'GET':
+        try:
+            scheduleModel = ScheduleProxyModel().get_schedule(request.GET.get('schedule_id'))
+            # model = PricesProxyModel(scheduleModel)
+            # model.get_price()
+            OrderProcess.create(scheduleModel).test_ticking_price()
+            return HttpResponse('200')
+        except Exception as e:
+            utils.info(e)
+            return HttpResponse('403')

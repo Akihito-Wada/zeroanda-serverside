@@ -2,6 +2,7 @@ from django.views   import generic
 
 from zeroanda.proxy.order import OrderProxyModel
 from zeroanda.proxy.account import AccountProxyModel
+from zeroanda.proxy.prices import PricesProxyModel
 
 from zeroanda import utils
 
@@ -29,3 +30,13 @@ class PositionsListView(generic.TemplateView):
 
     def get_template_names(self):
         return 'zeroanda/ticket/change_list.html'
+
+class PriceListView(generic.TemplateView):
+    def get_context_data(self, **kwargs):
+        priceModel  = PricesProxyModel.get_price()
+
+        context = super(PriceListView, self).get_context_data()
+        return context
+
+    def get_template_names(self):
+        return 'zeroanda/prices/change_list.html'

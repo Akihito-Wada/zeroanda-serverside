@@ -9,6 +9,7 @@ from zeroanda.errors import ZeroandaError
 from zeroanda.models import PricesModel
 from zeroanda.proxy.account import AccountProxyModel
 from zeroanda.proxy.order import OrderProxyModel
+from zeroanda.proxy.prices import PricesProxyModel
 
 logger =logging.getLogger("django")
 
@@ -27,7 +28,6 @@ class OrderProcess:
         self._targetdate = datetime.now() + timedelta(minutes=1)
         self._streaming = Streaming()
         self._order = OrderProxyModel()
-
         self.get_account()
 
     @staticmethod
@@ -90,51 +90,34 @@ class OrderProcess:
         except Exception as e:
             print(e)
 
-    def order(self):
-        buy_target_price = self._latest_ask + 0.2
-        sell_target_price = self._latest_ask - 0.2
-        # try :
-        #     self.buy_ifdoco(buy_target_price)
-        #     self.sell_ifdoco(sell_target_price)
-        # except ZeroandaError as e:
-        #     print('error')
-        #     e.save()
+    def collect_prices2(self):
+        proxyModel = PricesProxyModel(self._scheduleModel)
+        proxyModel.get_price()
 
-    # def buy_ifdoco(self, target_price, instrument, units):
-    #     try :
-    #         # [logger.info(item) for item in INSTRUMENTS if item[0] == instrument]
-    #         # return
-    #         model = OrderModel(schedule=self._schedule,
-    #                            # instruments = [instrument for item in INSTRUMENTS if item[0] == instrument],
-    #                            instruments = instrument,
-    #                            units = units,
-    #                            side = SIDE[0][0],
-    #                            type = TYPE[2][1],
-    #                            # expirey= '',
-    #                            price=target_price,
-    #                            upperBound=target_price + 10.0,
-    #                            lowerBound=target_price - 10.0,
-    #                            status=ACTUAL_ORDER_STATUS[0][0]
-    #                            )
-    #
-    #         model.save()
-    #         result = self._streaming.order_ifdoco(self._account, model)
-    #     except ZeroandaError as e:
-    #         print('error')
-    #         e.save()
+    def test_order_buy(self, ask):
+        # self.collect_prices()
+        units = self._accountModelProxy.get_max_units(ask)
+        self._order.buy_ifdoco(self._accountModelProxy.get_account(), self._scheduleModel, ask + 10, units)
 
-    # def sell_ifdoco(self, target_price, instrument):
-    #
-    #     try :
-    #         result = self._streaming.order_ifdoco(self._account, instrument, 'buy', target_price, target_price - 0.5, target_price + 0.5)
-    #     except ZeroandaError as e:
-    #         print('error')
-    #         e.save()
+    def test_ticking_price(self):
+        i = 0
+        while True:
+            try:
+                remain_time = self._targetdate.timestamp() - datetime.now().timestamp()
+                utils.info(remain_time)
+                # if remain_time > self._scheduleModel.priority:
+                self.collect_prices2()
+                # else:
+                i += 1
 
-    def test_order_buy(self):
-        self.collect_prices()
-        units = self._accountModelProxy.get_max_units(self._latest_ask)
-        # self._order.buy_ifdoco(self._accountModelProxy.get_account(), self._scheduleModel, self._latest_ask + 10, units)
+                nexttime = math.floor((datetime.now() + timedelta(seconds=1)).timestamp())
+                duration = nexttime - datetime.now().timestamp()
 
-    # def test_get_orders(self):
-    #     self._streaming.get_orders(self._accountModel)
+                time.sleep(duration)
+
+                if i >= 5:
+                    break
+            except:
+                print("exception.")
+                break
+        return

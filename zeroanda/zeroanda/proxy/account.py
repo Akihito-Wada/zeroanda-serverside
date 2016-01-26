@@ -2,6 +2,7 @@ from zeroanda.models import AccountModel, AccountInfoModel
 from zeroanda.proxy.streaming import Streaming
 from zeroanda import utils
 from zeroanda.constant import INSTRUMENTS, ACCOUNT_STATUS
+from zeroanda.cache import etag
 
 from django.conf import settings
 
@@ -57,7 +58,6 @@ class AccountProxyModel:
         self._accountModel = None if len(accounts) == 0 else accounts.reverse()[0]
         account_response = self._streaming.accounts(self._accountModel)
 
-        utils.info(account_response.get_code())
         if self._accountModel == None:
             self._accountModel = self._add_account(account_response)
         elif account_response.get_code() != 304:
@@ -69,35 +69,12 @@ class AccountProxyModel:
         self._accountInfoModel = None if len(account_info_list) == 0 else account_info_list.reverse()[0]
         account_info_response = self._streaming.account_info(self._accountModel, self._accountInfoModel)
 
-        utils.info(account_info_response.get_code())
         if self._accountInfoModel == None:
             self._accountInfoModel = self._add_account_info(self._accountModel, account_info_response)
         elif account_info_response.get_code() != 304:
             self._accountInfoModel = self._add_account_info(self._accountModel, account_info_response)
 
     def get_account(self):
-        # accounts = AccountModel.objects.filter(status=ACCOUNT_STATUS[0][0]).order_by('created')
-        # if len(accounts) > 1:
-        #     self._disable_all()
-        #
-        # self._accountModel = None if len(accounts) == 0 else accounts.reverse()[0]
-        # account_response = self._streaming.accounts(self._accountModel)
-        #
-        # if self._accountModel == None:
-        #     self._accountModel = self._add_account(account_response)
-        # elif account_response.get_code() != 304:
-        #     self._disable_all()
-        #     self._accountModel = self._add_account(account_response)
-        #
-        # account_info_list = AccountInfoModel.objects.filter(account_model = self._accountModel).order_by('created')
-        # self._accountInfoModel = None if len(account_info_list) == 0 else account_info_list.reverse()[0]
-        # account_info_response = self._streaming.account_info(self._accountModel, self._accountInfoModel)
-        #
-        # if self._accountInfoModel == None:
-        #     self._accountInfoModel = self._add_account_info(self._accountModel, account_info_response)
-        # elif account_info_response.get_code() != 304:
-        #     self._accountInfoModel = self._add_account_info(self._accountModel, account_info_response)
-
         if self._accountModel == None:
             self._get_account_model()
             self._get_account_info_model()
@@ -108,12 +85,26 @@ class AccountProxyModel:
         self.get_account()
         if self._accountInfoModel == None:
             self._get_account_info_model()
-        return self._get_account_info_model()
+
+        return self._accountInfoModel
+
+    def update_account(self):
+        self._get_account_model()
+        self._get_account_info_model()
+
+        return self._accountModel
+
+    def update_account_info(self):
+        if self._accountModel == None:
+            self._get_account_model()
+        self._get_account_info_model()
+
+        return self._accountInfoModel
 
     def get_max_units(self, rate):
         self.get_account_info()
         if self._accountInfoModel == None:
             return 0
         units = self._accountInfoModel.balance * settings.LEVERAGE / rate / settings.CURRENCY;
-        utils.info("balance: " + str(self._accountInfoModel.balance) + ", leverage: " + str(settings.LEVERAGE) + ", rate: " + str(rate) + ", currency: " + str(settings.CURRENCY) + ", units: " + str(units))
-        return math.floor(units)
+        # utils.info("balance: " + str(self._accountInfoModel.balance) + ", leverage: " + str(settings.LEVERAGE) + ", rate: " + str(rate) + ", currency: " + str(settings.CURRENCY) + ", units: " + str(units))
+        return int(math.floor(units))

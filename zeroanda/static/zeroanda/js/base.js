@@ -58,10 +58,41 @@ $(function(){
             type: "POST",
             url: "http://" + location.host + "/zeroanda/api/order/cancelall",
             success: function(msg){
+                //location.reload();
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+            }
+        });
+    });
+})
+
+// get prices
+$(function(){
+    $("#getPriceButton").click(function() {
+        logger.info('test')
+        $.ajax({
+            type: "GET",
+            url: "http://" + location.host + "/zeroanda/api/prices",
+            data: {"schedule_id": $("#scheduleModelId").val()},
+            success: function(msg){
                 location.reload();
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
             }
+        });
+    });
+})
+
+// get prices
+$(function(){
+    $("#getTickingPriceButton").click(function() {
+        logger.info('test')
+        $.ajax({
+            type: "GET",
+            url: "http://" + location.host + "/zeroanda/api/tick",
+            data: {"schedule_id": $("#scheduleModelId").val()},
+            success: function(msg){},
+            error: function(XMLHttpRequest, textStatus, errorThrown) {}
         });
     });
 })
