@@ -3,14 +3,15 @@ import  logging
 from django.http    import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from zeroanda.proxy.order import OrderProxyModel
+from zeroanda   import utils
+from zeroanda.constant import INSTRUMENTS
+from zeroanda.controller.process import OrderProcess
 from zeroanda.errors import ZeroandaError
 from zeroanda.models import ScheduleModel
-from zeroanda.process import OrderProcess
-from zeroanda.proxy.prices import PricesProxyModel
 from zeroanda.proxy.account import AccountProxyModel
+from zeroanda.proxy.order import OrderProxyModel
+from zeroanda.proxy.prices import PricesProxyModel
 from zeroanda.proxy.schedule import ScheduleProxyModel
-from zeroanda   import utils
 
 logger =logging.getLogger("django")
 
@@ -41,6 +42,18 @@ def ifdoco(request):
     if request.method == 'POST':
         scheduleModel = ScheduleProxyModel().get_schedule(request.POST.get('schedule_id'))
         OrderProcess.create(scheduleModel).test_ifdoco()
+        return HttpResponse('200')
+    else:
+        return HttpResponse('403')
+
+
+@csrf_exempt
+def test_market_order(request):
+    if request.method == 'POST':
+        accountModel = AccountProxyModel().get_account()
+        orderClass = OrderProxyModel()
+        orders = orderClass.buy_market(accountModel, INSTRUMENTS[0][0], 1)
+        utils.info(orders)
         return HttpResponse('200')
     else:
         return HttpResponse('403')

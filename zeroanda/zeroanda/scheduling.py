@@ -1,7 +1,9 @@
-from zeroanda.models import ScheduleModel
-from zeroanda.errors import ZeroandaError
-from zeroanda.process import OrderProcess
 from datetime import datetime, timedelta
+
+from zeroanda.controller.process import OrderProcess
+from zeroanda.errors import ZeroandaError
+from zeroanda.models import ScheduleModel
+
 
 def watch_schedule():
     now = datetime.now()

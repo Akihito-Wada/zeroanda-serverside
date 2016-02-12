@@ -32,7 +32,7 @@ class PricesModel(models.Model):
     created     = models.DateTimeField('DB生成時刻', auto_now_add=True)
 
 class OrderModel(models.Model):
-    schedule    = models.ForeignKey(ScheduleModel)
+    schedule    = models.ForeignKey(ScheduleModel, blank=True, null=True)
     instruments = models.CharField(max_length=30, choices=INSTRUMENTS)
     units       = models.IntegerField(default=0)
     side        = models.CharField(max_length=4, choices=SIDE)

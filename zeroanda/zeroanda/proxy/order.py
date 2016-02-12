@@ -46,11 +46,11 @@ class OrderProxyModel:
         # utils.info(result.get_body())
         return result.get_body()
 
-    def buy_market(self, accountModel, scheduleModel, target_price, units, expiry=None, upperBound=None, lowerBound=None):
+    def buy_market(self, accountModel, instruments, units, scheduleModel=None, expiry=None, upperBound=None, lowerBound=None):
         try :
             orderModel = OrderModel(
                             schedule=scheduleModel,
-                            instruments = scheduleModel.country,
+                            instruments = instruments,
                             units = units,
                             side = SIDE[1][0],
                             type = TYPE[2][0],
@@ -60,13 +60,12 @@ class OrderProxyModel:
                             status=ORDER_STATUS[0][0]
                             )
             orderModel.save()
-            response = self.order_market.order_ifdoco(
+            response = self._streaming.order_market(
                 accountModel.account_id,
                 scheduleModel.country,
                 units,
                 SIDE[1][0],
-                scheduleModel.presentation_time + timedelta(minutes=1),
-                target_price,
+                expiry,
                 upperBound,
                 lowerBound
             )

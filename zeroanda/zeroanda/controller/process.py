@@ -106,15 +106,10 @@ class OrderProcess:
         [job.join() for job in jobs]
 
     def f(self):
-        # utils.info(count)
-        # utils.info('f')
-        # utils.info(datetime.now())
-
         proxyModel = PricesProxyModel(self._scheduleModel)
         proxyModel.get_price()
 
     def test_order_buy(self, ask):
-
         proxyModel = PricesProxyModel(self._scheduleModel)
         price = proxyModel.get_price()
 
