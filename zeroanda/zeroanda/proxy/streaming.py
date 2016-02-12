@@ -112,6 +112,7 @@ from django.conf import settings
 from zeroanda.errors import ZeroandaError
 from zeroanda   import utils
 from zeroanda.proxy.do.requests_data_object  import RequestDataObject
+from zeroanda.constant import TYPE
 
 class Streaming(object):
     # _account_id = None
@@ -166,7 +167,9 @@ class Streaming(object):
         else:
             utils.error(result.get_body())
             raise ZeroandaError(result)
-
+    '''
+    未決済
+    '''
     def get_orders(self, accountModel):
         if accountModel.account_id == None:
             raise Exception('account_id is None.')
@@ -179,6 +182,9 @@ class Streaming(object):
             utils.error(result.get_body())
             raise ZeroandaError(result)
 
+    '''
+    ticket
+    '''
     def traders(self, accountModel, instruments, maxId = None, count=None):
         url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/trades"
         params = {'instruments' : instruments}
@@ -188,9 +194,11 @@ class Streaming(object):
         else:
             raise ZeroandaError(result)
 
+    '''
+    position
+    '''
     def positions(self, accountModel):
         url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/positions"
-        # params = {'instruments' : instruments}
         result = self.get(url, self._compressed_headers)
         if result.get_status():
             return result
@@ -210,21 +218,46 @@ class Streaming(object):
             utils.error(result.get_body())
             raise ZeroandaError(result)
 
-    def order_ifdoco(self, accountModel, orderModel):
-
-        payload = {'instrument': orderModel.instruments,
-                   'units': orderModel.units,
-                   'side': orderModel.side,
-                   'type': orderModel.type,
-                   'expiry': utils.convert_rfc2unixtime(orderModel.expiry),
-                   'price': orderModel.price,
-                   'lowerBound': orderModel.lowerBound,
-                   'upperBound': orderModel.upperBound,
+    def order_ifdoco(self, account_id, instruments, units, side, expiry, price, lowerBound, upperBound):
+        payload = {'instrument': instruments,
+                   'units': units,
+                   'side': side,
+                   'type': TYPE[2][0],
+                   'expiry': utils.convert_rfc2unixtime(expiry),
+                   'price': price,
+                   'lowerBound': lowerBound,
+                   'upperBound': upperBound,
                    }
-        if accountModel.account_id == None:
+
+        if account_id == None:
             raise Exception('account_id is None.')
         # url = settings.STREAMING_DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/orders"
-        url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/orders"
+        url = settings.DOMAIN + "/v1/accounts/" + str(account_id) + "/orders"
+        result = self.post(url, self.get_headers(None, True), payload)
+        if result.get_status():
+            return result
+        else:
+            utils.error(result.get_body())
+            raise ZeroandaError(result)
+
+    def order_market(self, account_id, instruments, units, side, expiry = None, lowerBound = None, upperBound = None):
+
+        payload = {'instrument': instruments,
+                   'units': units,
+                   'side': side,
+                   'type': TYPE[3][0],
+                   }
+        if expiry != None:
+            payload["expiry"] = utils.convert_rfc2unixtime(expiry)
+        if lowerBound != None:
+            payload["lowerBound"] = lowerBound
+        if upperBound != None:
+            payload["upperBound"] = upperBound
+
+        if account_id == None:
+            raise Exception('account_id is None.')
+        # url = settings.STREAMING_DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/orders"
+        url = settings.DOMAIN + "/v1/accounts/" + str(account_id) + "/orders"
         result = self.post(url, self.get_headers(None, True), payload)
         if result.get_status():
             return result
@@ -234,6 +267,16 @@ class Streaming(object):
 
     def cancel_order(self, accountModel, actual_order_id):
         url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/orders/" + str(actual_order_id)
+        result = self.delete(url, self._compressed_headers)
+        utils.info(result)
+        if result.get_status():
+            return result
+        else:
+            utils.error(result.get_body())
+            raise ZeroandaError(result)
+
+    def delete(self, accountModel, trade_id):
+        url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/trades/" + str(trade_id)
         result = self.delete(url, self._compressed_headers)
         utils.info(result)
         if result.get_status():

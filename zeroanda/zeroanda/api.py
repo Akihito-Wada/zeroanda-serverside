@@ -19,19 +19,31 @@ def order(request):
     if request.method == 'GET':
         accountModel = AccountProxyModel().get_account()
         orderClass = OrderProxyModel()
-        orderClass.get_orders(accountModel)
+        orders = orderClass.get_orders(accountModel)
+        utils.info(orders)
         # orderClass.traders(accountModel)
     elif request.method == 'POST':
         try:
             scheduleModel = ScheduleModel.objects.get(pk=request.POST.get("schedule_id"))
             priceModel = PricesProxyModel(scheduleModel)
             price = priceModel.get_price()
-            OrderProcess.create(scheduleModel).test_order_buy(price.ask)
+            OrderProcess.create(scheduleModel).test_order_buy(price.ask + 10)
 
         except ZeroandaError as e:
             print('error')
             e.save()
+    # elif request.method == 'DELETE':
+
     return HttpResponse('200')
+
+@csrf_exempt
+def ifdoco(request):
+    if request.method == 'POST':
+        scheduleModel = ScheduleProxyModel().get_schedule(request.POST.get('schedule_id'))
+        OrderProcess.create(scheduleModel).test_ifdoco()
+        return HttpResponse('200')
+    else:
+        return HttpResponse('403')
 
 @csrf_exempt
 def cancel(request):

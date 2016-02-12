@@ -22,10 +22,14 @@ class ActualOrderModelAdmin(admin.StackedInline):
         'trailingStop',
         'error_code',
         'status',
+        'created_time',
         'updated_date',
         'actual_datetime',
         'expiry_date',
         )
+
+    def created_time(self, instance):
+        return utils.format_jst(instance.created)
     def actual_datetime(self, instance):
         return utils.format_jst(instance.time)
     def expiry_date(self, instance):
@@ -50,9 +54,13 @@ class OrderModelAdmin(admin.ModelAdmin):
         'takeProfit',
         'traillingStop',
         'status',
+        'created_time',
         'update_time',
     )
     inlines = [ActualOrderModelAdmin]
+
+    def created_time(self, instance):
+        return utils.format_jst(instance.created)
 
     def update_time(self, instance):
         return utils.format_jst(instance.updated)
@@ -88,6 +96,7 @@ class OrderModelAdmin(admin.ModelAdmin):
                 'takeProfit',
                 'traillingStop',
                 'status',
+                'created_time',
                 'update_time',
             )
         else:
@@ -141,6 +150,7 @@ class PriceModelAdmin(admin.ModelAdmin):
         'ask',
         'bid',
         'instrument',
+        'etag',
         'target_server_time',
         # 'begin_time',
         # 'end_time',
@@ -168,6 +178,7 @@ class ErrorModelAdmin(admin.ModelAdmin):
         return utils.format_jst(instance.created)
 
 class AccountModelAdmin(admin.ModelAdmin):
+    exclude = ['updated']
     list_display = ('account_id',
                     'margin_rate',
                     'account_currency',
@@ -175,6 +186,7 @@ class AccountModelAdmin(admin.ModelAdmin):
                     'created_time')
     readonly_fields = ('account_id',
                        'margin_rate',
+                       'etag',
                        # 'margin_used',
                        # 'margin_avail',
                        # 'open_orders',

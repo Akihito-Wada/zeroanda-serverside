@@ -2,6 +2,7 @@ import logging
 import math
 import time
 from datetime import datetime, timedelta
+from multiprocessing import Process
 
 from zeroanda import utils
 from zeroanda.proxy.streaming import Streaming
@@ -91,13 +92,54 @@ class OrderProcess:
             print(e)
 
     def collect_prices2(self):
+        # proxyModel = PricesProxyModel(self._scheduleModel)
+        # proxyModel.get_price()
+        count = 5
+        duration = 1 / count
+        logger.info(duration)
+        jobs = []
+        for x in range(10):
+            job = Process(target=self.f)
+            jobs.append(job)
+            job.start()
+            time.sleep(duration)
+        [job.join() for job in jobs]
+
+    def f(self):
+        # utils.info(count)
+        # utils.info('f')
+        # utils.info(datetime.now())
+
         proxyModel = PricesProxyModel(self._scheduleModel)
         proxyModel.get_price()
 
     def test_order_buy(self, ask):
+
+        proxyModel = PricesProxyModel(self._scheduleModel)
+        price = proxyModel.get_price()
+
+        units = self._accountModelProxy.get_max_units(price.ask)
+        self._order.buy_ifdoco(self._accountModelProxy.get_account(), self._scheduleModel, ask + 0.01, units)
+
+    def test_order_sell(self, bid):
         # self.collect_prices()
-        units = self._accountModelProxy.get_max_units(ask)
-        self._order.buy_ifdoco(self._accountModelProxy.get_account(), self._scheduleModel, ask + 10, units)
+        units = self._accountModelProxy.get_max_units(bid)
+        self._order.sell_ifdoco(self._accountModelProxy.get_account(), self._scheduleModel, bid - 10, units)
+
+    def test_ifdoco(self):
+        proxyModel = PricesProxyModel(self._scheduleModel)
+        price = proxyModel.get_price()
+        units = int(math.floor(self._accountModelProxy.get_max_units(price.bid) / 2))
+
+        jobs = []
+        job = Process(target=self._order.sell_ifdoco, args=(self._accountModelProxy.get_account(), self._scheduleModel, price.bid - 10, units))
+        jobs.append(job)
+        job.start()
+        job = Process(target=self._order.buy_ifdoco, args=(self._accountModelProxy.get_account(), self._scheduleModel, price.ask + 10, units))
+        jobs.append(job)
+        job.start()
+
+        [job.join() for job in jobs]
 
     def test_ticking_price(self):
         i = 0
@@ -115,7 +157,7 @@ class OrderProcess:
 
                 time.sleep(duration)
 
-                if i >= 5:
+                if i >= 1:
                     break
             except:
                 print("exception.")

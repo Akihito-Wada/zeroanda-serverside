@@ -6,30 +6,30 @@ from zeroanda.proxy.prices import PricesProxyModel
 
 from zeroanda import utils
 
-class TradesListView(generic.TemplateView):
+class TradeListView(generic.TemplateView):
     def get_context_data(self, **kwargs):
         accountModel = AccountProxyModel().get_account()
         orderClass = OrderProxyModel()
         result = orderClass.get_orders(accountModel)
         utils.info(result)
-        context = super(TradesListView, self).get_context_data(**kwargs)
+        context = super(TradeListView, self).get_context_data(**kwargs)
         return context
 
     def get_template_names(self):
         return 'zeroanda/ticket/change_list.html'
 
-class PositionsListView(generic.TemplateView):
+class PositionListView(generic.TemplateView):
     def get_context_data(self, **kwargs):
         accountModel = AccountProxyModel().get_account()
 
         orderClass = OrderProxyModel()
         orderClass.positions(accountModel)
 
-        context = super(PositionsListView, self).get_context_data(**kwargs)
+        context = super(PositionListView, self).get_context_data(**kwargs)
         return context
 
     def get_template_names(self):
-        return 'zeroanda/ticket/change_list.html'
+        return 'zeroanda/position/change_list.html'
 
 class PriceListView(generic.TemplateView):
     def get_context_data(self, **kwargs):

@@ -19,6 +19,23 @@ $(function(){
     });
 })
 
+// ifdoco bid and ask.
+$(function(){
+    $("#ifdocoButton").click(function() {
+        $.ajax({
+            type: "POST",
+            url: "http://" + location.host + "/zeroanda/api/order/ifdoco",
+            data: "schedule_id="+$("#scheduleModelId").val(),
+            success: function(msg){
+//                location.href = '/admin/zeroanda/ordermodel/';
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+//                alert("some error");
+            }
+        });
+    });
+})
+
 $(function(){
     $("#getOrdersButton").click(function() {
         $.ajax({

@@ -38,9 +38,46 @@ class OrderProxyModel:
         actualOrderModel.save()
         return actualOrderModel
 
+    '''
+    ticket
+    '''
     def get_orders(self, accountModel):
         result = self._streaming.get_orders(accountModel)
-        return result
+        # utils.info(result.get_body())
+        return result.get_body()
+
+    def buy_market(self, accountModel, scheduleModel, target_price, units, expiry=None, upperBound=None, lowerBound=None):
+        try :
+            orderModel = OrderModel(
+                            schedule=scheduleModel,
+                            instruments = scheduleModel.country,
+                            units = units,
+                            side = SIDE[1][0],
+                            type = TYPE[2][0],
+                            expiry = expiry,
+                            upperBound=upperBound,
+                            lowerBound=lowerBound,
+                            status=ORDER_STATUS[0][0]
+                            )
+            orderModel.save()
+            response = self.order_market.order_ifdoco(
+                accountModel.account_id,
+                scheduleModel.country,
+                units,
+                SIDE[1][0],
+                scheduleModel.presentation_time + timedelta(minutes=1),
+                target_price,
+                upperBound,
+                lowerBound
+            )
+            if response.get_code() == 201:
+                self._add_actual_order(response, scheduleModel, orderModel)
+        except ZeroandaError as e:
+            e.save()
+            orderModel.status = ORDER_STATUS[1][0]
+            orderModel.updated  = datetime.now()
+            orderModel.save()
+            return
 
     def buy_ifdoco(self, accountModel, scheduleModel, target_price, units):
         try :
@@ -52,12 +89,22 @@ class OrderProxyModel:
                             type = TYPE[2][0],
                             expiry = scheduleModel.presentation_time + timedelta(minutes=1),
                             price=target_price,
-                            upperBound=self._get_upper_bound(target_price),
-                            lowerBound=self._get_lower_bound(target_price),
+                            upperBound=self._get_ask_upper_bound(target_price),
+                            lowerBound=self._get_ask_lower_bound(target_price),
                             status=ORDER_STATUS[0][0]
                             )
             orderModel.save()
-            response = self._streaming.order_ifdoco(accountModel, orderModel)
+            response = self._streaming.order_ifdoco(
+                accountModel.account_id,
+                scheduleModel.country,
+                units,
+                SIDE[1][0],
+                scheduleModel.presentation_time + timedelta(minutes=1),
+                target_price,
+                self._get_ask_upper_bound(target_price),
+                self._get_ask_lower_bound(target_price)
+            )
+            # response = self._streaming.order_ifdoco(accountModel, orderModel)
             if response.get_code() == 201:
                 self._add_actual_order(response, scheduleModel, orderModel)
         except ZeroandaError as e:
@@ -67,12 +114,41 @@ class OrderProxyModel:
             orderModel.save()
             return
 
-    def sell_ifdoco(self, accountModel, target_price, instrument):
+    def sell_ifdoco(self, accountModel, scheduleModel, target_price, units):
         try :
-            result = self._streaming.order_ifdoco(accountModel, instrument, 'buy', target_price, target_price - 0.5, target_price + 0.5)
+            orderModel = OrderModel(
+                            schedule=scheduleModel,
+                            instruments = scheduleModel.country,
+                            units = units,
+                            side = SIDE[0][0],
+                            type = TYPE[2][0],
+                            expiry = scheduleModel.presentation_time + timedelta(minutes=1),
+                            price=target_price,
+                            upperBound=self._get_bid_upper_bound(target_price),
+                            lowerBound=self._get_bid_lower_bound(target_price),
+                            status=ORDER_STATUS[0][0]
+                            )
+            orderModel.save()
+
+            response = self._streaming.order_ifdoco(
+                accountModel.account_id,
+                scheduleModel.country,
+                units,
+                SIDE[0][0],
+                scheduleModel.presentation_time + timedelta(minutes=1),
+                target_price,
+                self._get_bid_upper_bound(target_price),
+                self._get_bid_lower_bound(target_price)
+            )
+            # response = self._streaming.order_ifdoco(accountModel, orderModel)
+            if response.get_code() == 201:
+                self._add_actual_order(response, scheduleModel, orderModel)
         except ZeroandaError as e:
-            utils.info(e)
             e.save()
+            orderModel.status = ORDER_STATUS[1][0]
+            orderModel.updated  = datetime.now()
+            orderModel.save()
+            return
 
     def traders(self, accountModel):
         self._streaming.traders(accountModel, INSTRUMENTS[0][0])
@@ -80,7 +156,24 @@ class OrderProxyModel:
 
     def positions(self, accountModel):
         result = self._streaming.positions(accountModel)
-        utils.info(result)
+        utils.info(result.get_body())
+
+    def delete(self, accountModel, trade_id):
+        try:
+            self._streaming.cancel_order(accountModel, trade_id)
+            self._cancel_actual_order(trade_id);
+            actualOrderModel = self._get_actual_order_model(trade_id)
+            self._update_order(actualOrderModel.order.id)
+        except ZeroandaError as e:
+            actualOrderModel = self._get_active_actual_order_model(trade_id)
+            if ERROR_CODE[1][0] == e.get_code():
+                self._update_error_code(trade_id, e.get_code())
+            self._update_order(actualOrderModel.order.id)
+            e.save()
+        except Exception as e:
+            utils.error(e)
+        finally:
+            return
 
     def cancel(self, accountModel, actual_order_id):
         try:
@@ -101,7 +194,7 @@ class OrderProxyModel:
 
     def cancel_all(self, accountModel):
         result = self.get_orders(accountModel)
-        for v in result.get_body()['orders']:
+        for v in result['orders']:
             self.cancel(accountModel, v["id"])
 
     def _update_order(self, order_id):
@@ -147,12 +240,23 @@ class OrderProxyModel:
         actualOrderModel.updated    = datetime.now()
         actualOrderModel.save()
 
-    def _get_upper_bound(self, reference_value):
+    def _get_ask_upper_bound(self, reference_value):
         # return ('%.3f', reference_value + 10.0)
-        return math.floor((reference_value + 10.0) * 1000) / 1000
+        return math.floor((reference_value + 0.1) * 1000) / 1000
         # return reference_value + 10.0
 
-    def _get_lower_bound(self, reference_value):
+    def _get_ask_lower_bound(self, reference_value):
         # return ('%.3f', reference_value - 10.0)
-        return math.floor((reference_value - 10.0) * 1000) / 1000
+        return math.floor((reference_value - 0.1) * 1000) / 1000
         # return reference_value - 10.0
+
+    def _get_bid_upper_bound(self, reference_value):
+        # return ('%.3f', reference_value + 10.0)
+        return math.floor((reference_value + 0.1) * 1000) / 1000
+        # return reference_value + 10.0
+
+    def _get_bid_lower_bound(self, reference_value):
+        # return ('%.3f', reference_value - 10.0)
+        return math.floor((reference_value - 0.1) * 1000) / 1000
+        # return reference_value - 10.0
+
