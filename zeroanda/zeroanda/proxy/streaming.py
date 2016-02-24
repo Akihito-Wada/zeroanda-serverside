@@ -185,10 +185,19 @@ class Streaming(object):
     '''
     ticket
     '''
-    def traders(self, accountModel, instruments, maxId = None, count=None):
+    def get_trades(self, accountModel, instruments, maxId = None, count=None):
         url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/trades"
         params = {'instruments' : instruments}
         result = self.get(url, self._compressed_headers, params)
+        if result.get_status():
+            return result
+        else:
+            raise ZeroandaError(result)
+
+    def close_trade(self, accountModel, trade_id):
+        url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/trades/" + trade_id
+        # params = {'instruments' : instruments}
+        result = self.delete(url, self._compressed_headers)
         if result.get_status():
             return result
         else:
@@ -287,15 +296,15 @@ class Streaming(object):
             utils.error(result.get_body())
             raise ZeroandaError(result)
 
-    def delete(self, accountModel, trade_id):
-        url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/trades/" + str(trade_id)
-        result = self.delete(url, self._compressed_headers)
-        utils.info(result)
-        if result.get_status():
-            return result
-        else:
-            utils.error(result.get_body())
-            raise ZeroandaError(result)
+    # def delete(self, accountModel, trade_id):
+    #     url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/trades/" + str(trade_id)
+    #     result = self.delete(url, self._compressed_headers)
+    #     utils.info(result)
+    #     if result.get_status():
+    #         return result
+    #     else:
+    #         utils.error(result.get_body())
+    #         raise ZeroandaError(result)
 
     def events(self):
         url = settings.DOMAIN + "/v1/events/"

@@ -22,7 +22,6 @@ def order(request):
         orderClass = OrderProxyModel()
         orders = orderClass.get_orders(accountModel)
         utils.info(orders)
-        # orderClass.traders(accountModel)
     elif request.method == 'POST':
         try:
             scheduleModel = ScheduleModel.objects.get(pk=request.POST.get("schedule_id"))

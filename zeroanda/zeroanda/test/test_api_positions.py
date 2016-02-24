@@ -1,6 +1,6 @@
 import  logging
 
-from django.http    import HttpResponse
+from django.http    import HttpResponse, HttpResponseNotAllowed
 from django.views.decorators.csrf import csrf_exempt
 
 from zeroanda   import utils
@@ -18,7 +18,7 @@ def test_api_positions(request):
         return HttpResponse('200')
 
     elif request.method == 'DELETE':
-        return HttpResponse(405)
+        return HttpResponseNotAllowed(permitted_methods=['GET',])
 
         # accountModel = AccountProxyModel().get_account()
         # positions = PositionsProxyModel();

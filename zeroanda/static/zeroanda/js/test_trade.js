@@ -2,24 +2,11 @@
  * Created by wadaakihito on 2/24/16.
  */
 
-// test - trade - option?
+// test - trade
 $(function(){
     $("#testTradesGetButton").click(function() {
         $.ajax({
             type: "GET",
-            url: "http://" + location.host + "/zeroanda/test/trades",
-            success: function(msg){
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
-            }
-        });
-    });
-})
-
-$(function(){
-    $("#testTradesCancelButton").click(function() {
-        $.ajax({
-            type: "POST",
             url: "http://" + location.host + "/zeroanda/test/trades",
             success: function(msg){
             },
@@ -43,7 +30,7 @@ $(function(){
 })
 
 $(function(){
-    $("#testTradesDeleteButton").click(function() {
+    $("#testTradesCloseButton").click(function() {
         $.ajax({
             type: "DELETE",
             url: "http://" + location.host + "/zeroanda/test/trades",

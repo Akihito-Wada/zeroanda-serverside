@@ -9,5 +9,10 @@ class TradesProxyModel:
     def __init__(self):
         self._streaming = Streaming()
 
-    def traders(self, accountModel):
-        self._streaming.traders(accountModel, INSTRUMENTS[0][0])
+    def get_trades(self, accountModel):
+        result = self._streaming.get_trades(accountModel, INSTRUMENTS[0][0])
+        utils.info(result.get_body())
+
+    def close_trades(self, accountModel, trade_id):
+        result = self._streaming.close_trade(accountModel, trade_id)
+        utils.info(result.get_body())
