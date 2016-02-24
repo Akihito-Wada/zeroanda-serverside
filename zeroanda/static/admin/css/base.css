@@ -859,4 +859,14 @@ div#footerArea {
     height: 50px;
     background-color: #4e758e;
     color: #fff;
+    padding: 10px 10px 0px 10px;
+}
+
+div#footerArea .defalt-button {
+    font-size: 1.2em;
+    font-weight: bold;
+    /*padding: 10px 30px;*/
+    background-color: #248;
+    color: #b13338;
+    border-style: none;
 }

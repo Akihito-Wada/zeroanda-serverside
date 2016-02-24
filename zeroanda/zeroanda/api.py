@@ -46,18 +46,6 @@ def ifdoco(request):
     else:
         return HttpResponse('403')
 
-
-@csrf_exempt
-def test_market_order(request):
-    if request.method == 'POST':
-        accountModel = AccountProxyModel().get_account()
-        orderClass = OrderProxyModel()
-        orders = orderClass.buy_market(accountModel, INSTRUMENTS[0][0], 1)
-        utils.info(orders)
-        return HttpResponse('200')
-    else:
-        return HttpResponse('403')
-
 @csrf_exempt
 def cancel(request):
     id = request.POST.get('actual_order_id')

@@ -49,7 +49,7 @@ class OrderProxyModel:
     def buy_market(self, accountModel, instruments, units, scheduleModel=None, expiry=None, upperBound=None, lowerBound=None):
         try :
             orderModel = OrderModel(
-                            # schedule=scheduleModel,
+                            schedule=scheduleModel,
                             instruments = instruments,
                             units = units,
                             side = SIDE[1][0],
@@ -62,7 +62,7 @@ class OrderProxyModel:
             orderModel.save()
             response = self._streaming.order_market(
                 accountModel.account_id,
-                scheduleModel.country,
+                instruments,
                 units,
                 SIDE[1][0],
                 expiry,
