@@ -9,7 +9,6 @@ class RequestDataObject:
         self._code = response.status_code
         self._headers    = response.headers
         self._body = None if response.status_code == 304 or response.text == None else response.text if response.headers["Content-Type"] != 'application/json' else json.loads(response.text)
-
     def get_code(self):
         return self._code
 

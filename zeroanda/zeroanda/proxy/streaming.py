@@ -197,9 +197,21 @@ class Streaming(object):
     '''
     position
     '''
-    def positions(self, accountModel):
+    def get_positions(self, accountModel):
         url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/positions"
         result = self.get(url, self._compressed_headers)
+        if result.get_status():
+            return result
+        else:
+            utils.error(result.get_body())
+            raise ZeroandaError(result)
+
+    '''
+     未対応 status-code 405:
+    '''
+    def delete_positions(self, accountModel):
+        url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/positions"
+        result = self.delete(url, self.get_headers())
         if result.get_status():
             return result
         else:
@@ -324,9 +336,18 @@ class Streaming(object):
             req = requests.Request('GET', url, headers = headers, params = params)
             pre = req.prepare()
             response = s.send(pre, stream = True, verify = False)
-            # for k, v in response:
-            #     utils.info(k + ", v: " + v)
             return RequestDataObject(response)
-            # return response
+        except Exception as e:
+            s.close()
+
+    def options(self, url, headers, params = None):
+        try:
+            s = requests.Session()
+            utils.info(headers)
+            utils.info(url)
+            req = requests.Request('OPTIONS', url, headers = headers, params = params)
+            pre = req.prepare()
+            response = s.send(pre, stream = True, verify = False)
+            return RequestDataObject(response)
         except Exception as e:
             s.close()

@@ -2,7 +2,7 @@
  * Created by wadaakihito on 2/24/16.
  */
 
-// test - trade
+// test - trade - option?
 $(function(){
     $("#testTradesGetButton").click(function() {
         $.ajax({

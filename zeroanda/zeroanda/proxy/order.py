@@ -149,13 +149,13 @@ class OrderProxyModel:
             orderModel.save()
             return
 
-    def traders(self, accountModel):
-        self._streaming.traders(accountModel, INSTRUMENTS[0][0])
-        # self._streaming.traders(accountModel, scheduleModel.instruments, INSTRUMENTS[0][0])
+    # def traders(self, accountModel):
+    #     self._streaming.traders(accountModel, INSTRUMENTS[0][0])
+    #     # self._streaming.traders(accountModel, scheduleModel.instruments, INSTRUMENTS[0][0])
 
-    def positions(self, accountModel):
-        result = self._streaming.positions(accountModel)
-        utils.info(result.get_body())
+    # def positions(self, accountModel):
+    #     result = self._streaming.positions(accountModel)
+    #     utils.info(result.get_body())
 
     def delete(self, accountModel, trade_id):
         try:
