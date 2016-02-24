@@ -10,10 +10,8 @@ $(function(){
             url: "http://" + location.host + "/zeroanda/api/order",
             data: "schedule_id="+$("#scheduleModelId").val(),
             success: function(msg){
-//                location.href = '/admin/zeroanda/ordermodel/';
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
-//                alert("some error");
             }
         });
     });

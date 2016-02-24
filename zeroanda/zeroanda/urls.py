@@ -21,7 +21,8 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from zeroanda.api import order, cancel, cancelAll, prices, tick, ifdoco
 from zeroanda.views import TradeListView, PositionListView
 
-from zeroanda.test.test_api import test_market_order, test_cancel
+from zeroanda.test.test_trades import test_trades
+from zeroanda.test.test_orders import test_order_buy_market, test_orders
 
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -51,8 +52,9 @@ urlpatterns = [
     url(r'^zeroanda/orders$', TradeListView.as_view()),
     url(r'^zeroanda/position', PositionListView.as_view()),
 
-    url(r'^zeroanda/test/buy_market', test_market_order),
-    url(r'^zeroanda/test/cancel$', test_cancel),
+    url(r'^zeroanda/test/orders', test_orders),
+    url(r'^zeroanda/test/order/buy_market', test_order_buy_market),
+    url(r'^zeroanda/test/trades', test_trades),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

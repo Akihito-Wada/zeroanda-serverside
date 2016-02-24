@@ -14,20 +14,28 @@ from zeroanda.proxy.schedule import ScheduleProxyModel
 
 from zeroanda.constant import INSTRUMENTS
 
+
 @csrf_exempt
-def test_market_order(request):
-    if request.method == 'POST':
-        # accountModel = AccountProxyModel().get_account()
-        # orderClass = OrderProxyModel()
-        # orders = orderClass.buy_market(accountModel, INSTRUMENTS[0][0], 1)
-        # utils.info(orders)
+def test_orders(request):
+    utils.info(request.method)
+
+    if request.method == 'GET':
         return HttpResponse('200')
+
+    elif request.method == 'POST':
+        return HttpResponse('200')
+
+    elif request.method == 'PATCH':
+        return HttpResponse('200')
+
+    elif request.method == 'DELETE':
+        return HttpResponse('200')
+
     else:
         return HttpResponse('403')
 
-
 @csrf_exempt
-def test_cancel(request):
+def test_order_buy_market(request):
     if request.method == 'POST':
         # accountModel = AccountProxyModel().get_account()
         # orderClass = OrderProxyModel()
