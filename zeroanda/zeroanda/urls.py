@@ -21,6 +21,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from zeroanda.api import order, cancel, cancelAll, prices, tick, ifdoco
 from zeroanda.views import TradeListView, PositionListView
 
+from zeroanda.test.test_positions import test_positions
 from zeroanda.test.test_trades import test_trades
 from zeroanda.test.test_orders import test_order_buy_market, test_orders
 
@@ -55,6 +56,7 @@ urlpatterns = [
     url(r'^zeroanda/test/orders', test_orders),
     url(r'^zeroanda/test/order/buy_market', test_order_buy_market),
     url(r'^zeroanda/test/trades', test_trades),
+    url(r'^zeroanda/test/positions', test_positions),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
