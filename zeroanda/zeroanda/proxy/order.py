@@ -43,7 +43,7 @@ class OrderProxyModel:
     '''
     def get_orders(self, accountModel):
         result = self._streaming.get_orders(accountModel)
-        # utils.info(result.get_body())
+        utils.info(result.get_body())
         return result.get_body()
 
     def buy_market(self, accountModel, instruments, units, scheduleModel=None, expiry=None, upperBound=None, lowerBound=None):

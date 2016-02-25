@@ -30,19 +30,6 @@ $(function(){
 })
 
 $(function(){
-    $("#testOrdersGetAllButton").click(function() {
-        $.ajax({
-            type: "GET",
-            url: "http://" + location.host + "/zeroanda/test/orders",
-            success: function(msg){
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
-            }
-        });
-    });
-})
-
-$(function(){
     $("#testOrdersChangeButton").click(function() {
         $.ajax({
             type: "PATCH",
@@ -56,7 +43,7 @@ $(function(){
 })
 
 $(function(){
-    $("#testOrdersDeleteButton").click(function() {
+    $("#testOrdersCancelButton").click(function() {
         $.ajax({
             type: "DELETE",
             url: "http://" + location.host + "/zeroanda/test/orders",

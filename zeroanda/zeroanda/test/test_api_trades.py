@@ -23,7 +23,7 @@ def test_api_trades(request):
         return HttpResponse('200')
 
     elif request.method == 'DELETE':
-        trade_id='10127906571'
+        trade_id='10128286273'
         accountModel = AccountProxyModel().get_account()
         tradesProxyModel = TradesProxyModel();
         tradesProxyModel.close_trades(accountModel, trade_id)

@@ -167,15 +167,13 @@ class Streaming(object):
         else:
             utils.error(result.get_body())
             raise ZeroandaError(result)
-    '''
-    未決済
-    '''
-    def get_orders(self, accountModel):
-        if accountModel.account_id == None:
-            raise Exception('account_id is None.')
-        url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/orders"
-        result = self.get(url, self._compressed_headers)
 
+    def prices(self, instruments, priceModel = None):
+        url = settings.DOMAIN + "/v1/prices"
+        # url = settings.STREAMING_DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/prices"
+        # url = settings.STREAMING_DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/prices"
+        params = {'instruments' : instruments}
+        result = self.get(url, self.get_headers(priceModel, True), params)
         if result.get_status():
             return result
         else:
@@ -227,12 +225,15 @@ class Streaming(object):
             utils.error(result.get_body())
             raise ZeroandaError(result)
 
-    def prices(self, instruments, priceModel = None):
-        url = settings.DOMAIN + "/v1/prices"
-        # url = settings.STREAMING_DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/prices"
-        # url = settings.STREAMING_DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/prices"
-        params = {'instruments' : instruments}
-        result = self.get(url, self.get_headers(priceModel, True), params)
+    '''
+    orders
+    '''
+    def get_orders(self, accountModel, instruments=None, maxId=None, count=None):
+        if accountModel.account_id == None:
+            raise Exception('account_id is None.')
+        url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/orders"
+        result = self.get(url, self._compressed_headers)
+
         if result.get_status():
             return result
         else:
