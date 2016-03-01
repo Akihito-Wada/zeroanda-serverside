@@ -23,17 +23,22 @@ class OrderProcess:
     _streaming  = None
     _order      = None
 
-    def __init__(self, schedule):
+    # def __init__(self, schedule):
+    def __init__(self):
         super(OrderProcess,self).__init__()
-        self._scheduleModel = schedule
+        # self._scheduleModel = schedule
         self._targetdate = datetime.now() + timedelta(minutes=1)
-        self._streaming = Streaming()
-        self._order = OrderProxyModel()
+        # self._streaming = Streaming()
+        # self._order = OrderProxyModel()
         self.get_account()
 
     @staticmethod
     def create(schedule):
-        return OrderProcess(schedule)
+        orderProcess = OrderProcess()
+        orderProcess._scheduleModel = schedule
+        orderProcess._streaming = Streaming()
+        orderProcess._order = OrderProxyModel()
+        return orderProcess
 
     def get_account(self):
         self._accountModelProxy = AccountProxyModel()
@@ -154,6 +159,28 @@ class OrderProcess:
 
                 if i >= 1:
                     break
+            except:
+                print("exception.")
+                break
+        return
+
+    def countdown(self, targetdate, exec):
+        i = 0
+        while True:
+            try:
+                remain_time = targetdate.timestamp() - datetime.now().timestamp()
+                utils.info(remain_time)
+
+                exec()
+
+                nexttime = math.floor((datetime.now() + timedelta(seconds=1)).timestamp())
+                duration = nexttime - datetime.now().timestamp()
+
+                time.sleep(duration)
+
+                if remain_time < 0:
+                    break
+
             except:
                 print("exception.")
                 break
