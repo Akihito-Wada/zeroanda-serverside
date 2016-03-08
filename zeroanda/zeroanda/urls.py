@@ -26,6 +26,7 @@ from zeroanda.test.test_api_trades import test_api_trades
 from zeroanda.test.test_api_orders import test_order_buy_market, test_api_orders
 from zeroanda.test.test_api_account import test_api_account
 from zeroanda.test.test_api_process import test_api_process_countdown
+from zeroanda.test.test_call_action import test_api_call_action
 
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -61,7 +62,7 @@ urlpatterns = [
     url(r'^zeroanda/test/positions', test_api_positions),
     url(r'^zeroanda/test/accounts', test_api_account),
     url(r'^zeroanda/test/process', test_api_process_countdown),
-
+    url(r'^zeroanda/test/call/action', test_api_call_action),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

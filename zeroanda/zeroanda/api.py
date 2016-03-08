@@ -38,8 +38,10 @@ def order(request):
 
 @csrf_exempt
 def ifdoco(request):
+    utils.info('test')
     if request.method == 'POST':
-        scheduleModel = ScheduleProxyModel().get_schedule(request.POST.get('schedule_id'))
+        # scheduleModel = ScheduleProxyModel().get_schedule(request.POST.get('schedule_id'))
+        scheduleModel = ScheduleProxyModel().get_schedule(4)
         OrderProcess.create(scheduleModel).test_ifdoco()
         return HttpResponse('200')
     else:

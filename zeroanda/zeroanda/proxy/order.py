@@ -93,6 +93,7 @@ class OrderProxyModel:
                             status=ORDER_STATUS[0][0]
                             )
             orderModel.save()
+            utils.info('test')
             response = self._streaming.order_ifdoco(
                 accountModel.account_id,
                 scheduleModel.country,
@@ -103,6 +104,7 @@ class OrderProxyModel:
                 self._get_ask_upper_bound(target_price),
                 self._get_ask_lower_bound(target_price)
             )
+            utils.info('test1')
             # response = self._streaming.order_ifdoco(accountModel, orderModel)
             if response.get_code() == 201:
                 self._add_actual_order(response, scheduleModel, orderModel)

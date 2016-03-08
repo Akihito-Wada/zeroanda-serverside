@@ -132,10 +132,10 @@ class OrderProcess:
         units = int(math.floor(self._accountModelProxy.get_max_units(price.bid) / 2))
 
         jobs = []
-        job = Process(target=self._order.sell_ifdoco, args=(self._accountModelProxy.get_account(), self._scheduleModel, price.bid - 10, units))
+        job = Process(target=self._order.sell_ifdoco, args=(self._accountModelProxy.get_account(), self._scheduleModel, price.bid - 100, units))
         jobs.append(job)
         job.start()
-        job = Process(target=self._order.buy_ifdoco, args=(self._accountModelProxy.get_account(), self._scheduleModel, price.ask + 10, units))
+        job = Process(target=self._order.buy_ifdoco, args=(self._accountModelProxy.get_account(), self._scheduleModel, price.ask + 100, units))
         jobs.append(job)
         job.start()
 
@@ -169,6 +169,7 @@ class OrderProcess:
         while True:
             try:
                 remain_time = targetdate.timestamp() - datetime.now().timestamp()
+                utils.info(targetdate)
                 utils.info(remain_time)
 
                 exec()
