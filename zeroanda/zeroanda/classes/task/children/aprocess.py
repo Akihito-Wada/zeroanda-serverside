@@ -7,7 +7,6 @@ from zeroanda import utils
 
 class AbstractProcess(IProcess):
     __metaclass__ = ABCMeta
-    _jobs = []
     _task      = None
 
     def __init__(self, task):
@@ -21,6 +20,7 @@ class AbstractProcess(IProcess):
     def _exec(self):pass
 
     def exec(self):
+        utils.info("self._jobs: " + str(len(self._jobs)))
         for job in self._jobs:
             # if job.is_alive() == True:
             #     break

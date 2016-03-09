@@ -2,7 +2,6 @@ from django.http    import HttpResponse, HttpResponseNotAllowed
 from django.views.decorators.csrf import csrf_exempt
 
 from zeroanda.controller.action import Action
-from zeroanda   import utils
 
 @csrf_exempt
 def test_api_call_action(request):
