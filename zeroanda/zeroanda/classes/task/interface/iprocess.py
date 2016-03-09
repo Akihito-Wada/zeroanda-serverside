@@ -11,3 +11,6 @@ class IProcess:
 
     @abstractclassmethod
     def add_process(self, IProcess): pass
+
+    @abstractclassmethod
+    def _is_condition(self): pass

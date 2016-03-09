@@ -20,6 +20,8 @@ class AbstractProcess(IProcess):
     def _exec(self):pass
 
     def exec(self):
+        if self._is_condition() == False or self.is_running() or self.is_finished():
+            return
         utils.info("self._jobs: " + str(len(self._jobs)))
         for job in self._jobs:
             # if job.is_alive() == True:
@@ -34,7 +36,6 @@ class AbstractProcess(IProcess):
                 return True
 
         return False
-
 
     def is_finished(self):
         for job in self._jobs:

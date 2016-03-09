@@ -8,6 +8,8 @@ class AccountProcess(AbstractProcess):
         super(AccountProcess, self).__init__(task)
 
     def _exec(self):
-        utils.info(2222)
         accountProxyModel = AccountProxyModel()
         self._task.set_account_info_model(accountProxyModel.get_account_info())
+
+    def _is_condition(self):
+        return True
