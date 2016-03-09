@@ -20,10 +20,10 @@ def test_api_positions(request):
     elif request.method == 'DELETE':
         return HttpResponseNotAllowed(permitted_methods=['GET',])
 
-        # accountModel = AccountProxyModel().get_account()
-        # positions = PositionsProxyModel();
-        # positions.delete_positions(accountModel)
-        # return HttpResponse('200')
+        accountModel = AccountProxyModel().get_account()
+        positions = PositionsProxyModel();
+        positions.delete_positions(accountModel)
+        return HttpResponse('200')
 
     else:
         return HttpResponse('403')

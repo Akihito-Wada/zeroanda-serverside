@@ -1,5 +1,5 @@
 from zeroanda.classes.task.tasks.task import Task
-from zeroanda.classes.task.tickTack import TickTack
+from zeroanda.classes.task.tick_tack import TickTack
 from zeroanda import utils
 
 class Action:
@@ -14,4 +14,4 @@ class Action:
 
     def startTickTack(self, schedule):
         tickTack = TickTack()
-        tickTack.tickTack(Task.createTask(schedule))
+        tickTack.tickTack(Task.create_task(schedule))

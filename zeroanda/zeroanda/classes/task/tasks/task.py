@@ -1,47 +1,47 @@
-from zeroanda.classes.task.status import ProcessStatus
 from zeroanda.classes.task.interface.iprocess import IProcess
+from zeroanda.classes.task.children.account_process import AccountProcess
+
 from zeroanda import utils
+import time
 
 class Task(IProcess):
-    __targetProcess = None
+    __count = 0
+    __process_list = []
+    __target_process = None
     __schedule  = None
-    __status    = ProcessStatus.UNEXECUTED
+    __account_info_model = None
 
     def __init__(self, schedule):
         self.__schedule = schedule
 
     @staticmethod
-    def createTask(schedule):
+    def create_task(schedule):
         task = Task(schedule)
-        # task.addProcess()
+        task.add_process(AccountProcess(task))
         return task
 
     def exec(self):
-        self.__targetProcess.exec()
+        if self.__target_process.is_running() or self.__target_process.is_finished():
+            return
 
-    def isFinished(self):
-        return self.__status == ProcessStatus.FINISH
+        self.__target_process.exec()
 
-    def addProcess(self, process):
-        if self.__targetProcess == None:
-            self.__targetProcess = process
+    '''
+    実行中のプロセスが終了していた場合は次のプロセスを取り出してセット
+    実行できるプロセスがなくなったら終了
+    '''
+    def is_finished(self):
+        try:
+            if self.__target_process == None or self.__target_process != None and self.__target_process.is_finished():
+                self.__target_process = self.__process_list.pop(0)
+        except Exception as e:
+            utils.info(e)
+            return True
         else:
-            self.__targetProcess.addProcess(process)
+            return False
 
-    def hasProcess(self):
-        return self.__targetProcess != None or self.__targetProcess.status == ProcessStatus.FINISH
-        # try:
-        #     process = self.__processList.pop(0)
-        #     utils.info(process)
-        #     for process in range(len(self.__processList)):
-        #         process.isFinished()
-        #         break
-        #     while (True):
-        #         if process.isFinished():
-        #             process = process.next()
-        #         process.exec()
-        #
-        # except Exception as e:
-        #     utils.error(e)
-        #     return False
+    def add_process(self, process):
+        self.__process_list.append(process)
 
+    def set_account_info_model(self, model):
+        self.__account_info_model = model

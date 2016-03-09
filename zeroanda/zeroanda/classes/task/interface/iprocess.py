@@ -7,7 +7,7 @@ class IProcess:
     def exec(self): pass
 
     @abstractclassmethod
-    def isFinished(self): pass
+    def is_finished(self): pass
 
     @abstractclassmethod
-    def addProcess(self, IProcess): pass
+    def add_process(self, IProcess): pass

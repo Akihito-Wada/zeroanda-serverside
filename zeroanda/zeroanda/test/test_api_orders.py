@@ -29,7 +29,7 @@ def test_api_orders(request):
 
     elif request.method == 'DELETE':
         try:
-            order_id = ""
+            order_id = 10155069789
             accountModel = AccountProxyModel().get_account()
             orderProxyModel = OrderProxyModel()
             orderProxyModel.cancel(accountModel, order_id)

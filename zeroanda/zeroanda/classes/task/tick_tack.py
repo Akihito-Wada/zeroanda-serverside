@@ -14,23 +14,17 @@ class TickTack:
 
         while True:
             try:
-                if task.hasProcess() == False:
+                if task.is_finished() == True:
                     break
 
                 task.exec()
 
-                # remain_time = self._targetdate.timestamp() - datetime.now().timestamp()
-                # utils.info(remain_time)
-                # if remain_time > self._scheduleModel.priority:
-                # self.collect_prices2()
-                # else:
-                # i += 1
-
                 nexttime = math.floor((datetime.now() + timedelta(seconds=1)).timestamp())
                 duration = nexttime - datetime.now().timestamp()
-
+                utils.info(duration)
                 time.sleep(duration)
-            except:
+            except Exception as e:
+                utils.info(e)
                 print("exception.")
                 break
         return
