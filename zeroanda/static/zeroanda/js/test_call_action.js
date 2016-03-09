@@ -5,7 +5,7 @@
 $(function(){
     $("#testCallActionButton").click(function() {
         $.ajax({
-            type: "DELETE",
+            type: "GET",
             url: "http://" + location.host + "/zeroanda/test/call/action",
             success: function(msg){
             },
