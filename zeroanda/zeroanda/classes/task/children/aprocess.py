@@ -13,11 +13,10 @@ class AbstractProcess(IProcess):
         self._task = task
         self._create_job()
 
-    def _create_job(self):
-        self._jobs.append(Process(target=self._exec))
-
     @abstractclassmethod
-    def _exec(self):pass
+    def _create_job(self): pass
+        # self._jobs.append(Process(target=self._exec))
+
 
     def exec(self):
         if self._is_condition() == False or self.is_running() or self.is_finished():

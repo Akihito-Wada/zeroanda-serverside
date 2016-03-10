@@ -1,7 +1,9 @@
 from datetime import datetime, timezone, timedelta
 import calendar, pytz, logging
-import json
-import json
+import math
+
+from django.conf import settings
+
 logger =logging.getLogger("django")
 
 def format_jst(date_time):
@@ -30,3 +32,7 @@ def error(value):
     #     value = json.loads(value)
     logger.error(value)
     # print("error: " + value)
+
+def get_max_units(self, balance, rate):
+    units = balance * settings.LEVERAGE / rate / settings.CURRENCY;
+    return int(math.floor(units))

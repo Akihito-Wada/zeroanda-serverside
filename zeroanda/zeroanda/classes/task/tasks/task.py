@@ -20,7 +20,7 @@ class Task(IProcess):
     def create_task(schedule):
         task = Task(schedule)
         task.add_process(AccountProcess(task))
-        task.add_process(PriceProcess(task))
+        # task.add_process(PriceProcess(task))
         return task
 
     def exec(self):
