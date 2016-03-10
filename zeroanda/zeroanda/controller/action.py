@@ -3,6 +3,7 @@ from zeroanda.classes.task.tick_tack import TickTack
 from zeroanda import utils
 
 class Action:
+    tmp = {}
     def __init__(self):
         self.__createTask()
 

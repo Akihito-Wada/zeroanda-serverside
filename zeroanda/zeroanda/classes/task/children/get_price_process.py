@@ -4,10 +4,10 @@ from zeroanda import utils
 
 from multiprocessing import Process
 
-class PriceProcess(AbstractProcess):
+class GetPriceProcess(AbstractProcess):
     def __init__(self, task):
         self._jobs = []
-        super(PriceProcess, self).__init__(task)
+        super(GetPriceProcess, self).__init__(task)
 
     def _create_job(self):
         self._jobs.append(Process(target=self._get_price))

@@ -1,17 +1,18 @@
 from zeroanda.classes.task.interface.iprocess import IProcess
-from zeroanda.classes.task.children.account_process import AccountProcess
-from zeroanda.classes.task.children.price_process import PriceProcess
+from zeroanda.classes.task.children.get_account_process import GetAccountProcess
+from zeroanda.classes.task.children.get_price_process import GetPriceProcess
+from zeroanda.classes.task.children.set_unit_process import SetUnitProcess
 
 from zeroanda import utils
 
 class Task(IProcess):
-    __count = 0
-    __process_list = []
+    _process_list = []
     __target_process = None
     __schedule  = None
 
-    __account_info_model = None
-    __price_model = None
+    account_info_model = None
+    _price_model = None
+    pool = {}
 
     def __init__(self, schedule):
         self.__schedule = schedule
@@ -19,8 +20,9 @@ class Task(IProcess):
     @staticmethod
     def create_task(schedule):
         task = Task(schedule)
-        task.add_process(AccountProcess(task))
-        # task.add_process(PriceProcess(task))
+        task.add_process(GetAccountProcess(task))
+        task.add_process(GetPriceProcess(task))
+        task.add_process(SetUnitProcess(task))
         return task
 
     def exec(self):
@@ -35,10 +37,10 @@ class Task(IProcess):
     '''
     def is_finished(self):
 
-        utils.info("len(self.__process_list): " + str(len(self.__process_list)))
+        utils.info("len(self.__process_list): " + str(len(self._process_list)))
         try:
             if self.__target_process == None or self.__target_process != None and self.__target_process.is_finished():
-                self.__target_process = self.__process_list.pop(0)
+                self.__target_process = self._process_list.pop(0)
             utils.info(self.__target_process)
         except Exception as e:
             utils.info(e)
@@ -47,10 +49,11 @@ class Task(IProcess):
             return False
 
     def add_process(self, process):
-        self.__process_list.append(process)
+        self._process_list.append(process)
 
     def set_account_info_model(self, model):
-        self.__account_info_model = model
+        self.account_info_model = model
 
     def set_price_model(self, model):
-        self.__price_model = model
+        self._price_model = model
+
