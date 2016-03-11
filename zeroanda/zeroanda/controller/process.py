@@ -119,7 +119,7 @@ class OrderProcess:
         price = proxyModel.get_price()
 
         units = self._accountModelProxy.get_max_units(price.ask)
-        self._order.buy_ifdoco(self._accountModelProxy.get_account(), self._scheduleModel, ask + 0.01, units)
+        # self._order.buy_ifdoco(self._accountModelProxy.get_account(), self._scheduleModel, ask + 0.01, units)
 
     def test_order_sell(self, bid):
         # self.collect_prices()

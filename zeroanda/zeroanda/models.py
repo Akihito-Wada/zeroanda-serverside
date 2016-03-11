@@ -49,7 +49,7 @@ class OrderModel(models.Model):
     updated     = models.DateTimeField('更新時刻', null=True, blank=True)
 
 class ActualOrderModel(models.Model):
-    schedule    = models.ForeignKey(ScheduleModel)
+    schedule    = models.ForeignKey(ScheduleModel, blank=True, null=True)
     order       = models.OneToOneField(OrderModel)
     actual_order_id    = models.BigIntegerField(default=0)
     instruments = models.CharField(max_length=200)

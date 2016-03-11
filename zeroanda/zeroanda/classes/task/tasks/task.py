@@ -2,8 +2,11 @@ from zeroanda.classes.task.interface.iprocess import IProcess
 from zeroanda.classes.task.children.get_account_process import GetAccountProcess
 from zeroanda.classes.task.children.get_price_process import GetPriceProcess
 from zeroanda.classes.task.children.set_unit_process import SetUnitProcess
+from zeroanda.classes.task.children.ifdococ_process import IfdococProcess
 
 from zeroanda import utils
+
+from multiprocessing import Manager
 
 class Task(IProcess):
     _process_list = []
@@ -12,10 +15,11 @@ class Task(IProcess):
 
     account_info_model = None
     _price_model = None
-    pool = {}
 
     def __init__(self, schedule):
         self.__schedule = schedule
+        manager = Manager()
+        self.pool = manager.dict()
 
     @staticmethod
     def create_task(schedule):
@@ -23,6 +27,7 @@ class Task(IProcess):
         task.add_process(GetAccountProcess(task))
         task.add_process(GetPriceProcess(task))
         task.add_process(SetUnitProcess(task))
+        task.add_process(IfdococProcess(task))
         return task
 
     def exec(self):
@@ -52,8 +57,7 @@ class Task(IProcess):
         self._process_list.append(process)
 
     def set_account_info_model(self, model):
-        self.account_info_model = model
+        self.pool["account_info_model"] = model
 
     def set_price_model(self, model):
-        self._price_model = model
-
+        self.pool["price_model"] = model
