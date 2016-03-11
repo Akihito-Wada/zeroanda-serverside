@@ -15,17 +15,24 @@ class IfdococProcess(AbstractProcess):
 
     def _create_job(self):
         self._jobs.append(Process(target=self._order_buy))
-        # self._jobs.append(Process(target=self._order_sell()))
+        self._jobs.append(Process(target=self._order_sell))
 
     def _order_buy(self):
-        # expiry = datetime.now(pytz.utc) + timedelta(minutes=1)
-        # utils.info(expiry)
-        # utils.convert_rfc2unixtime(expiry)
         self.__orderProxyModel.buy_ifdoco(
                 target_price=self._task.pool['price_model'].ask + 100,
                 upper_bound=utils.get_ask_upper_bound(self._task.pool['price_model'].ask),
                 lower_bound=utils.get_ask_lower_bound(self._task.pool['price_model'].ask),
                 units= self._task.pool['ask_unit'],
+                expiry= datetime.now(pytz.utc) + timedelta(minutes=1),
+                accountId= self._task.pool['account_info_model'].account_id,
+                instrument=INSTRUMENTS[0][0])
+
+    def _order_sell(self):
+        self.__orderProxyModel.sell_ifdoco(
+                target_price=self._task.pool['price_model'].bid - 100,
+                upper_bound=utils.get_bid_upper_bound(self._task.pool['price_model'].bid),
+                lower_bound=utils.get_bid_lower_bound(self._task.pool['price_model'].bid),
+                units= self._task.pool['bid_unit'],
                 expiry= datetime.now(pytz.utc) + timedelta(minutes=1),
                 accountId= self._task.pool['account_info_model'].account_id,
                 instrument=INSTRUMENTS[0][0])

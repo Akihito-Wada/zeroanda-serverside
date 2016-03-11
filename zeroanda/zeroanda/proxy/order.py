@@ -81,7 +81,7 @@ class OrderProxyModel:
     def buy_ifdoco(self, target_price, upper_bound, lower_bound, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None):
         try :
             _instrument = instrument if instrument != None else scheduleModel.country
-            _expiry = expiry if expiry != None else scheduleModel.presentation_time + timedelta(minutes=1)
+            _expiry = expiry if expiry != None else scheduleModel.presentation_time + timedelta(minutes=5)
             orderModel = OrderModel(
                             schedule=scheduleModel,
                             instruments = _instrument,
@@ -114,32 +114,34 @@ class OrderProxyModel:
             orderModel.updated  = datetime.now()
             orderModel.save()
             return
-
-    def sell_ifdoco(self, accountModel, scheduleModel, target_price, units):
+    # def buy_ifdoco(self, target_price, upper_bound, lower_bound, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None):
+    def sell_ifdoco(self, target_price, upper_bound, lower_bound, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None):
+        _instrument = instrument if instrument != None else scheduleModel.country
+        _expiry = expiry if expiry != None else scheduleModel.presentation_time + timedelta(minutes=5)
         try :
             orderModel = OrderModel(
                             schedule=scheduleModel,
-                            instruments = scheduleModel.country,
+                            instruments = _instrument,
                             units = units,
                             side = SIDE[0][0],
                             type = TYPE[2][0],
-                            expiry = scheduleModel.presentation_time + timedelta(minutes=1),
+                            expiry = _expiry,
                             price=target_price,
-                            upperBound=self._get_bid_upper_bound(target_price),
-                            lowerBound=self._get_bid_lower_bound(target_price),
+                            upperBound=upper_bound,
+                            lowerBound=lower_bound,
                             status=ORDER_STATUS[0][0]
                             )
             orderModel.save()
 
             response = self._streaming.order_ifdoco(
-                accountModel.account_id,
-                scheduleModel.country,
+                accountId if accountId != None else accountModel.account_id,
+                _instrument,
                 units,
                 SIDE[0][0],
-                scheduleModel.presentation_time + timedelta(minutes=1),
+                _expiry,
                 target_price,
-                self._get_bid_upper_bound(target_price),
-                self._get_bid_lower_bound(target_price)
+                upper_bound,
+                lower_bound
             )
             # response = self._streaming.order_ifdoco(accountModel, orderModel)
             if response.get_code() == 201:
