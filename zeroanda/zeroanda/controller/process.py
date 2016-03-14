@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from multiprocessing import Process
 
 from zeroanda import utils
+from zeroanda.classes.utils import timeutils
 from zeroanda.proxy.streaming import Streaming
 from zeroanda.errors import ZeroandaError
 from zeroanda.models import PricesModel
@@ -76,7 +77,7 @@ class OrderProcess:
             model.ask   = self._latest_ask = result["ask"]
             model.bid   = self._latest_bid = result["bid"]
             model.instrument    = result["instrument"]
-            model.time = utils.convert_timestamp2datetime(result["time"])
+            model.time = timeutils.convert_timestamp2datetime(result["time"])
             model.end = datetime.now()
             elapsed = model.end - model.begin
             model.elapsed = str(elapsed)

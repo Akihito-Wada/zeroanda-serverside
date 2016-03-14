@@ -16,6 +16,7 @@ logger =logging.getLogger("django")
 
 from optparse import OptionParser
 from django.conf import settings
+
 #
 # def connect_to_stream(url):
 #     """
@@ -113,6 +114,7 @@ from zeroanda.errors import ZeroandaError
 from zeroanda   import utils
 from zeroanda.proxy.do.requests_data_object  import RequestDataObject
 from zeroanda.constant import TYPE
+from zeroanda.classes.utils import timeutils
 
 class Streaming(object):
     # _account_id = None
@@ -245,7 +247,7 @@ class Streaming(object):
                    'units': units,
                    'side': side,
                    'type': TYPE[2][0],
-                   'expiry': utils.convert_rfc2unixtime(expiry),
+                   'expiry': timeutils.convert_rfc2unixtime(expiry),
                    'price': price,
                    'lowerBound': lowerBound,
                    'upperBound': upperBound,
@@ -270,7 +272,7 @@ class Streaming(object):
                    'type': TYPE[3][0],
                    }
         if expiry != None:
-            payload["expiry"] = utils.convert_rfc2unixtime(expiry)
+            payload["expiry"] = timeutils.convert_rfc2unixtime(expiry)
         if lowerBound != None:
             payload["lowerBound"] = lowerBound
         if upperBound != None:

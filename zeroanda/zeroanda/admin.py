@@ -1,6 +1,7 @@
 from django.contrib import admin
 from zeroanda.models import ScheduleModel, ProcessModel, PricesModel, OrderModel, ErrorModel, AccountModel, ActualOrderModel
 from zeroanda import utils
+from zeroanda.classes.utils import timeutils
 from zeroanda.constant import ACTUAL_ORDER_STATUS
 
 import logging
@@ -29,13 +30,13 @@ class ActualOrderModelAdmin(admin.StackedInline):
         )
 
     def created_time(self, instance):
-        return utils.format_jst(instance.created)
+        return timeutils.format_jst(instance.created)
     def actual_datetime(self, instance):
-        return utils.format_jst(instance.time)
+        return timeutils.format_jst(instance.time)
     def expiry_date(self, instance):
-        return utils.format_jst(instance.expiry)
+        return timeutils.format_jst(instance.expiry)
     def updated_date(self, instance):
-        return utils.format_jst(instance.updated)
+        return timeutils.format_jst(instance.updated)
 
 class OrderModelAdmin(admin.ModelAdmin):
     _actualOrderModel = None
@@ -60,13 +61,13 @@ class OrderModelAdmin(admin.ModelAdmin):
     inlines = [ActualOrderModelAdmin]
 
     def created_time(self, instance):
-        return utils.format_jst(instance.created)
+        return timeutils.format_jst(instance.created)
 
     def update_time(self, instance):
-        return utils.format_jst(instance.updated)
+        return timeutils.format_jst(instance.updated)
 
     def expiry_time(self, instance):
-        return utils.format_jst(instance.expiry)
+        return timeutils.format_jst(instance.expiry)
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         try :
@@ -120,20 +121,20 @@ class ProcessModelAdmin(admin.ModelAdmin):
         return instance.schedule.title
 
     def schedule_presentation_time(self, instance):
-        return utils.format_jst(instance.schedule.presentation_time)
+        return timeutils.format_jst(instance.schedule.presentation_time)
 
     def created_time(self, instance):
-        return utils.format_jst(instance.created)
+        return timeutils.format_jst(instance.created)
 
     def end_time(self, instance):
-        return utils.format_jst(instance.endtime)
+        return timeutils.format_jst(instance.endtime)
 
 class PriceModelAdmin(admin.ModelAdmin):
     def created_time(self, instance):
-        return utils.format_jst(instance.created)
+        return timeutils.format_jst(instance.created)
 
     def target_server_time(self, instance):
-        return utils.format_jst(instance.time)
+        return timeutils.format_jst(instance.time)
 
     change_list_template = 'zeroanda/admin/price/change_list.html'
     # created_time.short_description = 'precise time'
@@ -162,7 +163,7 @@ class PriceModelAdmin(admin.ModelAdmin):
     #     return instance.schedule.title
 
     def schedule_presentation_time(self, instance):
-        return utils.format_jst(instance.schedule.presentation_time)
+        return timeutils.format_jst(instance.schedule.presentation_time)
 
     # def begin_time(self, instance):
     #     return utils.format_jst(instance.begin)
@@ -175,7 +176,7 @@ class ErrorModelAdmin(admin.ModelAdmin):
     readonly_fields = ('code', 'message', 'info', 'created_time')
 
     def created_time(self, instance):
-        return utils.format_jst(instance.created)
+        return timeutils.format_jst(instance.created)
 
 class AccountModelAdmin(admin.ModelAdmin):
     exclude = ['updated']
@@ -200,10 +201,10 @@ class AccountModelAdmin(admin.ModelAdmin):
                        'updated_time')
 
     def created_time(self, instance):
-        return utils.format_jst(instance.created)
+        return timeutils.format_jst(instance.created)
 
     def updated_time(self, instance):
-        return utils.format_jst(instance.updated)
+        return timeutils.format_jst(instance.updated)
 
 admin.site.register(ScheduleModel, ScheduleModelAdmin)
 admin.site.register(ProcessModel, ProcessModelAdmin)

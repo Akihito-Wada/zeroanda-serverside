@@ -1,9 +1,11 @@
 from zeroanda.classes.task.children.aprocess import AbstractProcess
+from zeroanda.classes.utils import timeutils
 from zeroanda.constant import INSTRUMENTS
 from zeroanda.proxy.order import OrderProxyModel
 from zeroanda import utils
 
 from datetime import datetime, timedelta
+import time
 from multiprocessing import Process
 import  pytz
 
@@ -38,4 +40,10 @@ class IfdococProcess(AbstractProcess):
                 instrument=INSTRUMENTS[0][0])
 
     def _is_condition(self):
+        utils.info(self._task.schedule.presentation_time)
+        utils.info(timeutils.convert_rfc2unixtime(self._task.schedule.presentation_time))
+        utils.info(time.time())
+        return False
+
+    def is_finished(self):
         return True

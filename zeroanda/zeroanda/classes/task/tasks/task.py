@@ -11,13 +11,13 @@ from multiprocessing import Manager
 class Task(IProcess):
     _process_list = []
     __target_process = None
-    __schedule  = None
+    schedule  = None
 
     account_info_model = None
     _price_model = None
 
     def __init__(self, schedule):
-        self.__schedule = schedule
+        self.schedule = schedule
         manager = Manager()
         self.pool = manager.dict()
 

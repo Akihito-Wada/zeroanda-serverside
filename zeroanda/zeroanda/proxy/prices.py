@@ -1,3 +1,4 @@
+from zeroanda.classes.utils import timeutils
 from zeroanda.proxy.streaming import Streaming
 from zeroanda.models import PricesModel
 from zeroanda import utils
@@ -20,7 +21,7 @@ class PricesProxyModel:
             bid = price['bid'],
             instrument = price['instrument'],
             etag=response.get_etag(),
-            time = utils.convert_timestamp2datetime(price['time']),
+            time = timeutils.convert_timestamp2datetime(price['time']),
         )
         priceModel.save()
         return priceModel

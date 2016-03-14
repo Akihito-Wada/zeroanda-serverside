@@ -1,4 +1,5 @@
 from zeroanda.models import OrderModel, ActualOrderModel
+from zeroanda.classes.utils import timeutils
 from zeroanda.constant import SIDE, TYPE, ACTUAL_ORDER_STATUS, INSTRUMENTS, ERROR_CODE, ORDER_STATUS
 from zeroanda.errors import ZeroandaError
 from zeroanda.proxy.streaming import Streaming
@@ -26,14 +27,14 @@ class OrderProxyModel:
             instruments = result["instrument"],
             units = result["orderOpened"]["units"],
             side = result["orderOpened"]["side"],
-            expiry = utils.convert_timestamp2datetime(result["orderOpened"]["expiry"]),
+            expiry = timeutils.convert_timestamp2datetime(result["orderOpened"]["expiry"]),
             price = result["price"],
             upperBound = result["orderOpened"]["upperBound"],
             lowerBound = result["orderOpened"]["lowerBound"],
             stopLoss = result["orderOpened"]["stopLoss"],
             takeProfit = result["orderOpened"]["takeProfit"],
             trailingStop = result["orderOpened"]["trailingStop"],
-            time = utils.convert_timestamp2datetime(result["time"]),
+            time = timeutils.convert_timestamp2datetime(result["time"]),
         )
         actualOrderModel.save()
         return actualOrderModel
