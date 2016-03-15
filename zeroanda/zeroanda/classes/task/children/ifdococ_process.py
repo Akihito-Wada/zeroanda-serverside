@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from zeroanda.classes.task.children.aprocess import AbstractProcess
 from zeroanda.classes.utils import timeutils
 from zeroanda.constant import INSTRUMENTS
@@ -5,7 +7,7 @@ from zeroanda.proxy.order import OrderProxyModel
 from zeroanda import utils
 
 from datetime import datetime, timedelta
-import time
+
 from multiprocessing import Process
 import  pytz
 
@@ -17,7 +19,7 @@ class IfdococProcess(AbstractProcess):
 
     def _create_job(self):
         self._jobs.append(Process(target=self._order_buy))
-        self._jobs.append(Process(target=self._order_sell))
+        # self._jobs.append(Process(target=self._order_sell))
 
     def _order_buy(self):
         self.__orderProxyModel.buy_ifdoco(
@@ -40,10 +42,13 @@ class IfdococProcess(AbstractProcess):
                 instrument=INSTRUMENTS[0][0])
 
     def _is_condition(self):
-        utils.info(self._task.schedule.presentation_time)
-        utils.info(timeutils.convert_rfc2unixtime(self._task.schedule.presentation_time))
-        utils.info(time.time())
-        return False
+        if settings.TEST == True:
+            return True
 
-    def is_finished(self):
+        now = timeutils.unixtime()
+        presentation_time = int(timeutils.convert_rfc2unixtime(self._task.schedule.presentation_time))
+        if presentation_time - now > 10:
+            return False
+        elif now > presentation_time:
+            raise Exception('IfdococProcess::time is over.: ' + timeutils.format_date(now))
         return True

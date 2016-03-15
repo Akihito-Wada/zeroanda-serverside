@@ -31,6 +31,8 @@ class Task(IProcess):
         return task
 
     def exec(self):
+        if self.__target_process.is_runnable() == False:
+            return
         # if self.__target_process.is_running() or self.__target_process.is_finished():
         #     return
 

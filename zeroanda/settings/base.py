@@ -133,3 +133,5 @@ REST_FRAMEWORK = {
 # rate
 LEVERAGE    = 25
 CURRENCY    = 10000
+
+TEST = True

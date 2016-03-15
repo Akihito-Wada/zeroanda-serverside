@@ -10,9 +10,8 @@ class PricesProxyModel:
     _scheduleModel  = None
     _etag        = None
 
-    def __init__(self, scheduleModel = None):
+    def __init__(self):
         self._streaming = Streaming()
-        self._scheduleModel = scheduleModel
 
     def _add_price(self, response):
         price = response.get_body()['prices'][0]
@@ -38,8 +37,8 @@ class PricesProxyModel:
         if instrument != None:
             self._get_price_model(instrument)
             return self._priceModel
-        elif self._scheduleModel != None:
-            self._get_price_model(self._scheduleModel.country)
-            return self._priceModel
+        # elif self._scheduleModel != None:
+        #     self._get_price_model(self._scheduleModel.country)
+        #     return self._priceModel
         else:
             raise Exception('instrument data is required.')

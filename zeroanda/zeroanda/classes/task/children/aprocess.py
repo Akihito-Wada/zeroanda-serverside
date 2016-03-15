@@ -3,6 +3,7 @@ from multiprocessing import Process
 import signal
 
 from zeroanda.classes.task.interface.iprocess import IProcess
+from zeroanda.classes.process_status import ProcessStatus
 from zeroanda import utils
 
 class AbstractProcess(IProcess):
@@ -12,20 +13,28 @@ class AbstractProcess(IProcess):
     def __init__(self, task):
         self._task = task
         self._create_job()
+        self.status = ProcessStatus.waiting
 
     @abstractclassmethod
     def _create_job(self): pass
 
     def exec(self):
-        if self._is_condition() == False or self.is_running() or self.is_finished():
+        # if self._is_condition() == False or self.is_running() or self.is_finished():
+        if self._is_condition() == False:
             return
+
         utils.info("self._jobs: " + str(len(self._jobs)))
         for job in self._jobs:
             # if job.is_alive() == True:
             #     break
             job.start()
-
+        self.status = ProcessStatus.running
         # [job.join() for job in self._jobs]
+
+    def is_runnable(self):
+        result = self.status == ProcessStatus.waiting
+        utils.info('is_runnable: ' + str(result))
+        return result
 
     def is_running(self):
         for job in self._jobs:
@@ -41,4 +50,5 @@ class AbstractProcess(IProcess):
             utils.info(-signal.SIGTERM)
             if job.is_alive() == True or job.is_alive() == False and job.exitcode == None:
                 return False
+        self.status = ProcessStatus.finish
         return True

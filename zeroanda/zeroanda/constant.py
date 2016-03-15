@@ -54,3 +54,5 @@ ERROR_CODE = (
     (0, 'None'),
     (11, 'Order not found'),
 )
+
+DURATION_GET_PRICE = 15

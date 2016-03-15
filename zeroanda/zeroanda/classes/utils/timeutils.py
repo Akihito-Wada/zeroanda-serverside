@@ -1,11 +1,14 @@
 from datetime import datetime, timezone, timedelta
 import calendar, pytz, logging, time
+from zeroanda.utils import utils
 
-from django.conf import settings
 logger =logging.getLogger("django")
 
 def unixtime():
-    return time.time()
+    return int(time.time())
+
+def format_date(time_int):
+    return time.strftime('%Y/%m/%d %H:%M:%S', time.localtime(time_int))
 
 def format_jst(date_time):
     JST = timezone(timedelta(hours=+9), 'JST')

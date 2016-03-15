@@ -16,10 +16,9 @@ class OrderProxyModel:
     def __init__(self):
         self._streaming = Streaming()
 
-    def _add_actual_order(self, response, scheduleModel, orderModel):
+    def _add_actual_order(self, response, orderModel, scheduleModel = None):
         utils.info(response.get_body())
         result = response.get_body()
-        # price = response.get_body()['prices'][0]
         actualOrderModel = ActualOrderModel(
             schedule= scheduleModel,
             order = orderModel,
@@ -71,7 +70,7 @@ class OrderProxyModel:
                 lowerBound
             )
             if response.get_code() == 201:
-                self._add_actual_order(response, scheduleModel, orderModel)
+                self._add_actual_order(response, orderModel, scheduleModel)
         except ZeroandaError as e:
             e.save()
             orderModel.status = ORDER_STATUS[1][0]
@@ -108,7 +107,7 @@ class OrderProxyModel:
                 lower_bound
             )
             if response.get_code() == 201:
-                self._add_actual_order(response, scheduleModel, orderModel)
+                self._add_actual_order(response, orderModel, scheduleModel)
         except ZeroandaError as e:
             e.save()
             orderModel.status = ORDER_STATUS[1][0]
@@ -146,7 +145,7 @@ class OrderProxyModel:
             )
             # response = self._streaming.order_ifdoco(accountModel, orderModel)
             if response.get_code() == 201:
-                self._add_actual_order(response, scheduleModel, orderModel)
+                self._add_actual_order(response, orderModel, scheduleModel)
         except ZeroandaError as e:
             e.save()
             orderModel.status = ORDER_STATUS[1][0]
