@@ -9,6 +9,7 @@ from zeroanda import utils
 from datetime import datetime, timedelta
 
 from multiprocessing import Process
+
 import  pytz
 
 class IfdococProcess(AbstractProcess):
@@ -22,28 +23,29 @@ class IfdococProcess(AbstractProcess):
         self._jobs.append(Process(target=self._order_sell))
 
     def _order_buy(self):
-        self.__orderProxyModel.buy_ifdoco(
+        self._task.set_ifdoco_orders_model("buy", self.__orderProxyModel.buy_ifdoco(
                 target_price=self._task.pool['price_model'].ask + 100,
                 upper_bound=utils.get_ask_upper_bound(self._task.pool['price_model'].ask),
                 lower_bound=utils.get_ask_lower_bound(self._task.pool['price_model'].ask),
                 units= self._task.pool['ask_unit'],
                 expiry= datetime.now(pytz.utc) + timedelta(minutes=1),
                 accountId= self._task.pool['account_info_model'].account_id,
-                instrument=INSTRUMENTS[0][0])
+                instrument=INSTRUMENTS[0][0]))
 
     def _order_sell(self):
-        self.__orderProxyModel.sell_ifdoco(
+        self._task.set_ifdoco_orders_model("sell", self.__orderProxyModel.sell_ifdoco(
                 target_price=self._task.pool['price_model'].bid - 100,
                 upper_bound=utils.get_bid_upper_bound(self._task.pool['price_model'].bid),
                 lower_bound=utils.get_bid_lower_bound(self._task.pool['price_model'].bid),
                 units= self._task.pool['bid_unit'],
                 expiry= datetime.now(pytz.utc) + timedelta(minutes=1),
                 accountId= self._task.pool['account_info_model'].account_id,
-                instrument=INSTRUMENTS[0][0])
+                instrument=INSTRUMENTS[0][0]))
 
     def _is_condition(self):
         if settings.TEST == True:
             return True
+        return True
 
         now = timeutils.unixtime()
         presentation_time = int(timeutils.convert_rfc2unixtime(self._task.schedule.presentation_time))

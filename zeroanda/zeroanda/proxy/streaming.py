@@ -231,8 +231,6 @@ class Streaming(object):
     orders
     '''
     def get_orders(self, account_id, instruments=None, maxId=None, count=None):
-        if accountModel.account_id == None:
-            raise Exception('account_id is None.')
         url = settings.DOMAIN + "/v1/accounts/" + str(account_id) + "/orders"
         result = self.get(url, self._compressed_headers)
 

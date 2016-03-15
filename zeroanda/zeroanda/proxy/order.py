@@ -107,7 +107,7 @@ class OrderProxyModel:
                 lower_bound
             )
             if response.get_code() == 201:
-                self._add_actual_order(response, orderModel, scheduleModel)
+                return self._add_actual_order(response, orderModel, scheduleModel)
         except ZeroandaError as e:
             e.save()
             orderModel.status = ORDER_STATUS[1][0]
@@ -145,7 +145,7 @@ class OrderProxyModel:
             )
             # response = self._streaming.order_ifdoco(accountModel, orderModel)
             if response.get_code() == 201:
-                self._add_actual_order(response, orderModel, scheduleModel)
+                return self._add_actual_order(response, orderModel, scheduleModel)
         except ZeroandaError as e:
             e.save()
             orderModel.status = ORDER_STATUS[1][0]
