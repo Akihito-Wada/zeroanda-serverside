@@ -216,6 +216,28 @@ class Streaming(object):
             raise ZeroandaError(result)
 
     '''
+    transations
+    '''
+    def get_transactions(self, account_id, instrument, count = None, max_id = None, min_id = None):
+        url = settings.DOMAIN + "/v1/accounts/" + str(account_id) + "/transactions"
+        params = {
+            "instrument": instrument
+        }
+        if count != None:
+            params["count"] = count
+        if max_id != None:
+            params["maxId"] = max_id
+        if min_id != None:
+            params["minId"] = min_id
+
+        result = self.get(url, self._compressed_headers, params)
+        if result.get_status():
+            return result
+        else:
+            utils.error(result.get_body())
+            raise ZeroandaError(result)
+
+    '''
      未対応 status-code 405:
     '''
     def delete_positions(self, accountModel):
