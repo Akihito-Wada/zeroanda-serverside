@@ -4,6 +4,7 @@ from zeroanda.classes.task.children.get_order_process import GetOrderProcess
 from zeroanda.classes.task.children.get_price_process import GetPriceProcess
 from zeroanda.classes.task.children.set_unit_process import SetUnitProcess
 from zeroanda.classes.task.children.ifdococ_process import IfdococProcess
+from zeroanda.classes.task.children.get_transaction_process import GetTransactionProcess
 
 from zeroanda import utils
 
@@ -30,6 +31,7 @@ class Task(IProcess):
         task.add_process(SetUnitProcess(task))
         task.add_process(IfdococProcess(task))
         # task.add_process(GetOrderProcess(task))
+        # task.add_process(GetTransactionProcess(task))
         return task
 
     def exec(self):
@@ -65,13 +67,6 @@ class Task(IProcess):
 
     def set_price_model(self, model):
         self.pool["price_model"] = model
-
-    def set_ifdoco_orders_model(self, side = None, model = None):
-        # if "actual_orders_model" not in self.pool:
-        #     self.pool["actual_orders_model"] = {}
-
-        self.pool["actual_orders_model_" + side] = model
-        utils.info(self.pool)
 
     def set_orders_model(self, model):
         self.pool["orders_model"] = model
