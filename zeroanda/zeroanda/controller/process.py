@@ -90,7 +90,7 @@ class OrderProcess:
 
     def get_orders(self):
         try:
-            result = self._streaming.get_orders(self._account)
+            result = self._streaming.get_orders(self._account.account_id)
         except ZeroandaError as e:
             print('error')
             e.save()

@@ -41,8 +41,8 @@ class OrderProxyModel:
     '''
     ticket
     '''
-    def get_orders(self, accountModel):
-        result = self._streaming.get_orders(accountModel)
+    def get_orders(self, account_id):
+        result = self._streaming.get_orders(account_id)
         utils.info(result.get_body())
         return result.get_body()
 
@@ -196,7 +196,7 @@ class OrderProxyModel:
             return
 
     def cancel_all(self, accountModel):
-        result = self.get_orders(accountModel)
+        result = self.get_orders(accountModel.account_id)
         for v in result['orders']:
             self.cancel(accountModel, v["id"])
 

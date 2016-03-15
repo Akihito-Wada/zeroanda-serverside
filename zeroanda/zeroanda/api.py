@@ -20,7 +20,7 @@ def order(request):
     if request.method == 'GET':
         accountModel = AccountProxyModel().get_account()
         orderClass = OrderProxyModel()
-        orders = orderClass.get_orders(accountModel)
+        orders = orderClass.get_orders(accountModel.account_id)
         utils.info(orders)
     elif request.method == 'POST':
         try:
