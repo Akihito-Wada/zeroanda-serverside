@@ -1,0 +1,30 @@
+from enum import Enum
+
+class TransactionStatus(Enum):
+    '''
+    create
+    '''
+    MARKET_ORDER_CREATE = 1
+    STOP_ORDER_CREATE   = 2
+    LIMIT_ORDER_CREATE  = 3
+    MARKET_IF_TOUCHED_ORDER_CREATE = 4
+
+    '''
+    '''
+    ORDER_UPDATE    = 5
+    ORDER_CANCEL    = 6
+    ORDER_FILLED    = 7
+    TRADE_UPDATE    = 8
+    TRADE_CLOSE     = 9
+    MIGRATE_TRADE_OPEN  = 10
+    MIGRATE_TRADE_CLOSE = 11
+    STOP_LOSS_FILLED    = 12
+    TAKE_PROFIT_FILLED  = 13
+    TRAILING_STOP_FILLED= 14
+    MARGIN_CALL_ENTER   = 15
+    MARGIN_CALL_EXIT    = 16
+    MARGIN_CLOSEOUT = 17
+    SET_MARGIN_RATE = 18
+    TRANSFER_FUNDS  = 19
+    DAILY_INTEREST  = 20
+    FEE = 21

@@ -31,7 +31,7 @@ class Task(IProcess):
         task.add_process(SetUnitProcess(task))
         task.add_process(IfdococProcess(task))
         # task.add_process(GetOrderProcess(task))
-        # task.add_process(GetTransactionProcess(task))
+        task.add_process(GetTransactionProcess(task))
         return task
 
     def exec(self):
@@ -70,3 +70,6 @@ class Task(IProcess):
 
     def set_orders_model(self, model):
         self.pool["orders_model"] = model
+
+    def set_actual_orders_model(self, side, model):
+        self.pool["actual_order_model_" + side] = model

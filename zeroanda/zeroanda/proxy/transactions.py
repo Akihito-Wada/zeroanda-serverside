@@ -7,8 +7,8 @@ class TransactionsProxyModel:
     def __init__(self):
         self._streaming = Streaming()
 
-    def get_transactions(self, account_id, instrument, count = None):
-        response = self._streaming.get_transactions(account_id, instrument, count)
+    def get_transactions(self, account_id, instrument, ids = None, count = None):
+        response = self._streaming.get_transactions(account_id, instrument, ids, count)
         utils.info(response.get_code())
         if response.get_code() == 200:
             return response.get_body()

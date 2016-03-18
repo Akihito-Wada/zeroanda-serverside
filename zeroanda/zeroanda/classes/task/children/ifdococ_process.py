@@ -25,25 +25,25 @@ class IfdococProcess(AbstractProcess):
 
     def _order_buy(self):
         db.close_old_connections()
-        self.__orderProxyModel.buy_ifdoco(
+        self._task.set_actual_orders_model("buy", self.__orderProxyModel.buy_ifdoco(
                 target_price=self._task.pool['price_model'].ask + IFDOCO_ENTRY_POINT,
                 upper_bound=utils.get_ask_upper_bound(self._task.pool['price_model'].ask),
                 lower_bound=utils.get_ask_lower_bound(self._task.pool['price_model'].ask),
                 units= self._task.pool['ask_unit'],
                 expiry= datetime.now(pytz.utc) + timedelta(minutes=EXPIRY_MINITES),
                 accountId= self._task.pool['account_info_model'].account_id,
-                instrument=INSTRUMENTS[0][0])
+                instrument=INSTRUMENTS[0][0]))
 
     def _order_sell(self):
         db.close_old_connections()
-        self.__orderProxyModel.sell_ifdoco(
+        self._task.set_actual_orders_model("sell", self.__orderProxyModel.sell_ifdoco(
                 target_price=self._task.pool['price_model'].bid - IFDOCO_ENTRY_POINT,
                 upper_bound=utils.get_bid_upper_bound(self._task.pool['price_model'].bid),
                 lower_bound=utils.get_bid_lower_bound(self._task.pool['price_model'].bid),
                 units= self._task.pool['bid_unit'],
                 expiry= datetime.now(pytz.utc) + timedelta(minutes=EXPIRY_MINITES),
                 accountId= self._task.pool['account_info_model'].account_id,
-                instrument=INSTRUMENTS[0][0])
+                instrument=INSTRUMENTS[0][0]))
 
     def _is_condition(self):
         if settings.TEST == True:
