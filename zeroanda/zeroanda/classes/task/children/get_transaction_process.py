@@ -11,8 +11,9 @@ class GetTransactionProcess(AbstractProcess):
         self._jobs = []
         self.__transaction = TransactionsProxyModel()
         self.__transactions = []
-        self._set_status(ProcessStatus.waiting)
         super(GetTransactionProcess, self).__init__(task)
+
+        self._set_status(ProcessStatus.waiting)
 
     def is_runnable(self):
         result = self._get_status() == ProcessStatus.waiting and self.is_running() == False
@@ -24,11 +25,29 @@ class GetTransactionProcess(AbstractProcess):
         utils.info('__reflesh')
         self.__transactions = []
         self._set_status(ProcessStatus.waiting)
-        self._create_job()
+        # self._create_job()
+        # self._jobs.append(Process(target=self._get_transactions2))
 
     def _create_job(self):
         self._jobs.append(Process(target=self._get_transactions))
 
+    def exec(self):
+        if self._is_condition() == False:
+            return
+
+        utils.info("self._jobs222: " + str(len(self._jobs)))
+        if 0 == len(self._jobs):
+            return
+
+        for job in self._jobs:
+            job.start()
+
+        self._set_status(ProcessStatus.running)
+
+        [job.join() for job in self._jobs]
+
+    def _get_transactions2(self):
+        utils.info(3333)
     def _get_transactions(self):
         ids = []
         ids.append(self._task.pool['actual_order_model_sell'].actual_order_id)
@@ -58,32 +77,19 @@ class GetTransactionProcess(AbstractProcess):
             tra1 = self.__transactions[1]
             utils.info("status: " + tra0["type"] + ", " + tra1["type"])
 
-            # finish
-            # 1 or 2 transaction(s) have closed.
-            # if tra0["type"] == TransactionStatus.TRADE_CLOSE.name or tra1["type"] == TransactionStatus.TRADE_CLOSE.name:
-            #     self.status = ProcessStatus.finish
-            #     return
-
-            # both of transactions have expired.
-            # if tra0["type"] == TransactionStatus.ORDER_CANCEL.name or tra1["type"] and TransactionStatus.ORDER_CANCEL.name:
-            #     self.status = ProcessStatus.finish
-            #     return
-            # finish
-
             #running
             utils.info(str(tra0["type"] == TransactionStatus.MARKET_IF_TOUCHED_ORDER_CREATE.name))
             if tra0["type"] == TransactionStatus.MARKET_IF_TOUCHED_ORDER_CREATE.name and tra1["type"] and TransactionStatus.MARKET_IF_TOUCHED_ORDER_CREATE.name:
                 self.__reflesh()
-                utils.info("self.status.name: " + self.status.name)
                 return
             #running
             self._set_status(ProcessStatus.finish)
 
-            # for transaction in self.__transactions:
-            #     utils.info(transaction["type"] != TransactionStatus.ORDER_CANCEL.name)
-            #     if transaction["type"] != TransactionStatus.ORDER_CANCEL.name:
-            #         return
-            #     if transaction["type"] == TransactionStatus.TRADE_CLOSE.name:
-            #         self.status = ProcessStatus.finish
-            #         return
-            # self.status = ProcessStatus.waiting
+    def _set_status(self, status):
+        utils.info("_set_status: " + status.name)
+        self._task.pool["status"] = status
+
+    def _get_status(self):
+        if "status" not in self._task.pool :
+            self._set_status(ProcessStatus.waiting)
+        return self._task.pool["status"]

@@ -24,7 +24,7 @@ class AbstractProcess(IProcess):
 
         utils.info("self._jobs: " + str(len(self._jobs)))
         if 0 == len(self._jobs):
-            self._set_status(ProcessStatus.finish)
+            # self._set_status(ProcessStatus.finish)
             return
 
         for job in self._jobs:

@@ -49,6 +49,7 @@ class Task(IProcess):
     def is_finished(self):
 
         utils.info("len(self.__process_list): " + str(len(self._process_list)))
+        utils.info("self.__target_process: " + str(self.__target_process) if self.__target_process != None else "None")
         try:
             if self.__target_process == None or self.__target_process != None and self.__target_process.is_finished():
                 self.__target_process = self._process_list.pop(0)
