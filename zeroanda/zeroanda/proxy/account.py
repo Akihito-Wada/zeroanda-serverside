@@ -42,7 +42,7 @@ class AccountProxyModel:
             open_trades     = response.get_body()['openTrades'],
             unrealized_pl   = response.get_body()['unrealizedPl'],
             realized_pl     = response.get_body()['realizedPl'],
-            etag = response.get_etag(),
+            etag            = response.get_etag(),
         )
         accountInfoModel.save()
         return accountInfoModel
@@ -56,7 +56,7 @@ class AccountProxyModel:
             self._disable_all()
 
         self._accountModel = None if len(accounts) == 0 else accounts.reverse()[0]
-        account_response = self._streaming.accounts(self._accountModel)
+        account_response = self._streaming.accounts(None if self._accountModel == None else self._accountModel.etag )
 
         if self._accountModel == None:
             self._accountModel = self._add_account(account_response)
@@ -67,7 +67,7 @@ class AccountProxyModel:
     def _get_account_info_model(self):
         account_info_list = AccountInfoModel.objects.filter(account_model = self._accountModel).order_by('created')
         self._accountInfoModel = None if len(account_info_list) == 0 else account_info_list.reverse()[0]
-        account_info_response = self._streaming.account_info(self._accountModel, self._accountInfoModel)
+        account_info_response = self._streaming.account_info(self._accountModel)
 
         if self._accountInfoModel == None:
             self._accountInfoModel = self._add_account_info(self._accountModel, account_info_response)

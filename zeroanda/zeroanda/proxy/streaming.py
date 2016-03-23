@@ -141,29 +141,26 @@ class Streaming(object):
         # 'Accept-Encoding': 'gzip,deflate',
     }
 
-    def get_headers(self, model=None, compressed=False):
-        if model == None or model.etag == None:
+    def get_headers(self, etag=None, compressed=False):
+        if etag == None:
             return self._default_headers if compressed == False else self._compressed_headers
         else:
-            self._default_headers['If-None-Match'] = model.etag
+            self._default_headers['If-None-Match'] = etag
             return self._default_headers
             # return self._default_headers.update({'If-None-Match': accountModel.etag})
 
-    def accounts(self, accountModel = None):
-        # if accountModel == None or accountModel.account_id == None:
+    def accounts(self, etag = None):
         url = settings.DOMAIN + "/v1/accounts"
-        # else:
-        #     url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id)
-        result = self.get(url, self.get_headers(accountModel))
+        result = self.get(url, self.get_headers(etag=etag))
         if result.get_status():
             return result
         else:
             utils.error(result.get_body())
             raise ZeroandaError(result)
 
-    def account_info(self, accountModel, accountInfoModel = None):
+    def account_info(self, accountModel, etag = None):
         url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id)
-        result = self.get(url, self.get_headers(accountInfoModel))
+        result = self.get(url, self.get_headers(etag))
         if result.get_status():
             return result
         else:
@@ -175,7 +172,7 @@ class Streaming(object):
         # url = settings.STREAMING_DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/prices"
         # url = settings.STREAMING_DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/prices"
         params = {'instruments' : instruments}
-        result = self.get(url, self.get_headers(priceModel, True), params)
+        result = self.get(url, self.get_headers(None, True), params)
         if result.get_status():
             return result
         else:
@@ -218,7 +215,7 @@ class Streaming(object):
     '''
     transations
     '''
-    def get_transactions(self, account_id, instrument, ids = None, count = None, max_id = None, min_id = None):
+    def get_transactions(self, account_id, instrument, ids = None, count = None, max_id = None, min_id = None, etag = None):
         url = settings.DOMAIN + "/v1/accounts/" + str(account_id) + "/transactions"
         params = {}
         if ids != None:
@@ -232,8 +229,11 @@ class Streaming(object):
                 params["maxId"] = max_id
             if min_id != None:
                 params["minId"] = min_id
-        result = self.get(url, self._compressed_headers, params)
-        utils.info(result)
+        if etag != None:
+            utils.info("get_transactions: " + etag)
+        else:
+            utils.info("nothing")
+        result = self.get(url, self.get_headers(etag), params)
         if result.get_status():
             return result
         else:

@@ -17,8 +17,11 @@ class RequestDataObject:
         return self._code == 200 or self._code == 304 or self._code == 201
 
     def get_etag(self):
-        return self._headers["ETag"] if self._headers == None and "ETag" in self._headers == True else None
-        # return None if self._headers == None or self._headers["ETag"] == None else self._headers["ETag"].strip('"')
+        # for k, v in self._headers.items():
+        #     utils.info(k)
+        #     utils.info(v)
+        result = self._headers["ETag"] if self._headers != None and "ETag" in self._headers else None
+        return result
 
     def get_body(self):
         return self._body

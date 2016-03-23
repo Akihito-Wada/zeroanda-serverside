@@ -4,6 +4,7 @@ from zeroanda.classes.enums.process_status import ProcessStatus
 from zeroanda.constant import INSTRUMENTS
 from zeroanda.proxy.transactions import TransactionsProxyModel
 from zeroanda import utils
+from zeroanda.classes.utils import timeutils
 from multiprocessing import Process
 
 class GetTransactionProcess(AbstractProcess):
@@ -13,7 +14,7 @@ class GetTransactionProcess(AbstractProcess):
         self._set_status(ProcessStatus.waiting)
         self.__transaction = TransactionsProxyModel()
         self.__transactions = []
-
+        self._task.pool['count'] = 0
         # super(GetTransactionProcess, self).__init__(task)
 
         self._set_status(ProcessStatus.waiting)
@@ -37,6 +38,10 @@ class GetTransactionProcess(AbstractProcess):
         utils.info("self._create_job: " + str(len(self._get_job_list())))
 
     def exec(self):
+        self._task.pool['count'] = self._task.pool['count'] + 1
+        # if self._task.pool['count'] > 80:
+        #     self._set_status(ProcessStatus.finish)
+        #     return
         self._create_job()
         utils.info('exec')
 
@@ -62,12 +67,30 @@ class GetTransactionProcess(AbstractProcess):
         ids = []
         ids.append(self._task.pool['actual_order_model_sell'].actual_order_id)
         ids.append(self._task.pool['actual_order_model_buy'].actual_order_id)
-        result = self.__transaction.get_transactions(self._task.pool['account_info_model'].account_id, INSTRUMENTS[0][0], ",".join(map(str, ids)))
-
-        self.__transactions.append(result["transactions"][0])
-        self.__transactions.append(result["transactions"][1])
-        utils.info(self.__transactions)
-        self.__set_transaction_status()
+        etag = None if "etag" not in self._task.pool else self._task.pool["etag"]
+        if etag != None:
+            utils.info("etag11: " + etag)
+        else:
+            utils.info("etag11: nothing")
+        result = self.__transaction.get_transactions(self._task.pool['account_info_model'].account_id, INSTRUMENTS[0][0], ",".join(map(str, ids)), etag=etag)
+        utils.info(11)
+        utils.info("etag12: " + result.get_etag())
+        utils.info(22)
+        self._task.pool["etag"] = result.get_etag()
+        utils.info(33)
+        if result.get_code() == 200:
+            utils.info(44)
+            self.__transactions.append(result.get_body()["transactions"][0])
+            self.__transactions.append(result.get_body()["transactions"][1])
+            utils.info(self.__transactions)
+            self.__set_transaction_status()
+        elif result.get_code() == 304:
+            utils.info(55)
+            self._set_status(ProcessStatus.waiting)
+            self._task.pool["etag"] = result.get_etag()
+        else:
+            utils.info(66)
+            self._set_status(ProcessStatus.finish)
 
     def _is_condition(self):
         return True
@@ -86,6 +109,7 @@ class GetTransactionProcess(AbstractProcess):
         else:
             tra0 = self.__transactions[0]
             tra1 = self.__transactions[1]
+            utils.info(timeutils.convert_timestamp2datetime(tra0['expiry']))
             utils.info("status: " + tra0["type"] + ", " + tra1["type"])
 
             #running
@@ -94,6 +118,7 @@ class GetTransactionProcess(AbstractProcess):
                 self.__reflesh()
                 return
             #running
+            utils.info('3254')
             self._set_status(ProcessStatus.finish)
 
     def _set_status(self, status):

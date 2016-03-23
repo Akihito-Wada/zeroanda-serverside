@@ -7,10 +7,14 @@ class TransactionsProxyModel:
     def __init__(self):
         self._streaming = Streaming()
 
-    def get_transactions(self, account_id, instrument, ids = None, count = None):
-        utils.info('get_transactions')
-        response = self._streaming.get_transactions(account_id, instrument, ids, count)
-        utils.info('get_transactions1')
-        utils.info(response.get_code())
-        if response.get_code() == 200:
-            return response.get_body()
+    def get_transactions(self, account_id, instrument, ids = None, count = None, etag = None):
+        if etag == None:
+            utils.info("none")
+
+        response = self._streaming.get_transactions(account_id, instrument, ids=ids, count=count, etag=etag)
+        utils.info("code: " + str(response.get_code()))
+        if response.get_status():
+            return response
+        # if response.get_code() == 200 or response.get_code() == 304 :
+        #     return response
+            # return response.get_body()
