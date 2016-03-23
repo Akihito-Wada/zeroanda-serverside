@@ -29,6 +29,8 @@ from zeroanda.test.test_api_process import test_api_process_countdown
 from zeroanda.test.test_call_action import test_api_call_action
 from zeroanda.test.test_api_transactions import test_api_transactions
 
+from test_multiprocess.views import index
+
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -65,6 +67,8 @@ urlpatterns = [
     url(r'^zeroanda/test/process', test_api_process_countdown),
     url(r'^zeroanda/test/transactions', test_api_transactions),
     url(r'^zeroanda/test/call/action', test_api_call_action),
+
+    url(r'^test/multiprocess', index),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

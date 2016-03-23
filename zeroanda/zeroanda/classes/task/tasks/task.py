@@ -30,7 +30,6 @@ class Task(IProcess):
         task.add_process(GetPriceProcess(task))
         task.add_process(SetUnitProcess(task))
         task.add_process(IfdococProcess(task))
-        # task.add_process(GetOrderProcess(task))
         task.add_process(GetTransactionProcess(task))
         return task
 
@@ -53,6 +52,7 @@ class Task(IProcess):
         try:
             if self.__target_process == None or self.__target_process != None and self.__target_process.is_finished():
                 self.__target_process = self._process_list.pop(0)
+                utils.info('poped.')
             utils.info(self.__target_process)
         except Exception as e:
             utils.info(e)

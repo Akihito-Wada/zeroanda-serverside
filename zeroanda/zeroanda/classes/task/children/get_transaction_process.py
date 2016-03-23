@@ -8,46 +8,56 @@ from multiprocessing import Process
 
 class GetTransactionProcess(AbstractProcess):
     def __init__(self, task):
-        self._jobs = []
+        self._task = task
+        # self._create_job()
+        self._set_status(ProcessStatus.waiting)
         self.__transaction = TransactionsProxyModel()
         self.__transactions = []
-        super(GetTransactionProcess, self).__init__(task)
+
+        # super(GetTransactionProcess, self).__init__(task)
 
         self._set_status(ProcessStatus.waiting)
 
     def is_runnable(self):
-        result = self._get_status() == ProcessStatus.waiting and self.is_running() == False
-        utils.info("GetTransactionProcess.self.get_status(): " + self._get_status().name + ", self.is_running(): " + str(self.is_running()))
+        result = self._get_status() == ProcessStatus.waiting
+        # result = self._get_status() == ProcessStatus.waiting and self.is_running() == False
         utils.info('is_runnable: ' + str(result))
         return result
 
     def __reflesh(self):
         utils.info('__reflesh')
         self.__transactions = []
+
         self._set_status(ProcessStatus.waiting)
         # self._create_job()
-        # self._jobs.append(Process(target=self._get_transactions2))
 
     def _create_job(self):
-        self._jobs.append(Process(target=self._get_transactions))
+        process = Process(target=self._get_transactions)
+        self._jobs = [process]
+        utils.info("self._create_job: " + str(len(self._get_job_list())))
 
     def exec(self):
+        self._create_job()
+        utils.info('exec')
+
         if self._is_condition() == False:
             return
-
-        utils.info("self._jobs222: " + str(len(self._jobs)))
-        if 0 == len(self._jobs):
+        utils.info("self._jobs222: " + str(len(self._get_job_list())))
+        if 0 == len(self._get_job_list()):
             return
 
-        for job in self._jobs:
+        while len(self._get_job_list()) > 0:
+            job = self._get_job_list().pop(0)
+            utils.info(job.is_alive())
+            utils.info(job.name)
             job.start()
+        # for job in self._jobs:
+        #     utils.info(job.is_alive())
+        #     utils.info(job.name)
+        #     job.start()
 
         self._set_status(ProcessStatus.running)
 
-        [job.join() for job in self._jobs]
-
-    def _get_transactions2(self):
-        utils.info(3333)
     def _get_transactions(self):
         ids = []
         ids.append(self._task.pool['actual_order_model_sell'].actual_order_id)
@@ -70,6 +80,7 @@ class GetTransactionProcess(AbstractProcess):
         return self._get_status()== ProcessStatus.finish
 
     def __set_transaction_status(self):
+        utils.info('__set_transaction_status.length: ' + str(len(self.__transactions)))
         if len(self.__transactions) != 2:
             self._set_status(ProcessStatus.running)
         else:
@@ -93,3 +104,6 @@ class GetTransactionProcess(AbstractProcess):
         if "status" not in self._task.pool :
             self._set_status(ProcessStatus.waiting)
         return self._task.pool["status"]
+
+    def _get_job_list(self):
+        return self._jobs

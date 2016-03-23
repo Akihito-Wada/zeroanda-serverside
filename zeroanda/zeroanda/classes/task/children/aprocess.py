@@ -22,33 +22,29 @@ class AbstractProcess(IProcess):
         if self._is_condition() == False:
             return
 
-        utils.info("self._jobs: " + str(len(self._jobs)))
-        if 0 == len(self._jobs):
-            # self._set_status(ProcessStatus.finish)
+        if 0 == len(self._get_job_list()):
             return
 
-        for job in self._jobs:
+        for job in self._get_job_list():
             job.start()
 
         self._set_status(ProcessStatus.running)
 
-        # [job.join() for job in self._jobs]
-
     def is_runnable(self):
         result = self._get_status() == ProcessStatus.waiting and self.is_running() == False
-        utils.info("self.status: " + self._get_status().name + ", self.is_running(): " + str(self.is_running()))
-        utils.info('is_runnable: ' + str(result))
+        # utils.info("self.status: " + self._get_status().name + ", self.is_running(): " + str(self.is_running()))
+        # utils.info('is_runnable: ' + str(result))
         return result
 
     def is_running(self):
-        for job in self._jobs:
+        for job in self._get_job_list():
             if job.is_alive() == True:
                return True
 
         return False
 
     def is_finished(self):
-        for job in self._jobs:
+        for job in self._get_job_list():
             utils.info(job.is_alive())
             utils.info(job.exitcode)
             utils.info(-signal.SIGTERM)
@@ -63,3 +59,6 @@ class AbstractProcess(IProcess):
 
     def _get_status(self):
         return self.status
+
+    def _get_job_list(self):
+        return self._jobs

@@ -221,11 +221,9 @@ class Streaming(object):
     def get_transactions(self, account_id, instrument, ids = None, count = None, max_id = None, min_id = None):
         url = settings.DOMAIN + "/v1/accounts/" + str(account_id) + "/transactions"
         params = {}
-        utils.info(1)
         if ids != None:
             params["ids"] = ids
         else:
-            utils.info(2)
             params["instrument"] = instrument
 
             if count != None:
@@ -234,7 +232,6 @@ class Streaming(object):
                 params["maxId"] = max_id
             if min_id != None:
                 params["minId"] = min_id
-        utils.info(3)
         result = self.get(url, self._compressed_headers, params)
         utils.info(result)
         if result.get_status():
