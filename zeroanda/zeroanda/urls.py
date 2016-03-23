@@ -28,6 +28,7 @@ from zeroanda.test.test_api_account import test_api_account
 from zeroanda.test.test_api_process import test_api_process_countdown
 from zeroanda.test.test_call_action import test_api_call_action
 from zeroanda.test.test_api_transactions import test_api_transactions
+from zeroanda.test.test_api_events import test_api_events
 
 from test_multiprocess.views import index
 
@@ -67,6 +68,7 @@ urlpatterns = [
     url(r'^zeroanda/test/process', test_api_process_countdown),
     url(r'^zeroanda/test/transactions', test_api_transactions),
     url(r'^zeroanda/test/call/action', test_api_call_action),
+    url(r'^zeroanda/test/events', test_api_events),
 
     url(r'^test/multiprocess', index),
 ]

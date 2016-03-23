@@ -239,7 +239,19 @@ class Streaming(object):
         else:
             utils.error(result.get_body())
             raise ZeroandaError(result)
+    '''
+    events
+    '''
+    def get_events(self, account_id, etag=None):
+        url = settings.DOMAIN + "/v1/events?6818465"
+        # params = {'accountIds':  str(account_id)}
+        result = self.get(url, self.get_headers(etag))
 
+        if result.get_status():
+            return result
+        else:
+            utils.error(result.get_body())
+            raise ZeroandaError(result)
     '''
      未対応 status-code 405:
     '''
