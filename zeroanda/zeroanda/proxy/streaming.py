@@ -138,7 +138,7 @@ class Streaming(object):
         'Content-type': 'application/x-www-form-urlencoded',
         'X-Accept-Datetime-Format':'unix',
         # 'Connection': 'keep-alive',
-        # 'Accept-Encoding': 'gzip,deflate',
+        'Accept-Encoding': 'gzip,deflate',
     }
 
     def get_headers(self, etag=None, compressed=False):
