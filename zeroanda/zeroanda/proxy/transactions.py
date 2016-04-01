@@ -7,11 +7,11 @@ class TransactionsProxyModel:
     def __init__(self):
         self._streaming = Streaming()
 
-    def get_transactions(self, account_id, instrument, ids = None, count = None, etag = None):
+    def get_transactions(self, account_id, instrument, id = None, ids = None, count = None, etag = None):
         if etag == None:
             utils.info("none")
 
-        response = self._streaming.get_transactions(account_id, instrument, ids=ids, count=count, etag=etag)
+        response = self._streaming.get_transactions(account_id, instrument, id=id, ids=ids, count=count, etag=etag)
         utils.info("code: " + str(response.get_code()))
         if response.get_status():
             return response

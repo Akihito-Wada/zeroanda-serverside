@@ -137,7 +137,7 @@ class Streaming(object):
         'Authorization' : 'Bearer ' + settings.TOKEN,
         'Content-type': 'application/x-www-form-urlencoded',
         'X-Accept-Datetime-Format':'unix',
-        'Connection': 'keep-alive',
+        # 'Connection': 'keep-alive',
         # 'Accept-Encoding': 'gzip,deflate',
     }
 
@@ -215,10 +215,12 @@ class Streaming(object):
     '''
     transations
     '''
-    def get_transactions(self, account_id, instrument, ids = None, count = None, max_id = None, min_id = None, etag = None):
+    def get_transactions(self, account_id, instrument, id = None, ids = None, count = None, max_id = None, min_id = None, etag = None):
         url = settings.DOMAIN + "/v1/accounts/" + str(account_id) + "/transactions"
         params = {}
-        if ids != None:
+        if id != None:
+            url = url + "/" + id
+        elif ids != None:
             params["ids"] = ids
         else:
             params["instrument"] = instrument
@@ -229,11 +231,9 @@ class Streaming(object):
                 params["maxId"] = max_id
             if min_id != None:
                 params["minId"] = min_id
-        if etag != None:
-            utils.info("get_transactions: " + etag)
-        else:
-            utils.info("nothing")
-        result = self.get(url, self.get_headers(etag), params)
+        # result = self.get(url, self.get_headers(etag), params)
+        result = self.get(url, self._streaming_headers, params)
+
         if result.get_status():
             return result
         else:
