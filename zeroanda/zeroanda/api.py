@@ -38,7 +38,6 @@ def order(request):
 
 @csrf_exempt
 def ifdoco(request):
-    utils.info('test')
     if request.method == 'POST':
         # scheduleModel = ScheduleProxyModel().get_schedule(request.POST.get('schedule_id'))
         scheduleModel = ScheduleProxyModel().get_schedule(4)
@@ -71,9 +70,11 @@ def cancelAll(request):
 def prices(request):
     if request.method == 'GET':
         try:
-            scheduleModel = ScheduleProxyModel().get_schedule(request.GET.get('schedule_id'))
-            model = PricesProxyModel(scheduleModel)
-            model.get_price()
+            # scheduleModel = ScheduleProxyModel().get_schedule(request.GET.get('schedule_id'))
+            scheduleModel = ScheduleProxyModel().get_schedule(5)
+            model = PricesProxyModel()
+            utils.info(model)
+            result = model.get_price(scheduleModel.country)
             return HttpResponse('200')
         except Exception as e:
             utils.info(e)

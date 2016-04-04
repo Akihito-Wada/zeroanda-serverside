@@ -82,7 +82,7 @@ $(function(){
 
 // get prices
 $(function(){
-    $("#getPriceButton").click(function() {
+    $("#testGetPriceButton").click(function() {
         logger.info('test')
         $.ajax({
             type: "GET",

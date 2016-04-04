@@ -27,6 +27,7 @@ class PricesProxyModel:
 
     def _get_price_model(self, instruments):
         price_response = self._streaming.prices(instruments, self._priceModel)
+        utils.info(price_response.get_body())
         if self._priceModel == None or price_response.get_code() != 304:
             self._priceModel = self._add_price(price_response)
             self._etag  = price_response.get_etag()
