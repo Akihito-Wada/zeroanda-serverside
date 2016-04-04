@@ -17,3 +17,5 @@ DATABASES = {
         'AUTOCOMMIT': True,
     }
 }
+
+TEST = False

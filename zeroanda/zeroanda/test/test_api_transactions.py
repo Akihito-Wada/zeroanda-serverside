@@ -15,10 +15,10 @@ def test_api_transactions(request):
         accountModel = AccountProxyModel().get_account()
         transactionModel = TransactionsProxyModel()
         etag = "df8446ef2ea9a10ac34216ce287b79e9e7d9e72d"
-        ids = '10204259638,10204259637'
-        id = '10204259638'
-        # result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], count=2)
-        result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], id=id)
+        ids = '10182693006,10182693005'
+        id = '10182693005'
+        result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], count=2)
+        # result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], id=id)
         # result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], id=id, etag=etag)
         # result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], ids=ids)
         # result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], ids=ids, etag=etag)

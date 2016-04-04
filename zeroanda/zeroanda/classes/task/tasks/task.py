@@ -5,9 +5,11 @@ from zeroanda.classes.task.children.get_price_process import GetPriceProcess
 from zeroanda.classes.task.children.set_unit_process import SetUnitProcess
 from zeroanda.classes.task.children.ifdococ_process import IfdococProcess
 from zeroanda.classes.task.children.get_transaction_process import GetTransactionProcess
-
 from zeroanda import utils
 
+from django.conf import settings
+
+from datetime import datetime, timedelta
 from multiprocessing import Manager
 
 class Task(IProcess):
@@ -22,6 +24,8 @@ class Task(IProcess):
         self.schedule = schedule
         manager = Manager()
         self.pool = manager.dict()
+
+        self._presentation_date = datetime.now() + timedelta(seconds = 70) if settings.TEST else self._task.schedule.presentation_time
 
     @staticmethod
     def create_task(schedule):

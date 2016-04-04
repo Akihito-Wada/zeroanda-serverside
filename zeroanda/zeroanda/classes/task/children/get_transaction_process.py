@@ -72,24 +72,17 @@ class GetTransactionProcess(AbstractProcess):
             utils.info("etag11: " + etag)
         else:
             utils.info("etag11: nothing")
-        result = self.__transaction.get_transactions(self._task.pool['account_info_model'].account_id, INSTRUMENTS[0][0], ",".join(map(str, ids)), etag=etag)
-        utils.info(11)
-        utils.info("etag12: " + result.get_etag())
-        utils.info(22)
+        result = self.__transaction.get_transactions(self._task.pool['account_info_model'].account_id, INSTRUMENTS[0][0], ids=",".join(map(str, ids)), etag=etag)
         self._task.pool["etag"] = result.get_etag()
-        utils.info(33)
         if result.get_code() == 200:
-            utils.info(44)
             self.__transactions.append(result.get_body()["transactions"][0])
             self.__transactions.append(result.get_body()["transactions"][1])
             utils.info(self.__transactions)
             self.__set_transaction_status()
         elif result.get_code() == 304:
-            utils.info(55)
             self._set_status(ProcessStatus.waiting)
             self._task.pool["etag"] = result.get_etag()
         else:
-            utils.info(66)
             self._set_status(ProcessStatus.finish)
 
     def _is_condition(self):
@@ -118,7 +111,6 @@ class GetTransactionProcess(AbstractProcess):
                 self.__reflesh()
                 return
             #running
-            utils.info('3254')
             self._set_status(ProcessStatus.finish)
 
     def _set_status(self, status):
