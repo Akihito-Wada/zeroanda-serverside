@@ -107,6 +107,7 @@ class GetTransactionProcess(AbstractProcess):
         self._presentation_date = self._task._presentation_date if settings.TEST else self._task.schedule.presentation_time
         self._target_date = self._presentation_date + timedelta(seconds = UNTILE_GET_TRANSACTION_EXCUTE_TIME)
 
+
     def is_finished(self):
         # return True
         # if len(self.__transactions) != 2:

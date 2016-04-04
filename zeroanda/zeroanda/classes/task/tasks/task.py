@@ -6,6 +6,7 @@ from zeroanda.classes.task.children.set_unit_process import SetUnitProcess
 from zeroanda.classes.task.children.ifdococ_process import IfdococProcess
 from zeroanda.classes.task.children.get_transaction_process import GetTransactionProcess
 from zeroanda import utils
+from zeroanda.models import TradeModel
 
 from django.conf import settings
 
@@ -17,15 +18,15 @@ class Task(IProcess):
     __target_process = None
     schedule  = None
 
-    account_info_model = None
-    _price_model = None
-
     def __init__(self, schedule):
         self.schedule = schedule
         manager = Manager()
         self.pool = manager.dict()
 
         self._presentation_date = datetime.now() + timedelta(seconds = 70) if settings.TEST else self._task.schedule.presentation_time
+
+        self.trade_model = TradeModel(schedule=schedule, presentation_time=self._presentation_date, created=datetime.now())
+        self.trade_model.save()
 
     @staticmethod
     def create_task(schedule):

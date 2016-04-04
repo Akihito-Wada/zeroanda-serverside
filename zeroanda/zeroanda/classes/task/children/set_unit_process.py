@@ -2,6 +2,7 @@ from django.conf import settings
 from datetime import datetime, timedelta
 
 from zeroanda.classes.task.children.aprocess import AbstractProcess
+from zeroanda.models import TransactionModel
 from zeroanda import utils
 
 from multiprocessing import Process
@@ -26,8 +27,14 @@ class SetUnitProcess(AbstractProcess):
         utils.info(self._presentation_date)
         if now > self._presentation_date:
             raise Exception('presentation time has already passed.')
+
+        self.__transaction_model.excute_time = datetime.now()
+        self.__transaction_model.save()
         return True
 
     def _set_target_date(self):
         # self._presentation_date = datetime.now() + timedelta(seconds = SET_UNIT_EXCUTE_TIME) * 2 if settings.TEST else self._task.schedule.presentation_time
         self._presentation_date = self._task._presentation_date if settings.TEST else self._task.schedule.presentation_time
+
+        self.__transaction_model = TransactionModel(trade_model=self._task.trade_model, transaction_name=self.__class__.__name__)
+        self.__transaction_model.save()

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from zeroanda.models import ScheduleModel, ProcessModel, PricesModel, OrderModel, ErrorModel, AccountModel, ActualOrderModel
+from zeroanda.models import ScheduleModel, ProcessModel, PricesModel, OrderModel, ErrorModel, AccountModel, ActualOrderModel, TradeModel
 from zeroanda import utils
 from zeroanda.classes.utils import timeutils
 from zeroanda.constant import ACTUAL_ORDER_STATUS
@@ -206,6 +206,22 @@ class AccountModelAdmin(admin.ModelAdmin):
     def updated_time(self, instance):
         return timeutils.format_jst(instance.updated)
 
+
+class TradesModelAdmin(admin.ModelAdmin):
+    # exclude = ['updated']
+    list_display = (
+        'schedule',
+        'presentation_time',
+        'created_time',
+    )
+
+    def created_time(self, instance):
+        return timeutils.format_jst(instance.created)
+
+    def updated_time(self, instance):
+        return timeutils.format_jst(instance.updated)
+
+admin.site.register(TradeModel, TradesModelAdmin)
 admin.site.register(ScheduleModel, ScheduleModelAdmin)
 admin.site.register(ProcessModel, ProcessModelAdmin)
 admin.site.register(PricesModel, PriceModelAdmin)

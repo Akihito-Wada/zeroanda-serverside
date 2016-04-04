@@ -103,3 +103,15 @@ class ErrorModel(models.Model):
     message      = models.CharField(max_length=200)
     info        = models.CharField(max_length=200)
     created     = models.DateTimeField('登録時刻', auto_now_add=True)
+
+class TradeModel(models.Model):
+    schedule    = models.ForeignKey(ScheduleModel, blank=True, null=True)
+    presentation_time   = models.DateTimeField('イベント時刻')
+    created     = models.DateTimeField('登録時刻', auto_now_add=True)
+
+class TransactionModel(models.Model):
+    trade_model     = models.ForeignKey(TradeModel)
+    transaction_name= models.CharField(max_length=200)
+    created     = models.DateTimeField('登録時刻', auto_now_add=True, null=True)
+    presentation_time= models.DateTimeField('実行予定時刻', null=True)
+    excute_time= models.DateTimeField('実行時刻', null=True)
