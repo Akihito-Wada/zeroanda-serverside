@@ -38,11 +38,6 @@ class GetPriceProcess(AbstractProcess):
 
     def _is_condition(self):
         now = datetime.now()
-        utils.info('test1')
-        utils.info(now)
-        utils.info(self._target_date)
-        utils.info(self._presentation_date)
-        utils.info('test2')
         if now > self._presentation_date:
             raise Exception('IfdococProcess::presentation time has already passed.')
         result = now > self._target_date

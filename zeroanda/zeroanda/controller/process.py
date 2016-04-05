@@ -127,9 +127,9 @@ class OrderProcess:
         units = self._accountModelProxy.get_max_units(bid)
         self._order.sell_ifdoco(self._accountModelProxy.get_account(), self._scheduleModel, bid - 10, units)
 
-    def test_ifdoco(self):
-        proxyModel = PricesProxyModel(self._scheduleModel)
-        price = proxyModel.get_price()
+    def test_ifdoco(self, instrument):
+        proxyModel = PricesProxyModel()
+        price = proxyModel.get_price(instrument)
         units = int(math.floor(self._accountModelProxy.get_max_units(price.bid) / 2))
 
         jobs = []

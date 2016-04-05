@@ -44,15 +44,11 @@ class GetTransactionProcess(AbstractProcess):
 
     def exec(self):
         self._task.pool['count'] = self._task.pool['count'] + 1
-        # if self._task.pool['count'] > 80:
-        #     self._set_status(ProcessStatus.finish)
-        #     return
         self._create_job()
-        utils.info('exec')
 
         if self._is_condition() == False:
             return
-        utils.info("self._jobs222: " + str(len(self._get_job_list())))
+
         if 0 == len(self._get_job_list()):
             return
 
@@ -61,11 +57,7 @@ class GetTransactionProcess(AbstractProcess):
             utils.info(job.is_alive())
             utils.info(job.name)
             job.start()
-        # for job in self._jobs:
-        #     utils.info(job.is_alive())
-        #     utils.info(job.name)
-        #     job.start()
-
+        
         self._set_status(ProcessStatus.running)
 
     def _get_transactions(self):
@@ -73,10 +65,7 @@ class GetTransactionProcess(AbstractProcess):
         ids.append(self._task.pool['actual_order_model_sell'].actual_order_id)
         ids.append(self._task.pool['actual_order_model_buy'].actual_order_id)
         etag = None if "etag" not in self._task.pool else self._task.pool["etag"]
-        if etag != None:
-            utils.info("etag11: " + etag)
-        else:
-            utils.info("etag11: nothing")
+
         result = self.__transaction.get_transactions(self._task.pool['account_info_model'].account_id, INSTRUMENTS[0][0], ids=",".join(map(str, ids)), etag=etag)
         self._task.pool["etag"] = result.get_etag()
         if result.get_code() == 200:
@@ -92,11 +81,6 @@ class GetTransactionProcess(AbstractProcess):
 
     def _is_condition(self):
         now = datetime.now()
-        utils.info('test1')
-        utils.info(now)
-        utils.info(self._target_date)
-        utils.info(self._presentation_date)
-        utils.info('test2')
 
         result = now < self._target_date
         if result == False:

@@ -73,6 +73,6 @@ def transaction_list(request, trade_id):
     utils.info(333)
     if request.method == 'GET':
         utils.info(trade_id)
-        transaction_list = TransactionModel.objects.filter(trade_model_id=trade_id).order_by("-created")
+        transaction_list = TransactionModel.objects.filter(trade_model_id=trade_id).order_by("created")
         return render(request, 'zeroanda/transactions/change_list.html', {'transaction_list': transaction_list})
     return HttpResponse('200')
