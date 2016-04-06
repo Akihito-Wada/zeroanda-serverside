@@ -89,10 +89,26 @@ def candles(request):
     if request.method == 'GET':
         try:
             model = PricesProxyModel()
-            startdate = timeutils.get_datetime(2016, 4, 5, 21, 29, 0)
+            # startdate = timeutils.get_datetime(2016, 4, 5, 21, 29, 0)
+            startdate = timeutils.get_datetime(2016, 4, 6, 20, 1, 0)
             result = model.get_candles(INSTRUMENTS[0][0], start=startdate, count=50)
+
+            # enddate = timeutils.unixtime()
+            # result = model.get_candles(INSTRUMENTS[0][0], end=enddate, count=50)
             for candle in result['candles']:
-                utils.info("closeBid: " + str(candle['closeBid']) + ", complete: " + str(candle['complete']) + ", lowBid: " + str(candle['lowBid']) + ", volume: " + str(candle['volume']) + ", closeAsk: " + str(candle['closeAsk']) + ", highBid: " + str(candle['highBid']) + ", lowAsk: " + str(candle['lowAsk']) + ", time: " + str(timeutils.convert_timestamp2datetime(candle['time']))  + ", openAsk: " + str(candle['openAsk']) + ", highAsk: " + str(candle['highAsk']) + ", openBid: " + str(candle['openBid']))
+                utils.info(
+                           "lowBid: " + str(candle['lowBid']) +
+                           ", highBid: " + str(candle['highBid']) +
+                           ", openBid: " + str(candle['openBid']) +
+                           ", closeBid: " + str(candle['closeBid']) +
+                           ", lowAsk: " + str(candle['lowAsk']) +
+                           ", highAsk: " + str(candle['highAsk']) +
+                           ", openAsk: " + str(candle['openAsk']) +
+                           ", closeAsk: " + str(candle['closeAsk']) +
+                           ", volume: " + str(candle['volume']) +
+                           ", complete: " + str(candle['complete']) +
+                           ", time: " + str(timeutils.convert_timestamp2datetime(candle['time']))
+                           )
             return HttpResponse('200')
         except Exception as e:
             utils.info(e)

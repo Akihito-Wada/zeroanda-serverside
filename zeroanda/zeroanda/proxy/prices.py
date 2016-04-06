@@ -44,7 +44,7 @@ class PricesProxyModel:
         else:
             raise Exception('instrument data is required.')
 
-    def get_candles(self, instrument, start = None, count = 20):
-        response = self._streaming.candles(instrument, start=start, count=count)
+    def get_candles(self, instrument, start = None, end = None, count = 20):
+        response = self._streaming.candles(instrument, start=start, end=end, count=count)
         # utils.info(response.get_body())
         return response.get_body()
