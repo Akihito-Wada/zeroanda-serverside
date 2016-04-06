@@ -57,7 +57,7 @@ class GetTransactionProcess(AbstractProcess):
             utils.info(job.is_alive())
             utils.info(job.name)
             job.start()
-        
+
         self._set_status(ProcessStatus.running)
 
     def _get_transactions(self):
