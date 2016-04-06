@@ -11,6 +11,7 @@ To show heartbeat, replace [options] by -b or --displayHeartBeat
 import requests
 import json
 import logging
+from zeroanda.classes.utils import timeutils
 
 logger =logging.getLogger("django")
 
@@ -172,6 +173,36 @@ class Streaming(object):
         # url = settings.STREAMING_DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/prices"
         # url = settings.STREAMING_DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/prices"
         params = {'instruments' : instruments}
+        result = self.get(url, self.get_headers(None, True), params)
+        if result.get_status():
+            return result
+        else:
+            utils.error(result.get_body())
+            raise ZeroandaError(result)
+
+    # http://developer.oanda.com/docs/jp/v1/rates/#retrieve-instrument-history
+    def candles(self, instrument, candleFormat = "bidask", includeFirst = "true", dailyAlignment = 21, alignmentTimezone = "America/New_York", weeklyAlignment = "Friday", granularity = None, count = 10, start = None, end = None):
+        url = settings.DOMAIN + "/v1/candles"
+        params = {
+            'instrument' : instrument,
+            'candleFormat': candleFormat,
+            # 'includeFirst': includeFirst,
+            'dailyAlignment': dailyAlignment,
+            'alignmentTimezone': alignmentTimezone,
+            'weeklyAlignment': weeklyAlignment
+        }
+        if granularity != None:
+            params['granularity'] = granularity
+        if start != None:
+            params['start'] = start
+        if end != None:
+            params['end'] = end
+        if start == None and end == None:
+            params['end'] = timeutils.unixtime()
+
+        if (start == None or end == None) and count != 0:
+            params['count'] = count
+
         result = self.get(url, self.get_headers(None, True), params)
         if result.get_status():
             return result

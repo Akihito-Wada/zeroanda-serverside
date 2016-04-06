@@ -1,9 +1,11 @@
 import  logging
+import datetime
 
 from django.http    import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from zeroanda   import utils
+from zeroanda.classes.utils import timeutils
 from zeroanda.constant import INSTRUMENTS
 from zeroanda.controller.process import OrderProcess
 from zeroanda.errors import ZeroandaError
@@ -76,6 +78,21 @@ def prices(request):
             model = PricesProxyModel()
             utils.info(model)
             result = model.get_price(scheduleModel.country)
+            return HttpResponse('200')
+        except Exception as e:
+            utils.info(e)
+            return HttpResponse('403')
+
+
+@csrf_exempt
+def candles(request):
+    if request.method == 'GET':
+        try:
+            model = PricesProxyModel()
+            startdate = timeutils.get_datetime(2016, 4, 5, 21, 29, 0)
+            result = model.get_candles(INSTRUMENTS[0][0], start=startdate, count=50)
+            for candle in result['candles']:
+                utils.info("closeBid: " + str(candle['closeBid']) + ", complete: " + str(candle['complete']) + ", lowBid: " + str(candle['lowBid']) + ", volume: " + str(candle['volume']) + ", closeAsk: " + str(candle['closeAsk']) + ", highBid: " + str(candle['highBid']) + ", lowAsk: " + str(candle['lowAsk']) + ", time: " + str(timeutils.convert_timestamp2datetime(candle['time']))  + ", openAsk: " + str(candle['openAsk']) + ", highAsk: " + str(candle['highAsk']) + ", openBid: " + str(candle['openBid']))
             return HttpResponse('200')
         except Exception as e:
             utils.info(e)

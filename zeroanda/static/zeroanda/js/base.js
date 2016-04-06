@@ -89,7 +89,21 @@ $(function(){
             url: "http://" + location.host + "/zeroanda/api/prices",
             data: {"schedule_id": $("#scheduleModelId").val()},
             success: function(msg){
-                location.reload();
+                //location.reload();
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+            }
+        });
+    });
+})
+
+// get candles
+$(function(){
+    $("#testGetCandlesButton").click(function() {
+        $.ajax({
+            type: "GET",
+            url: "http://" + location.host + "/zeroanda/api/candles",
+            success: function(msg){
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
             }
