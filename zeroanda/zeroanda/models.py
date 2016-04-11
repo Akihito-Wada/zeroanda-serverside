@@ -9,6 +9,7 @@ class ScheduleModel(models.Model):
     target      = models.BooleanField('対象の可否', choices=SCHEDULE_AVAILABLE, default=SCHEDULE_AVAILABLE[0][0])
     status      = models.IntegerField('状況', choices=SCHEDULE_STATUS, default=SCHEDULE_STATUS[0][0])
     presentation_time   = models.DateTimeField('イベント時刻')
+    updated     = models.DateTimeField('更新時刻', null=True, blank=True)
 
     # def get_instrument(self):
     #     return

@@ -9,13 +9,11 @@ class Action:
 
     def WatchSchedule(self):
         proxy = ScheduleProxyModel()
-        # schedule = 3
-        # schedules = ScheduleModel.objects.all()[:1]
         schedules = proxy.get_schedule()
 
         if len(schedules) > 0:
             self.startTickTack(schedules[0])
-
+            proxy.set_status_proceed(schedules[0])
 
     def startTickTack(self, schedule):
         MailManager.send_opening_mail(schedule)

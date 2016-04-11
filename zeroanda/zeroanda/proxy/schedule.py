@@ -1,6 +1,8 @@
+from zeroanda.constant import SCHEDULE_STATUS, SCHEDULE_AVAILABLE
 from zeroanda.models import ScheduleModel
-from datetime import datetime, timedelta
 from zeroanda import utils
+
+from datetime import datetime, timedelta
 
 class ScheduleProxyModel:
     def get_schedule(self, id = None):
@@ -23,7 +25,16 @@ class ScheduleProxyModel:
     def _get_schedule_by_presentationdate(self):
         now = datetime.now()
         target_startdate = now + timedelta(minutes=60)
-        model = ScheduleModel.objects.filter(presentation_time__lt=target_startdate,
-                                     presentation_time__gt=now)
+        model = ScheduleModel.objects.filter(
+                presentation_time__lt=target_startdate,
+                presentation_time__gt=now,
+                target=SCHEDULE_AVAILABLE[0][0],
+                status=SCHEDULE_STATUS[0][0],
+        )
         utils.info(model.query)
         return model
+
+    def set_status_proceed(self, schedule):
+        schedule.status = SCHEDULE_STATUS[1][0]
+        schedule.update = datetime.now()
+        schedule.save()
