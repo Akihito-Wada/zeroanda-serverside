@@ -31,10 +31,9 @@ class ScheduleProxyModel:
                 target=SCHEDULE_AVAILABLE[0][0],
                 status=SCHEDULE_STATUS[0][0],
         )
-        utils.info(model.query)
         return model
 
     def set_status_proceed(self, schedule):
-        schedule.status = SCHEDULE_STATUS[1][0]
+        # schedule.status = SCHEDULE_STATUS[1][0]
         schedule.update = datetime.now()
         schedule.save()

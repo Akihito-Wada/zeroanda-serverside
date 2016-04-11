@@ -10,7 +10,6 @@ class Action:
     def WatchSchedule(self):
         proxy = ScheduleProxyModel()
         schedules = proxy.get_schedule()
-
         if len(schedules) > 0:
             self.startTickTack(schedules[0])
             proxy.set_status_proceed(schedules[0])
@@ -18,8 +17,8 @@ class Action:
     def startTickTack(self, schedule):
         MailManager.send_opening_mail(schedule)
 
-        # tickTack = TickTack()
-        # tickTack.tickTack(Task.create_task(schedule))
+        tickTack = TickTack()
+        tickTack.tickTack(Task.create_task(schedule))
 
 class TickTackPriceAction:
     def tick_tack(self):

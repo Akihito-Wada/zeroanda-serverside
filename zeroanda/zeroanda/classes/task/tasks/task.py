@@ -6,6 +6,7 @@ from zeroanda.classes.task.children.set_unit_process import SetUnitProcess
 from zeroanda.classes.task.children.ifdococ_process import IfdococProcess
 from zeroanda.classes.task.children.get_transaction_process import GetTransactionProcess
 from zeroanda import utils
+from zeroanda.classes.utils import timeutils
 from zeroanda.models import TradeModel
 
 from django.conf import settings
@@ -23,7 +24,7 @@ class Task(IProcess):
         manager = Manager()
         self.pool = manager.dict()
 
-        self._presentation_date = datetime.now() + timedelta(seconds = 70) if settings.TEST else self._task.schedule.presentation_time
+        self._presentation_date = timeutils.convert_naive_rfc2unixtime(datetime.now() + timedelta(seconds = 70)) if settings.TEST else self.schedule.presentation_time
 
         self.trade_model = TradeModel(schedule=schedule, presentation_time=self._presentation_date, created=datetime.now())
         self.trade_model.save()
@@ -33,9 +34,9 @@ class Task(IProcess):
         task = Task(schedule)
         task.add_process(GetAccountProcess(task))
         task.add_process(GetPriceProcess(task))
-        task.add_process(SetUnitProcess(task))
-        task.add_process(IfdococProcess(task))
-        task.add_process(GetTransactionProcess(task))
+        # task.add_process(SetUnitProcess(task))
+        # task.add_process(IfdococProcess(task))
+        # task.add_process(GetTransactionProcess(task))
         return task
 
     def exec(self):
