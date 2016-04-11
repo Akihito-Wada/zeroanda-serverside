@@ -41,9 +41,15 @@ TYPE = (
     ("market", "Market"),
 )
 
-SCHEDULE_STATUS = (
+SCHEDULE_AVAILABLE = (
     (True, "有効"),
     (False, "無効"),
+)
+
+SCHEDULE_STATUS = (
+    (0, "has been prepared."),
+    (1, "has started."),
+    (2, "has finished."),
 )
 
 COUNTRY_LIST = (

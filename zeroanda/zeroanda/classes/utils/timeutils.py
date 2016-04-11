@@ -25,5 +25,8 @@ def convert_rfc2unixtime(date_time):
 def convert_timestamp2datetime(timestamp_data):
     return datetime.fromtimestamp(format_unixtime(timestamp_data))
 
+def convert_datetime2str(datetime):
+    return datetime.strftime("%Y/%m/%d %H:%M:%S")
+
 def get_datetime(year, month, day, hour, minute, second):
     return int(datetime(year, month, day, hour=hour, minute=minute, second=second).timestamp())

@@ -1,12 +1,13 @@
 from django.db import models
-from zeroanda.constant import ORDER_STATUS, PRIORITY, SIDE, ACTUAL_ORDER_STATUS, INSTRUMENTS, TYPE, SCHEDULE_STATUS, COUNTRY_LIST, ERROR_CODE, ACCOUNT_STATUS
+from zeroanda.constant import ORDER_STATUS, PRIORITY, SIDE, ACTUAL_ORDER_STATUS, INSTRUMENTS, TYPE, SCHEDULE_AVAILABLE, SCHEDULE_STATUS, COUNTRY_LIST, ERROR_CODE, ACCOUNT_STATUS
 
 class ScheduleModel(models.Model):
     created     = models.DateTimeField(auto_now_add=True)
     title       = models.CharField('イベント名', max_length=200)
     country     = models.CharField('対象国', max_length=200, choices=COUNTRY_LIST)
     priority    = models.IntegerField('イベントの重要性', choices=PRIORITY, default=PRIORITY[2][0])
-    target      = models.BooleanField('対象の可否', choices=SCHEDULE_STATUS, default=SCHEDULE_STATUS[0][0])
+    target      = models.BooleanField('対象の可否', choices=SCHEDULE_AVAILABLE, default=SCHEDULE_AVAILABLE[0][0])
+    status      = models.IntegerField('状況', choices=SCHEDULE_STATUS, default=SCHEDULE_STATUS[0][0])
     presentation_time   = models.DateTimeField('イベント時刻')
 
     # def get_instrument(self):
