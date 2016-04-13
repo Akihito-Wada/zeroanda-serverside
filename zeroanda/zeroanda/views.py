@@ -13,7 +13,7 @@ class OrdersListView(generic.TemplateView):
     def get_context_data(self, **kwargs):
         accountModel = AccountProxyModel().get_account()
         orderClass = OrderProxyModel()
-        result = orderClass.get_orders(accountModel)
+        result = orderClass.get_orders(accountModel.account_id)
         utils.info(result)
         context = super(OrdersListView, self).get_context_data(**kwargs)
         return context
@@ -59,18 +59,14 @@ class TransactionListView(generic.ListView):
     context_object_name = "transaction_list"
 
     def get_queryset(self):
-        utils.info(333)
         for key, value in self.request.GET.items():
             utils.info(key)
-        utils.info(self.request.GET)
-        utils.info(self.request.GET.get('trade_id'))
         return TransactionModel.objects.all().order_by("-created")
 
     def get_template_names(self):
         return 'zeroanda/transactions/change_list.html'
 
 def transaction_list(request, trade_id):
-    utils.info(333)
     if request.method == 'GET':
         utils.info(trade_id)
         transaction_list = TransactionModel.objects.filter(trade_model_id=trade_id).order_by("created")

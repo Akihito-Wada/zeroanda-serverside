@@ -301,7 +301,7 @@ class Streaming(object):
     '''
     def get_orders(self, account_id, instruments=None, maxId=None, count=None):
         url = settings.DOMAIN + "/v1/accounts/" + str(account_id) + "/orders"
-        result = self.get(url, self._compressed_headers)
+        result = self.get(url, self.get_headers())
 
         if result.get_status():
             return result

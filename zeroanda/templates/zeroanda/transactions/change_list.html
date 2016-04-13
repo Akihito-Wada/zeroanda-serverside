@@ -69,12 +69,23 @@
         {{ cl.formset.non_form_errors }}
     {% endif %}
     <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
+    <table>
+      <tr>
+        <th>transaction name</th>
+        <th>created</th>
+        <th>presentation_time</th>
+        <th>excute time</th>
+      </tr>
 
-      <ul>
-        {% for transaction in transaction_list %}
-          <li>{{transaction.transaction_name}}</li>
+      {% for transaction in transaction_list %}
+      <tr>
+          <td>{{transaction.transaction_name}}</td>
+          <td>{{transaction.created | date:"c" }}</td>
+          <td>{{transaction.presentation_time | date:"c"}}</td>
+          <td>{{transaction.excute_time | date:"c"}}</td>
+        </tr>
         {% endfor %}
-      </ul>
+    </table>
     </div>
   </div>
 {% endblock %}
