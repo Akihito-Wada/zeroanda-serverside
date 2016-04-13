@@ -2,7 +2,8 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views   import generic
 
-from zeroanda.models import TransactionModel, TradeModel
+from zeroanda.constant import SCHEDULE_STATUS, SCHEDULE_AVAILABLE
+from zeroanda.models import TransactionModel, TradeModel, ScheduleModel
 from zeroanda.proxy.order import OrderProxyModel
 from zeroanda.proxy.account import AccountProxyModel
 from zeroanda.proxy.prices import PricesProxyModel
@@ -69,6 +70,19 @@ class TransactionListView(generic.ListView):
 def transaction_list(request, trade_id):
     if request.method == 'GET':
         utils.info(trade_id)
+        tradeModel = TradeModel.objects.get(pk=trade_id)
+        if tradeModel != None:
+            scheduleModel = ScheduleModel.objects.get(pk=tradeModel.schedule.id)
+            schedule_available = SCHEDULE_AVAILABLE[scheduleModel.target][1]
+            schedule_status = SCHEDULE_STATUS[scheduleModel.status][1]
+
         transaction_list = TransactionModel.objects.filter(trade_model_id=trade_id).order_by("created")
-        return render(request, 'zeroanda/transactions/change_list.html', {'transaction_list': transaction_list})
+        return render(request, 'zeroanda/transactions/change_list.html',
+                      {
+                          'transaction_list': transaction_list,
+                          'trade_model': tradeModel,
+                          'schedule_model': scheduleModel,
+                          'schedule_available': schedule_available,
+                          'schedule_status': schedule_status,
+                      })
     return HttpResponse('200')

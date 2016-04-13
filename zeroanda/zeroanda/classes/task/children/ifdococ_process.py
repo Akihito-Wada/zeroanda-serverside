@@ -78,6 +78,5 @@ class IfdococProcess(AbstractProcess):
     def _set_target_date(self):
         self._presentation_date = self._task._presentation_date if settings.TEST else self._task.schedule.presentation_time
         self._target_date = self._presentation_date + timedelta(seconds = DURATION_IFDOCO_EXCUTE_TIME)
-
         self.__transaction_model = TransactionModel(trade_model=self._task.trade_model, presentation_time=self._target_date, transaction_name=self.__class__.__name__)
         self.__transaction_model.save()

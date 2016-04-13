@@ -68,7 +68,52 @@
         </p>
         {{ cl.formset.non_form_errors }}
     {% endif %}
-    <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
+
+    <h1>schedule model</h1>
+    {% if schedule_model != None %}
+    <table>
+      <tr>
+        <th>title</th>
+        <td>{{ schedule_model.title }}</td>
+      </tr>
+      <tr>
+        <th>country</th>
+        <td>{{ schedule_model.country }}</td>
+      </tr>
+      <tr>
+        <th>priority</th>
+        <td>{{ schedule_model.priority }}</td>
+      </tr>
+      <tr>
+        <th>available</th>
+        <td>{{ schedule_available }}</td>
+      </tr>
+      <tr>
+        <th>status</th>
+        <td>{{ schedule_status }}</td>
+      </tr>
+      <tr>
+        <th>presentation time</th>
+        <td>{{ schedule_model.presentation_time | date:"c" }}</td>
+      </tr>
+      <tr>
+        <th>updated</th>
+        <td>{{ schedule_model.updated | date:"c" }}</td>
+      </tr>
+    </table>
+    {% endif %}
+    <h1>trade model</h1>
+    <table>
+      <tr>
+        <th>presentation_time</th>
+        <td>{{ trade_model.presentation_time | date:"c" }}</td>
+      </tr>
+      <tr>
+        <th>create time</th>
+        <td>{{ trade_model.created | date:"c" }}</td>
+      </tr>
+    </table>
+    <h1>transaction list</h1>
     <table>
       <tr>
         <th>transaction name</th>
@@ -86,6 +131,5 @@
         </tr>
         {% endfor %}
     </table>
-    </div>
   </div>
 {% endblock %}
