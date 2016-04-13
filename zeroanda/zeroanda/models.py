@@ -22,7 +22,7 @@ class ProcessModel(models.Model):
     endtime     = models.DateTimeField('終了時刻', blank=True, null=True)
 
 class PricesModel(models.Model):
-    # schedule    = models.ForeignKey(ScheduleModel)
+    trade_id    = models.IntegerField(default=0)
     ask         = models.FloatField(default=0)
     bid         = models.FloatField(default=0)
     instrument  = models.CharField(max_length=100, blank=True, null=True)
@@ -34,6 +34,7 @@ class PricesModel(models.Model):
     created     = models.DateTimeField('DB生成時刻', auto_now_add=True)
 
 class OrderModel(models.Model):
+    trade_id    = models.IntegerField(default=0)
     schedule    = models.ForeignKey(ScheduleModel, blank=True, null=True)
     instruments = models.CharField(max_length=30, choices=INSTRUMENTS)
     units       = models.IntegerField(default=0)
@@ -51,6 +52,7 @@ class OrderModel(models.Model):
     updated     = models.DateTimeField('更新時刻', null=True, blank=True)
 
 class ActualOrderModel(models.Model):
+    trade_id    = models.IntegerField(default=0)
     schedule    = models.ForeignKey(ScheduleModel, blank=True, null=True)
     order       = models.OneToOneField(OrderModel)
     actual_order_id    = models.BigIntegerField(default=0)

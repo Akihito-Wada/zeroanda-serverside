@@ -21,7 +21,8 @@ class GetPriceProcess(AbstractProcess):
 
     def _get_price(self):
         priceProxyModel = PricesProxyModel()
-        self._task.set_price_model(priceProxyModel.get_price("USD_JPY"))
+        utils.info(self._task.pool['trade_id'])
+        self._task.set_price_model(priceProxyModel.get_price("USD_JPY", self._task.pool['trade_id']))
 
     def _is_condition(self):
         now = timeutils.get_now_with_jst()

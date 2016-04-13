@@ -26,6 +26,7 @@ class Task(IProcess):
         self._presentation_date = timeutils.get_now_with_jst() + timedelta(seconds = 70) if settings.TEST else timeutils.convert_aware_datetime_from_utc_to_jst(self.schedule.presentation_time)
         self.trade_model = TradeModel(schedule=schedule, presentation_time=self._presentation_date, created=timeutils.get_now_with_utc())
         self.trade_model.save()
+        self.pool["trade_id"] = self.trade_model.id
 
     @staticmethod
     def create_task(schedule):

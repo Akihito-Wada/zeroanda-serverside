@@ -1,6 +1,6 @@
 from zeroanda.models import OrderModel, ActualOrderModel
 from zeroanda.classes.utils import timeutils
-from zeroanda.constant import SIDE, TYPE, ACTUAL_ORDER_STATUS, INSTRUMENTS, ERROR_CODE, ORDER_STATUS
+from zeroanda.constant import SIDE, TYPE, ACTUAL_ORDER_STATUS, INSTRUMENTS, ERROR_CODE, ORDER_STATUS, EXPIRY_MINITES
 from zeroanda.errors import ZeroandaError
 from zeroanda.proxy.streaming import Streaming
 from zeroanda   import utils
@@ -17,9 +17,9 @@ class OrderProxyModel:
         self._streaming = Streaming()
 
     def _add_actual_order(self, response, orderModel, scheduleModel = None):
-        utils.info(response.get_body())
         result = response.get_body()
         actualOrderModel = ActualOrderModel(
+            trade_id=orderModel.trade_id,
             schedule= scheduleModel,
             order = orderModel,
             actual_order_id=result["orderOpened"]["id"],
@@ -78,11 +78,12 @@ class OrderProxyModel:
             orderModel.save()
             return
 
-    def buy_ifdoco(self, target_price, upper_bound, lower_bound, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None):
+    def buy_ifdoco(self, target_price, upper_bound, lower_bound, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None, trade_id=0):
         try :
             _instrument = instrument if instrument != None else scheduleModel.country
-            _expiry = expiry if expiry != None else scheduleModel.presentation_time + timedelta(minutes=5)
+            _expiry = expiry if expiry != None else scheduleModel.presentation_time + timedelta(minutes=EXPIRY_MINITES)
             orderModel = OrderModel(
+                            trade_id=trade_id,
                             schedule=scheduleModel,
                             instruments = _instrument,
                             units = units,
@@ -114,12 +115,13 @@ class OrderProxyModel:
             orderModel.updated  = timeutils.get_now_with_jst()
             orderModel.save()
             return
-    # def buy_ifdoco(self, target_price, upper_bound, lower_bound, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None):
-    def sell_ifdoco(self, target_price, upper_bound, lower_bound, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None):
+
+    def sell_ifdoco(self, target_price, upper_bound, lower_bound, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None, trade_id=0):
         _instrument = instrument if instrument != None else scheduleModel.country
-        _expiry = expiry if expiry != None else scheduleModel.presentation_time + timedelta(minutes=5)
+        _expiry = expiry if expiry != None else scheduleModel.presentation_time + timedelta(minutes=EXPIRY_MINITES)
         try :
             orderModel = OrderModel(
+                            trade_id=trade_id,
                             schedule=scheduleModel,
                             instruments = _instrument,
                             units = units,

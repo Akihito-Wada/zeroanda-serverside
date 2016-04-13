@@ -9,6 +9,7 @@ class PricesProxyModel:
     _priceModel     = None
     _scheduleModel  = None
     _etag        = None
+    __trade_id   = 0
 
     def __init__(self):
         self._streaming = Streaming()
@@ -21,26 +22,24 @@ class PricesProxyModel:
             instrument = price['instrument'],
             etag=response.get_etag(),
             time = timeutils.convert_timestamp2datetime(price['time']),
+            trade_id=self.__trade_id
         )
         priceModel.save()
         return priceModel
 
     def _get_price_model(self, instruments):
         price_response = self._streaming.prices(instruments, self._priceModel)
-        utils.info(price_response.get_body())
         if self._priceModel == None or price_response.get_code() != 304:
             self._priceModel = self._add_price(price_response)
             self._etag  = price_response.get_etag()
         # elif price_response.get_code() != 304:
         #     self._priceModel = self._add_price(price_response)
 
-    def get_price(self, instrument = None):
+    def get_price(self, instrument = None, trade_id=None):
+        self.__trade_id = trade_id
         if instrument != None:
             self._get_price_model(instrument)
             return self._priceModel
-        # elif self._scheduleModel != None:
-        #     self._get_price_model(self._scheduleModel.country)
-        #     return self._priceModel
         else:
             raise Exception('instrument data is required.')
 

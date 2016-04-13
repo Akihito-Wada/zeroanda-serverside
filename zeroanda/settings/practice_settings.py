@@ -7,7 +7,7 @@ from .sandbox_settings import *
 
 MODE    = 'practice'
 
-TEST = False
+# TEST = False
 
 DOMAIN = 'https://api-fxpractice.oanda.com'
 STREAMING_DOMAIN = 'https://stream-fxpractice.oanda.com'
