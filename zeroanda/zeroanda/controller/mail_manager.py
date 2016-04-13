@@ -9,15 +9,10 @@ from datetime import datetime
 class MailManager:
     @staticmethod
     def send_opening_mail(schedule):
-
-        utils.info(timeutils.convert_datetime2str(timeutils.format_jst(schedule.presentation_time)))
-        utils.info(timeutils.format_jst(schedule.presentation_time))
-
-        # utils.info(d)
-        subject =  "'" + schedule.title + "::" + timeutils.convert_datetime2str(timeutils.format_jst(schedule.presentation_time)) + "' begins. at " + timeutils.convert_datetime2str(datetime.now())
-        message = "test"
+        subject =  "'" + schedule.title + "::" + timeutils.convert_datetime2str(timeutils.convert_aware_datetime_from_utc_to_jst(schedule.presentation_time)) + "' begins. at " + timeutils.convert_datetime2str(timeutils.get_now_with_jst())
         recipient_list = [settings.ADMIN_EMAIL]
         from_email = settings.DEFAULT_FROM_EMAIL
+        message = "test"
         send_mail(
             subject=subject,
             message=message,

@@ -23,17 +23,15 @@ class Task(IProcess):
         self.schedule = schedule
         manager = Manager()
         self.pool = manager.dict()
-
-        self._presentation_date = timeutils.convert_naive_rfc2unixtime(datetime.now() + timedelta(seconds = 70)) if settings.TEST else self.schedule.presentation_time
-
-        self.trade_model = TradeModel(schedule=schedule, presentation_time=self._presentation_date, created=datetime.now())
+        self._presentation_date = timeutils.get_now_with_jst() + timedelta(seconds = 70) if settings.TEST else timeutils.convert_aware_datetime_from_utc_to_jst(self.schedule.presentation_time)
+        self.trade_model = TradeModel(schedule=schedule, presentation_time=self._presentation_date, created=timeutils.get_now_with_utc())
         self.trade_model.save()
 
     @staticmethod
     def create_task(schedule):
         task = Task(schedule)
         task.add_process(GetAccountProcess(task))
-        task.add_process(GetPriceProcess(task))
+        # task.add_process(GetPriceProcess(task))
         # task.add_process(SetUnitProcess(task))
         # task.add_process(IfdococProcess(task))
         # task.add_process(GetTransactionProcess(task))

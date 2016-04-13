@@ -1,6 +1,7 @@
 from django.conf import settings
 
 from datetime import datetime, timedelta
+import pytz
 from multiprocessing import Process
 
 from zeroanda.classes.task.children.aprocess import AbstractProcess
@@ -27,29 +28,17 @@ class GetAccountProcess(AbstractProcess):
         self._task.set_account_info_model(accountProxyModel.get_account_info())
 
     def _is_condition(self):
-        now = datetime.now()
-        utils.info(4)
-        utils.info(now)
-        utils.info(self._presentation_date)
-        utils.info(timeutils.unixtime())
-        utils.info(timeutils.convert_rfc2unixtime(self._presentation_date))
-        utils.info(4)
+        now = timeutils.get_now_with_jst()
         if now > self._presentation_date:
             raise Exception('presentation time has already passed.')
         result = now > self._target_date
-        utils.info(4)
-        utils.info(now)
-        utils.info(self._target_date)
-        utils.info(4)
         if result == True:
-            self.__transaction_model.excute_time = datetime.now()
+            self.__transaction_model.excute_time = timeutils.get_now_with_jst()
             self.__transaction_model.save()
         return result
 
     def _set_target_date(self):
-        self._presentation_date = self._task._presentation_date if settings.TEST else timeutils.format_jst(self._task.schedule.presentation_time)
+        self._presentation_date = self._task._presentation_date if settings.TEST else self._task.schedule.presentation_time
         self._target_date = self._presentation_date + timedelta(seconds = DURATION_GET_ACCOUNT_EXCUTE_TIME)
-        utils.info(self._presentation_date)
-        utils.info(self._target_date)
         self.__transaction_model = TransactionModel(trade_model=self._task.trade_model, presentation_time=self._target_date, transaction_name=self.__class__.__name__)
         self.__transaction_model.save()

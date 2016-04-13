@@ -90,7 +90,7 @@ def candles(request):
         try:
             model = PricesProxyModel()
             # startdate = timeutils.get_datetime(2016, 4, 5, 21, 29, 0)
-            startdate = timeutils.get_datetime(2016, 4, 7, 2, 58, 0)
+            startdate = timeutils.get_unixtime(2016, 4, 7, 2, 58, 0)
             result = model.get_candles(INSTRUMENTS[0][0], start=startdate, count=50)
 
             # enddate = timeutils.unixtime()

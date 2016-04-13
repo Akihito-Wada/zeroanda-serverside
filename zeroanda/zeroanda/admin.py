@@ -30,13 +30,13 @@ class ActualOrderModelAdmin(admin.StackedInline):
         )
 
     def created_time(self, instance):
-        return timeutils.format_jst(instance.created)
+        return timeutils.convert_aware_datetime_from_utc_to_jst(instance.created)
     def actual_datetime(self, instance):
-        return timeutils.format_jst(instance.time)
+        return timeutils.convert_aware_datetime_from_utc_to_jst(instance.time)
     def expiry_date(self, instance):
-        return timeutils.format_jst(instance.expiry)
+        return timeutils.convert_aware_datetime_from_utc_to_jst(instance.expiry)
     def updated_date(self, instance):
-        return timeutils.format_jst(instance.updated)
+        return timeutils.convert_aware_datetime_from_utc_to_jst(instance.updated)
 
 class OrderModelAdmin(admin.ModelAdmin):
     _actualOrderModel = None
@@ -61,13 +61,13 @@ class OrderModelAdmin(admin.ModelAdmin):
     inlines = [ActualOrderModelAdmin]
 
     def created_time(self, instance):
-        return timeutils.format_jst(instance.created)
+        return timeutils.convert_aware_datetime_from_utc_to_jst(instance.created)
 
     def update_time(self, instance):
-        return timeutils.format_jst(instance.updated)
+        return timeutils.convert_aware_datetime_from_utc_to_jst(instance.updated)
 
     def expiry_time(self, instance):
-        return timeutils.format_jst(instance.expiry)
+        return timeutils.convert_aware_datetime_from_utc_to_jst(instance.expiry)
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         try :
@@ -121,20 +121,20 @@ class ProcessModelAdmin(admin.ModelAdmin):
         return instance.schedule.title
 
     def schedule_presentation_time(self, instance):
-        return timeutils.format_jst(instance.schedule.presentation_time)
+        return timeutils.convert_aware_datetime_from_utc_to_jst(instance.schedule.presentation_time)
 
     def created_time(self, instance):
-        return timeutils.format_jst(instance.created)
+        return timeutils.convert_aware_datetime_from_utc_to_jst(instance.created)
 
     def end_time(self, instance):
-        return timeutils.format_jst(instance.endtime)
+        return timeutils.convert_aware_datetime_from_utc_to_jst(instance.endtime)
 
 class PriceModelAdmin(admin.ModelAdmin):
     def created_time(self, instance):
-        return timeutils.format_jst(instance.created)
+        return timeutils.convert_aware_datetime_from_utc_to_jst(instance.created)
 
     def target_server_time(self, instance):
-        return timeutils.format_jst(instance.time)
+        return timeutils.convert_aware_datetime_from_utc_to_jst(instance.time)
 
     change_list_template = 'zeroanda/admin/price/change_list.html'
     # created_time.short_description = 'precise time'
@@ -163,20 +163,20 @@ class PriceModelAdmin(admin.ModelAdmin):
     #     return instance.schedule.title
 
     def schedule_presentation_time(self, instance):
-        return timeutils.format_jst(instance.schedule.presentation_time)
+        return timeutils.convert_aware_datetime_from_utc_to_jst(instance.schedule.presentation_time)
 
     # def begin_time(self, instance):
-    #     return utils.format_jst(instance.begin)
+    #     return utils.convert_aware_datetime_from_utc_to_jst(instance.begin)
     #
     # def end_time(self, instance):
-    #     return utils.format_jst(instance.end)
+    #     return utils.convert_aware_datetime_from_utc_to_jst(instance.end)
 
 class ErrorModelAdmin(admin.ModelAdmin):
     list_display = ('code', 'message', 'created_time')
     readonly_fields = ('code', 'message', 'info', 'created_time')
 
     def created_time(self, instance):
-        return timeutils.format_jst(instance.created)
+        return timeutils.convert_aware_datetime_from_utc_to_jst(instance.created)
 
 class AccountModelAdmin(admin.ModelAdmin):
     exclude = ['updated']
@@ -201,10 +201,10 @@ class AccountModelAdmin(admin.ModelAdmin):
                        'updated_time')
 
     def created_time(self, instance):
-        return timeutils.format_jst(instance.created)
+        return timeutils.convert_aware_datetime_from_utc_to_jst(instance.created)
 
     def updated_time(self, instance):
-        return timeutils.format_jst(instance.updated)
+        return timeutils.convert_aware_datetime_from_utc_to_jst(instance.updated)
 
 
 class TradesModelAdmin(admin.ModelAdmin):
@@ -216,10 +216,10 @@ class TradesModelAdmin(admin.ModelAdmin):
     )
 
     def created_time(self, instance):
-        return timeutils.format_jst(instance.created)
+        return timeutils.convert_aware_datetime_from_utc_to_jst(instance.created)
 
     def updated_time(self, instance):
-        return timeutils.format_jst(instance.updated)
+        return timeutils.convert_aware_datetime_from_utc_to_jst(instance.updated)
 
 admin.site.register(TradeModel, TradesModelAdmin)
 admin.site.register(ScheduleModel, ScheduleModelAdmin)
