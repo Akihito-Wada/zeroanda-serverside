@@ -41,10 +41,17 @@ class OrderProxyModel:
     '''
     ticket
     '''
-    def get_orders(self, account_id):
-        result = self._streaming.get_orders(account_id)
-        utils.info(result.get_body())
-        return result.get_body()
+    def get_orders(self, account_id=None, trade_id=None, side=None):
+        if account_id != None:
+            result = self._streaming.get_orders(account_id)
+            return result.get_body()
+
+    def get_order_by_trade_id(self, trade_id, side):
+        models = OrderModel.objects.filter(trade_id=trade_id, side=side)
+        if len(models) > 0:
+            return models[0]
+        else:
+            return None
 
     def buy_market(self, accountModel, instruments, units, scheduleModel=None, expiry=None, upperBound=None, lowerBound=None):
         try :

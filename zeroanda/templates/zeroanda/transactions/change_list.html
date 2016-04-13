@@ -131,5 +131,112 @@
         </tr>
         {% endfor %}
     </table>
+
+    <h1>Price Model</h1>
+      {% if price_model != None %}
+      <table>
+          <tr>
+              <th>ask</th>
+              <td>{{ price_model.ask}}</td>
+          </tr>
+          <tr>
+              <th>bid</th>
+              <td>{{ price_model.bid}}</td>
+          </tr>
+          <tr>
+              <th>time</th>
+              <td>{{ price_model.time | date:"c"}}</td>
+          </tr>
+          <tr>
+              <th>created</th>
+              <td>{{ price_model.created | date:"c"}}</td>
+          </tr>
+      </table>
+      {% else %}
+      <h2>none</h2>
+      {% endif %}
+
+      <h1>Actual Order Models</h1>
+      {% if order_model_sell != None and order_model_buy != None %}
+      <table>
+          <tr>
+              <th></th>
+              <th>sell</th>
+              <th>buy</th>
+          </tr>
+          <tr>
+              <th>instruments</th>
+              <td>{{ order_model_sell.instruments }}</td>
+              <td>{{ order_model_buy.instruments }}</td>
+          </tr>
+          <tr>
+              <th>units</th>
+              <td>{{ order_model_sell.units }}</td>
+              <td>{{ order_model_buy.units }}</td>
+          </tr>
+          <tr>
+              <th>side</th>
+              <td>{{ order_model_sell.side }}</td>
+              <td>{{ order_model_buy.side }}</td>
+          </tr>
+          <tr>
+              <th>expiry</th>
+              <td>{{ order_model_sell.expiry | date:"c" }}</td>
+              <td>{{ order_model_buy.expiry | date:"c" }}</td>
+          </tr>
+          <tr>
+              <th>price</th>
+              <td>{{ order_model_sell.price }}</td>
+              <td>{{ order_model_buy.price }}</td>
+          </tr>
+          <tr>
+              <th>upperBound</th>
+              <td>{{ order_model_sell.upperBound }}</td>
+              <td>{{ order_model_buy.upperBound }}</td>
+          </tr>
+          <tr>
+              <th>lowerBound</th>
+              <td>{{ order_model_sell.lowerBound }}</td>
+              <td>{{ order_model_buy.lowerBound }}</td>
+          </tr>
+          <tr>
+              <th>stopLoss</th>
+              <td>{{ order_model_sell.price }}</td>
+              <td>{{ order_model_buy.stopLoss }}</td>
+          </tr>
+          <tr>
+              <th>takeProfit</th>
+              <td>{{ order_model_sell.takeProfit }}</td>
+              <td>{{ order_model_buy.takeProfit }}</td>
+          </tr>
+          <tr>
+              <th>status</th>
+              <td>{{ order_model_sell.status }}</td>
+              <td>{{ order_model_buy.status }}</td>
+          </tr>
+          <tr>
+              <th>error_code</th>
+              <td>{{ order_model_sell.error_code }}</td>
+              <td>{{ order_model_buy.error_code }}</td>
+          </tr>
+          <tr>
+              <th>time</th>
+              <td>{{ order_model_sell.time | date:"c" }}</td>
+              <td>{{ order_model_buy.time | date:"c" }}</td>
+          </tr>
+          <tr>
+              <th>created</th>
+              <td>{{ order_model_sell.created | date:"c" }}</td>
+              <td>{{ order_model_buy.created | date:"c" }}</td>
+          </tr>
+          <tr>
+              <th>updated</th>
+              <td>{{ order_model_sell.updated | date:"c" }}</td>
+              <td>{{ order_model_buy.updated | date:"c" }}</td>
+          </tr>
+      </table>
+      {% else %}
+      <h2>none</h2>
+      {% endif %}
   </div>
 {% endblock %}

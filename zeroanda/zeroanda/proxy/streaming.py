@@ -153,7 +153,6 @@ class Streaming(object):
     def accounts(self, etag = None):
         url = settings.DOMAIN + "/v1/accounts"
         result = self.get(url, self.get_headers(etag=etag))
-
         if result.get_status():
             return result
         else:

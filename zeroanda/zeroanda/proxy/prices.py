@@ -37,9 +37,17 @@ class PricesProxyModel:
 
     def get_price(self, instrument = None, trade_id=None):
         self.__trade_id = trade_id
+
         if instrument != None:
             self._get_price_model(instrument)
             return self._priceModel
+
+        elif trade_id != None:
+            try:
+                return PricesModel.objects.get(trade_id=trade_id)
+            except PricesModel.DoesNotExist:
+                return None
+
         else:
             raise Exception('instrument data is required.')
 

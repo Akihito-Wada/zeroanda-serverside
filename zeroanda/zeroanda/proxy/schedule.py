@@ -1,6 +1,10 @@
+from zeroanda.classes.utils import timeutils
 from zeroanda.constant import SCHEDULE_STATUS, SCHEDULE_AVAILABLE
 from zeroanda.models import ScheduleModel
 from zeroanda import utils
+
+from django.db import IntegrityError
+from django import db
 
 from datetime import datetime, timedelta
 
@@ -35,5 +39,9 @@ class ScheduleProxyModel:
 
     def set_status_proceed(self, schedule):
         # schedule.status = SCHEDULE_STATUS[1][0]
-        schedule.update = datetime.now()
-        schedule.save()
+        db.close_old_connections()
+        try:
+            schedule.updated = timeutils.get_now_with_utc()
+            schedule.save()
+        except IntegrityError as e:
+            utils.info(e)
