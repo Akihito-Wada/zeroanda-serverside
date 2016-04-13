@@ -8,7 +8,7 @@ from zeroanda.proxy.transactions import TransactionsProxyModel
 from zeroanda import utils
 from zeroanda.classes.utils import timeutils
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from multiprocessing import Process
 
 class GetTransactionProcess(AbstractProcess):
@@ -80,7 +80,7 @@ class GetTransactionProcess(AbstractProcess):
             self._set_status(ProcessStatus.finish)
 
     def _is_condition(self):
-        now = datetime.now()
+        now = timeutils.get_now_with_jst()
 
         result = now < self._target_date
         if result == False:
@@ -90,7 +90,6 @@ class GetTransactionProcess(AbstractProcess):
     def _set_target_date(self):
         self._presentation_date = self._task._presentation_date if settings.TEST else self._task.schedule.presentation_time
         self._target_date = self._presentation_date + timedelta(seconds = UNTILE_GET_TRANSACTION_EXCUTE_TIME)
-
 
     def is_finished(self):
         # return True

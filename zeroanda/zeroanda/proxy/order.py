@@ -5,7 +5,7 @@ from zeroanda.errors import ZeroandaError
 from zeroanda.proxy.streaming import Streaming
 from zeroanda   import utils
 
-from datetime import timedelta, datetime
+from datetime import timedelta
 import math
 import logging
 logger =logging.getLogger("django")
@@ -74,7 +74,7 @@ class OrderProxyModel:
         except ZeroandaError as e:
             e.save()
             orderModel.status = ORDER_STATUS[1][0]
-            orderModel.updated  = datetime.now()
+            orderModel.updated  = timeutils.get_now_with_jst()
             orderModel.save()
             return
 
@@ -111,7 +111,7 @@ class OrderProxyModel:
         except ZeroandaError as e:
             e.save()
             orderModel.status = ORDER_STATUS[1][0]
-            orderModel.updated  = datetime.now()
+            orderModel.updated  = timeutils.get_now_with_jst()
             orderModel.save()
             return
     # def buy_ifdoco(self, target_price, upper_bound, lower_bound, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None):
@@ -149,7 +149,7 @@ class OrderProxyModel:
         except ZeroandaError as e:
             e.save()
             orderModel.status = ORDER_STATUS[1][0]
-            orderModel.updated  = datetime.now()
+            orderModel.updated  = timeutils.get_now_with_jst()
             orderModel.save()
             return
 
@@ -202,7 +202,7 @@ class OrderProxyModel:
 
     def _update_order(self, order_id):
         orderModel = OrderModel.objects.get(pk=order_id)
-        orderModel.updated  = datetime.now()
+        orderModel.updated  = timeutils.get_now_with_jst()
         orderModel.save()
 
     '''
@@ -234,13 +234,13 @@ class OrderProxyModel:
         actualOrderModel = self._get_actual_order_model(actual_order_id)
         actualOrderModel.status = ACTUAL_ORDER_STATUS[1][0]
         actualOrderModel.error_code = error_code
-        actualOrderModel.updated    = datetime.now()
+        actualOrderModel.updated    = timeutils.get_now_with_jst()
         actualOrderModel.save()
 
     def _cancel_actual_order(self, actual_order_id):
         actualOrderModel = self._get_actual_order_model(actual_order_id)
         actualOrderModel.status = ACTUAL_ORDER_STATUS[2][0]
-        actualOrderModel.updated    = datetime.now()
+        actualOrderModel.updated    = timeutils.get_now_with_jst()
         actualOrderModel.save()
 
     def _get_ask_upper_bound(self, reference_value):

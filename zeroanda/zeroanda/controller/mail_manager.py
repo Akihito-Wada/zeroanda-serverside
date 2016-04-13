@@ -4,8 +4,6 @@ from django.conf import settings
 from zeroanda import utils
 from zeroanda.classes.utils import timeutils
 
-from datetime import datetime
-
 class MailManager:
     @staticmethod
     def send_opening_mail(schedule):

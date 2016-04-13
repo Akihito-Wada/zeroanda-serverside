@@ -11,7 +11,7 @@ from zeroanda.models import TradeModel
 
 from django.conf import settings
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from multiprocessing import Manager
 
 class Task(IProcess):
@@ -31,9 +31,9 @@ class Task(IProcess):
     def create_task(schedule):
         task = Task(schedule)
         task.add_process(GetAccountProcess(task))
-        # task.add_process(GetPriceProcess(task))
-        # task.add_process(SetUnitProcess(task))
-        # task.add_process(IfdococProcess(task))
+        task.add_process(GetPriceProcess(task))
+        task.add_process(SetUnitProcess(task))
+        task.add_process(IfdococProcess(task))
         # task.add_process(GetTransactionProcess(task))
         return task
 
