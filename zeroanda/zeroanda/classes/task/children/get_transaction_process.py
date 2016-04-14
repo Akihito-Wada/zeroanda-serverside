@@ -3,7 +3,7 @@ from django.conf import settings
 from zeroanda.classes.task.children.aprocess import AbstractProcess
 from zeroanda.classes.enums.transaction_status import TransactionStatus
 from zeroanda.classes.enums.process_status import ProcessStatus
-from zeroanda.constant import INSTRUMENTS, UNTILE_GET_TRANSACTION_EXCUTE_TIME
+from zeroanda.constant import INSTRUMENTS
 from zeroanda.proxy.transactions import TransactionsProxyModel
 from zeroanda import utils
 from zeroanda.classes.utils import timeutils
@@ -89,7 +89,7 @@ class GetTransactionProcess(AbstractProcess):
 
     def _set_target_date(self):
         self._presentation_date = self._task._presentation_date if settings.TEST else self._task.schedule.presentation_time
-        self._target_date = self._presentation_date + timedelta(seconds = UNTILE_GET_TRANSACTION_EXCUTE_TIME)
+        self._target_date = self._presentation_date + timedelta(seconds = settings.NTILE_GET_TRANSACTION_EXCUTE_TIME)
 
     def is_finished(self):
         # return True

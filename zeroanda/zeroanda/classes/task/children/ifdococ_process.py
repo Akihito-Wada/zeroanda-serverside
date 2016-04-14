@@ -3,7 +3,7 @@ from django.conf import settings
 
 from zeroanda.classes.task.children.aprocess import AbstractProcess
 from zeroanda.classes.utils import timeutils
-from zeroanda.constant import INSTRUMENTS, EXPIRY_MINITES, IFDOCO_ENTRY_POINT, DURATION_IFDOCO_EXCUTE_TIME
+from zeroanda.constant import INSTRUMENTS
 from zeroanda.models import TransactionModel
 from zeroanda.proxy.order import OrderProxyModel
 from zeroanda import utils
@@ -30,11 +30,12 @@ class IfdococProcess(AbstractProcess):
         db.close_old_connections()
         self._task.set_actual_orders_model("buy",
             self.__orderProxyModel.buy_ifdoco(
-                target_price=self._task.pool['price_model'].ask + IFDOCO_ENTRY_POINT,
+                target_price=utils.get_ask_target_point(self._task.pool['price_model'].ask),
                 upper_bound=utils.get_ask_upper_bound(self._task.pool['price_model'].ask),
                 lower_bound=utils.get_ask_lower_bound(self._task.pool['price_model'].ask),
+                stop_loss=utils.get_ask_stop_loss(self._task.pool['price_model'].ask),
                 units= self._task.pool['ask_unit'],
-                expiry= timeutils.get_now_with_utc() + timedelta(minutes=EXPIRY_MINITES),
+                expiry= timeutils.get_now_with_utc() + timedelta(minutes=settings.EXPIRY_MINITES),
                 accountId= self._task.pool['account_info_model'].account_id,
                 instrument=INSTRUMENTS[0][0],
                 trade_id=self._task.pool['trade_id']
@@ -45,11 +46,12 @@ class IfdococProcess(AbstractProcess):
         db.close_old_connections()
         self._task.set_actual_orders_model("sell",
             self.__orderProxyModel.sell_ifdoco(
-                target_price=self._task.pool['price_model'].bid - IFDOCO_ENTRY_POINT,
+                target_price=utils.get_bid_target_point(self._task.pool['price_model'].bid),
                 upper_bound=utils.get_bid_upper_bound(self._task.pool['price_model'].bid),
                 lower_bound=utils.get_bid_lower_bound(self._task.pool['price_model'].bid),
+                stop_loss=utils.get_bid_stop_loss(self._task.pool['price_model'].bid),
                 units= self._task.pool['bid_unit'],
-                expiry= timeutils.get_now_with_utc() + timedelta(minutes=EXPIRY_MINITES),
+                expiry= timeutils.get_now_with_utc() + timedelta(minutes=settings.EXPIRY_MINITES),
                 accountId= self._task.pool['account_info_model'].account_id,
                 instrument=INSTRUMENTS[0][0],
                 trade_id=self._task.pool['trade_id']
@@ -70,6 +72,6 @@ class IfdococProcess(AbstractProcess):
 
     def _set_target_date(self):
         self._presentation_date = self._task._presentation_date if settings.TEST else self._task.schedule.presentation_time
-        self._target_date = self._presentation_date + timedelta(seconds = DURATION_IFDOCO_EXCUTE_TIME)
+        self._target_date = self._presentation_date + timedelta(seconds = settings.DURATION_IFDOCO_EXCUTE_TIME)
         self.__transaction_model = TransactionModel(trade_model=self._task.trade_model, presentation_time=self._target_date, transaction_name=self.__class__.__name__)
         self.__transaction_model.save()

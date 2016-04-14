@@ -308,7 +308,7 @@ class Streaming(object):
             utils.error(result.get_body())
             raise ZeroandaError(result)
 
-    def order_ifdoco(self, account_id, instruments, units, side, expiry, price, lowerBound, upperBound):
+    def order_ifdoco(self, account_id, instruments, units, side, expiry, price, lowerBound, upperBound, stopLoss):
         payload = {'instrument': instruments,
                    'units': units,
                    'side': side,
@@ -317,6 +317,7 @@ class Streaming(object):
                    'price': price,
                    'lowerBound': lowerBound,
                    'upperBound': upperBound,
+                   'stopLoss': stopLoss
                    }
 
         if account_id == None:

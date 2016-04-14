@@ -1,9 +1,11 @@
 from zeroanda.models import OrderModel, ActualOrderModel
 from zeroanda.classes.utils import timeutils
-from zeroanda.constant import SIDE, TYPE, ACTUAL_ORDER_STATUS, INSTRUMENTS, ERROR_CODE, ORDER_STATUS, EXPIRY_MINITES
+from zeroanda.constant import SIDE, TYPE, ACTUAL_ORDER_STATUS, INSTRUMENTS, ERROR_CODE, ORDER_STATUS
 from zeroanda.errors import ZeroandaError
 from zeroanda.proxy.streaming import Streaming
 from zeroanda   import utils
+
+from django.conf import settings
 
 from datetime import timedelta
 import math
@@ -85,10 +87,10 @@ class OrderProxyModel:
             orderModel.save()
             return
 
-    def buy_ifdoco(self, target_price, upper_bound, lower_bound, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None, trade_id=0):
+    def buy_ifdoco(self, target_price, upper_bound, lower_bound, stop_loss, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None, trade_id=0):
         try :
             _instrument = instrument if instrument != None else scheduleModel.country
-            _expiry = expiry if expiry != None else scheduleModel.presentation_time + timedelta(minutes=EXPIRY_MINITES)
+            _expiry = expiry if expiry != None else scheduleModel.presentation_time + timedelta(minutes=settings.EXPIRY_MINITES)
             orderModel = OrderModel(
                             trade_id=trade_id,
                             schedule=scheduleModel,
@@ -100,6 +102,7 @@ class OrderProxyModel:
                             price=target_price,
                             upperBound=upper_bound,
                             lowerBound=lower_bound,
+                            stopLoss=stop_loss,
                             status=ORDER_STATUS[0][0]
                             )
             orderModel.save()
@@ -112,7 +115,8 @@ class OrderProxyModel:
                 _expiry,
                 target_price,
                 upper_bound,
-                lower_bound
+                lower_bound,
+                stop_loss
             )
             if response.get_code() == 201:
                 return self._add_actual_order(response, orderModel, scheduleModel)
@@ -123,9 +127,9 @@ class OrderProxyModel:
             orderModel.save()
             return
 
-    def sell_ifdoco(self, target_price, upper_bound, lower_bound, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None, trade_id=0):
+    def sell_ifdoco(self, target_price, upper_bound, lower_bound, stop_loss, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None, trade_id=0):
         _instrument = instrument if instrument != None else scheduleModel.country
-        _expiry = expiry if expiry != None else scheduleModel.presentation_time + timedelta(minutes=EXPIRY_MINITES)
+        _expiry = expiry if expiry != None else scheduleModel.presentation_time + timedelta(minutes=settings.EXPIRY_MINITES)
         try :
             orderModel = OrderModel(
                             trade_id=trade_id,
@@ -138,6 +142,7 @@ class OrderProxyModel:
                             price=target_price,
                             upperBound=upper_bound,
                             lowerBound=lower_bound,
+                            stopLoss=stop_loss,
                             status=ORDER_STATUS[0][0]
                             )
             orderModel.save()
@@ -150,7 +155,8 @@ class OrderProxyModel:
                 _expiry,
                 target_price,
                 upper_bound,
-                lower_bound
+                lower_bound,
+                stop_loss
             )
             # response = self._streaming.order_ifdoco(accountModel, orderModel)
             if response.get_code() == 201:
@@ -251,24 +257,24 @@ class OrderProxyModel:
         actualOrderModel.status = ACTUAL_ORDER_STATUS[2][0]
         actualOrderModel.updated    = timeutils.get_now_with_jst()
         actualOrderModel.save()
-
-    def _get_ask_upper_bound(self, reference_value):
-        # return ('%.3f', reference_value + 10.0)
-        return math.floor((reference_value + 0.1) * 1000) / 1000
-        # return reference_value + 10.0
-
-    def _get_ask_lower_bound(self, reference_value):
-        # return ('%.3f', reference_value - 10.0)
-        return math.floor((reference_value - 0.1) * 1000) / 1000
-        # return reference_value - 10.0
-
-    def _get_bid_upper_bound(self, reference_value):
-        # return ('%.3f', reference_value + 10.0)
-        return math.floor((reference_value + 0.1) * 1000) / 1000
-        # return reference_value + 10.0
-
-    def _get_bid_lower_bound(self, reference_value):
-        # return ('%.3f', reference_value - 10.0)
-        return math.floor((reference_value - 0.1) * 1000) / 1000
-        # return reference_value - 10.0
+    #
+    # def _get_ask_upper_bound(self, reference_value):
+    #     # return ('%.3f', reference_value + 10.0)
+    #     return math.floor((reference_value + 0.1) * 1000) / 1000
+    #     # return reference_value + 10.0
+    #
+    # def _get_ask_lower_bound(self, reference_value):
+    #     # return ('%.3f', reference_value - 10.0)
+    #     return math.floor((reference_value - 0.1) * 1000) / 1000
+    #     # return reference_value - 10.0
+    #
+    # def _get_bid_upper_bound(self, reference_value):
+    #     # return ('%.3f', reference_value + 10.0)
+    #     return math.floor((reference_value + 0.1) * 1000) / 1000
+    #     # return reference_value + 10.0
+    #
+    # def _get_bid_lower_bound(self, reference_value):
+    #     # return ('%.3f', reference_value - 10.0)
+    #     return math.floor((reference_value - 0.1) * 1000) / 1000
+    #     # return reference_value - 10.0
 

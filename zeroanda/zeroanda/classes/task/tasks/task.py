@@ -7,7 +7,6 @@ from zeroanda.classes.task.children.set_unit_process import SetUnitProcess
 from zeroanda.classes.task.children.ifdococ_process import IfdococProcess
 from zeroanda.classes.task.children.get_transaction_process import GetTransactionProcess
 from zeroanda.classes.utils import timeutils
-from zeroanda.constant import TEST_PRESENTATION_DURATION_MINITUS
 from zeroanda.models import TradeModel
 
 from django.conf import settings
@@ -24,7 +23,7 @@ class Task(IProcess):
         self.schedule = schedule
         manager = Manager()
         self.pool = manager.dict()
-        self._presentation_date = timeutils.get_now_with_jst() + timedelta(seconds = TEST_PRESENTATION_DURATION_MINITUS) if settings.TEST else timeutils.convert_aware_datetime_from_utc_to_jst(self.schedule.presentation_time)
+        self._presentation_date = timeutils.get_now_with_jst() + timedelta(seconds = settings.TEST_PRESENTATION_DURATION_MINITUS) if settings.TEST else timeutils.convert_aware_datetime_from_utc_to_jst(self.schedule.presentation_time)
         self.trade_model = TradeModel(schedule=schedule, presentation_time=self._presentation_date, created=timeutils.get_now_with_utc())
         self.trade_model.save()
         self.pool["trade_id"] = self.trade_model.id
