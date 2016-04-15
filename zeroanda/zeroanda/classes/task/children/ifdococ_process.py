@@ -84,4 +84,4 @@ class IfdococProcess(AbstractProcess):
         self.__transaction_model.save()
 
     def __get_priority(self):
-        return 1
+        return 0

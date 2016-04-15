@@ -35,7 +35,7 @@ class PricesProxyModel:
         # elif price_response.get_code() != 304:
         #     self._priceModel = self._add_price(price_response)
 
-    def get_price(self, instrument = None, trade_id=None):
+    def get_price(self, instrument = None, trade_id=0):
         self.__trade_id = trade_id
 
         if instrument != None:
