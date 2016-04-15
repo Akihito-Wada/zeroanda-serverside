@@ -258,23 +258,4 @@ class OrderProxyModel:
         actualOrderModel.updated    = timeutils.get_now_with_jst()
         actualOrderModel.save()
     #
-    # def _get_ask_upper_bound(self, reference_value):
-    #     # return ('%.3f', reference_value + 10.0)
-    #     return math.floor((reference_value + 0.1) * 1000) / 1000
-    #     # return reference_value + 10.0
-    #
-    # def _get_ask_lower_bound(self, reference_value):
-    #     # return ('%.3f', reference_value - 10.0)
-    #     return math.floor((reference_value - 0.1) * 1000) / 1000
-    #     # return reference_value - 10.0
-    #
-    # def _get_bid_upper_bound(self, reference_value):
-    #     # return ('%.3f', reference_value + 10.0)
-    #     return math.floor((reference_value + 0.1) * 1000) / 1000
-    #     # return reference_value + 10.0
-    #
-    # def _get_bid_lower_bound(self, reference_value):
-    #     # return ('%.3f', reference_value - 10.0)
-    #     return math.floor((reference_value - 0.1) * 1000) / 1000
-    #     # return reference_value - 10.0
 

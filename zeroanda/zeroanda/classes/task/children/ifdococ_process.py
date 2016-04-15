@@ -6,6 +6,7 @@ from zeroanda.classes.utils import timeutils
 from zeroanda.constant import INSTRUMENTS
 from zeroanda.models import TransactionModel
 from zeroanda.proxy.order import OrderProxyModel
+from zeroanda.proxy.point_map_proxy import AskPointMapProxy, BidPointMapProxy
 from zeroanda import utils
 
 from datetime import timedelta
@@ -28,12 +29,15 @@ class IfdococProcess(AbstractProcess):
 
     def _order_buy(self):
         db.close_old_connections()
+
+        proxy = AskPointMapProxy(self._task.pool['price_model'].ask, self.__get_priority())
+
         self._task.set_actual_orders_model("buy",
             self.__orderProxyModel.buy_ifdoco(
-                target_price=utils.get_ask_target_point(self._task.pool['price_model'].ask),
-                upper_bound=utils.get_ask_upper_bound(self._task.pool['price_model'].ask),
-                lower_bound=utils.get_ask_lower_bound(self._task.pool['price_model'].ask),
-                stop_loss=utils.get_ask_stop_loss(self._task.pool['price_model'].ask),
+                target_price=proxy.get_target_point(),
+                upper_bound=proxy.get_upper_bound(),
+                lower_bound=proxy.get_lower_bound(),
+                stop_loss=proxy.get_stop_loss(),
                 units= self._task.pool['ask_unit'],
                 expiry= timeutils.get_now_with_utc() + timedelta(minutes=settings.EXPIRY_MINITES),
                 accountId= self._task.pool['account_info_model'].account_id,
@@ -44,12 +48,15 @@ class IfdococProcess(AbstractProcess):
 
     def _order_sell(self):
         db.close_old_connections()
+
+        proxy = BidPointMapProxy(self._task.pool['price_model'].bid, self.__get_priority())
+
         self._task.set_actual_orders_model("sell",
             self.__orderProxyModel.sell_ifdoco(
-                target_price=utils.get_bid_target_point(self._task.pool['price_model'].bid),
-                upper_bound=utils.get_bid_upper_bound(self._task.pool['price_model'].bid),
-                lower_bound=utils.get_bid_lower_bound(self._task.pool['price_model'].bid),
-                stop_loss=utils.get_bid_stop_loss(self._task.pool['price_model'].bid),
+                target_price=proxy.get_target_point(),
+                upper_bound=proxy.get_upper_bound(),
+                lower_bound=proxy.get_lower_bound(),
+                stop_loss=proxy.get_stop_loss(),
                 units= self._task.pool['bid_unit'],
                 expiry= timeutils.get_now_with_utc() + timedelta(minutes=settings.EXPIRY_MINITES),
                 accountId= self._task.pool['account_info_model'].account_id,
@@ -75,3 +82,6 @@ class IfdococProcess(AbstractProcess):
         self._target_date = self._presentation_date + timedelta(seconds = settings.DURATION_IFDOCO_EXCUTE_TIME)
         self.__transaction_model = TransactionModel(trade_model=self._task.trade_model, presentation_time=self._target_date, transaction_name=self.__class__.__name__)
         self.__transaction_model.save()
+
+    def __get_priority(self):
+        return 1
