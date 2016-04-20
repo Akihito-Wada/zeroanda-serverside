@@ -1,5 +1,5 @@
 from django.db import models
-from zeroanda.constant import ORDER_STATUS, PRIORITY, SIDE, ACTUAL_ORDER_STATUS, INSTRUMENTS, TYPE, SCHEDULE_AVAILABLE, SCHEDULE_STATUS, COUNTRY_LIST, ERROR_CODE, ACCOUNT_STATUS
+from zeroanda.constant import ORDER_STATUS, PRIORITY, SIDE, ACTUAL_ORDER_STATUS, INSTRUMENTS, TYPE, SCHEDULE_AVAILABLE, SCHEDULE_STATUS, COUNTRY_LIST, ERROR_CODE, ACCOUNT_STATUS, TRANSACTION_REASON, TRANSACTION_TYPE
 
 class ScheduleModel(models.Model):
     created     = models.DateTimeField(auto_now_add=True)
@@ -72,14 +72,22 @@ class ActualOrderModel(models.Model):
     created     = models.DateTimeField('登録時刻', auto_now_add=True)
     updated     = models.DateTimeField('更新時刻', null=True, blank=True)
 
-# class TransactionModel(models.Model):
-#     actual_order_id     = models.BigIntegerField(default=0)
-#     units = models.IntegerField(default=1)
-#     side = models.CharField(max_length=200)
-#     upperBound = models.FloatField("成立上限価格", default=0)
-#     created     = models.DateTimeField('登録時刻', auto_now_add=True, null=True)
-#     presentation_time= models.DateTimeField('実行予定時刻', null=True)
-#     excute_time= models.DateTimeField('実行時刻', null=True)
+class TransactionModel(models.Model):
+    trade_id    = models.IntegerField(default=0)
+    schedule    = models.ForeignKey(ScheduleModel, blank=True, null=True)
+    actual_order_model = models.ForeignKey(ActualOrderModel, blank=True, null=True)
+    instruments = models.CharField(max_length=200)
+    units       = models.IntegerField(default=1)
+    side        = models.CharField(max_length=200)
+    expiry      = models.DateTimeField(blank=True, null=True)
+    price       = models.FloatField()
+    upperBound = models.FloatField("成立上限価格", default=0)
+    lowerBound  = models.FloatField("成立下限価格", default=0)
+    stopLoss    = models.FloatField(default=0)
+    type        = models.IntegerField(choices=TRANSACTION_TYPE, default=TRANSACTION_TYPE[0][0])
+    reason      = models.IntegerField(choices=TRANSACTION_REASON, default=TRANSACTION_REASON[0][0])
+    time        = models.DateTimeField('対象サーバー時刻', blank=True, null=True)
+    created     = models.DateTimeField('登録時刻', auto_now_add=True)
 
 class AccountModel(models.Model):
     # schedule    = models.ForeignKey(ScheduleModel)
