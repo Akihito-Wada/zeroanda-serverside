@@ -180,7 +180,7 @@ class OrderProxyModel:
         try:
             self._streaming.cancel_order(accountModel, trade_id)
             self._cancel_actual_order(trade_id);
-            actualOrderModel = self._get_actual_order_model(trade_id)
+            actualOrderModel = self.get_actual_order_model(trade_id)
             self._update_order(actualOrderModel.order.id)
         except ZeroandaError as e:
             actualOrderModel = self._get_active_actual_order_model(trade_id)
@@ -197,7 +197,7 @@ class OrderProxyModel:
         try:
             self._streaming.cancel_order(accountModel, actual_order_id)
             self._cancel_actual_order(actual_order_id);
-            actualOrderModel = self._get_actual_order_model(actual_order_id)
+            actualOrderModel = self.get_actual_order_model(actual_order_id)
             self._update_order(actualOrderModel.order.id)
         except ZeroandaError as e:
             actualOrderModel = self._get_active_actual_order_model(actual_order_id)
@@ -235,25 +235,25 @@ class OrderProxyModel:
     ActualOrderModelを取得
     args: {actual_order_id}
     '''
-    def _get_actual_order_model(self, actual_order_id):
+    def get_actual_order_model(self, actual_order_id):
         try:
             return ActualOrderModel.objects.get(actual_order_id=actual_order_id)
         except ActualOrderModel.DoesNotExist as e:
-            raise Exception(e)
+            return None
 
     '''
     ActualOrderModelのエラーコードを更新
     args: {actual_order_id, error_code}
     '''
     def _update_error_code(self, actual_order_id, error_code):
-        actualOrderModel = self._get_actual_order_model(actual_order_id)
+        actualOrderModel = self.get_actual_order_model(actual_order_id)
         actualOrderModel.status = ACTUAL_ORDER_STATUS[1][0]
         actualOrderModel.error_code = error_code
         actualOrderModel.updated    = timeutils.get_now_with_jst()
         actualOrderModel.save()
 
     def _cancel_actual_order(self, actual_order_id):
-        actualOrderModel = self._get_actual_order_model(actual_order_id)
+        actualOrderModel = self.get_actual_order_model(actual_order_id)
         actualOrderModel.status = ACTUAL_ORDER_STATUS[2][0]
         actualOrderModel.updated    = timeutils.get_now_with_jst()
         actualOrderModel.save()

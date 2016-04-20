@@ -7,6 +7,7 @@ from zeroanda.classes.enums.process_status import ProcessStatus
 from zeroanda.constant import INSTRUMENTS
 from zeroanda.models import TradeTransactionModel
 from zeroanda.proxy.transactions import TransactionsProxyModel
+from zeroanda.proxy.order import OrderProxyModel
 from zeroanda import utils
 from zeroanda.classes.utils import timeutils
 
@@ -28,21 +29,18 @@ class GetTransactionProcess(AbstractProcess):
         instrument = INSTRUMENTS[0][0] if settings.TEST else self._task.schedule.country
         result = transactionProxyModel.get_transactions(account_id=self._task.pool["account_info_model"].account_id, instrument=instrument, count=2)
 
+        orderProxy = OrderProxyModel()
         if result.get_code() == 429:
             return
         if 'transactions' not in result.get_body():
             transaction = result.get_body()
-            if "side" in transaction:
-                key = "actual_order_model_" + transaction['side']
-                actual_order_model = None if key not in self._task.pool else self._task.pool[key]
-                transactionProxyModel.add(transaction,schedule=self._task.schedule,trade_id=self._task.pool['trade_id'], actual_order_model=actual_order_model)
+            actual_order_model = orderProxy.get_actual_order_model(actual_order_id=transaction["orderId"])
+            transactionProxyModel.add(transaction,schedule=self._task.schedule,trade_id=self._task.pool['trade_id'], actual_order_model=actual_order_model)
         else:
             transactions = result.get_body()["transactions"]
             for transaction in transactions:
-                if "side" in transaction:
-                    key = "actual_order_model_" + transaction['side']
-                    actual_order_model = None if key not in self._task.pool else self._task.pool[key]
-                    transactionProxyModel.add(transaction, schedule=self._task.schedule, trade_id=self._task.pool['trade_id'], actual_order_model=actual_order_model)
+                actual_order_model = orderProxy.get_actual_order_model(actual_order_id=transaction["orderId"])
+                transactionProxyModel.add(transaction, schedule=self._task.schedule, trade_id=self._task.pool['trade_id'],actual_order_model=actual_order_model)
 
     def _is_condition(self):
         now = timeutils.get_now_with_jst()

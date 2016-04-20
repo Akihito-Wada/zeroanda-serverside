@@ -45,9 +45,9 @@ class AbstractProcess(IProcess):
 
     def is_finished(self):
         for job in self._get_job_list():
-            utils.info(job.is_alive())
-            utils.info(job.exitcode)
-            utils.info(-signal.SIGTERM)
+            # utils.info(job.is_alive())
+            # utils.info(job.exitcode)
+            # utils.info(-signal.SIGTERM)
             if job.is_alive() == True or job.is_alive() == False and job.exitcode == None:
                 return False
 
