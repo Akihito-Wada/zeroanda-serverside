@@ -26,8 +26,23 @@ class GetTransactionProcess(AbstractProcess):
     def _get_transactions(self):
         transactionProxyModel = TransactionsProxyModel()
         instrument = INSTRUMENTS[0][0] if settings.TEST else self._task.schedule.country
-        result = transactionProxyModel.get_transactions(self._task.pool["account_info_model"].account_id, instrument, count=2)
-        utils.info(result.get_body())
+        result = transactionProxyModel.get_transactions(account_id=self._task.pool["account_info_model"].account_id, instrument=instrument, count=2)
+
+        if result.get_code() == 429:
+            return
+        if 'transactions' not in result.get_body():
+            transaction = result.get_body()
+            if "side" in transaction:
+                key = "actual_order_model_" + transaction['side']
+                actual_order_model = None if key not in self._task.pool else self._task.pool[key]
+                transactionProxyModel.add(transaction,schedule=self._task.schedule,trade_id=self._task.pool['trade_id'], actual_order_model=actual_order_model)
+        else:
+            transactions = result.get_body()["transactions"]
+            for transaction in transactions:
+                if "side" in transaction:
+                    key = "actual_order_model_" + transaction['side']
+                    actual_order_model = None if key not in self._task.pool else self._task.pool[key]
+                    transactionProxyModel.add(transaction, schedule=self._task.schedule, trade_id=self._task.pool['trade_id'], actual_order_model=actual_order_model)
 
     def _is_condition(self):
         now = timeutils.get_now_with_jst()

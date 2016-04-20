@@ -7,6 +7,7 @@ from zeroanda.models import TradeTransactionModel, TradeModel, ScheduleModel
 from zeroanda.proxy.order import OrderProxyModel
 from zeroanda.proxy.account import AccountProxyModel
 from zeroanda.proxy.prices import PricesProxyModel
+from zeroanda.proxy.transactions import TransactionsProxyModel
 
 from zeroanda import utils
 
@@ -82,6 +83,25 @@ def transaction_list(request, trade_id):
             orderModelSell = orderProxyModel.get_order_by_trade_id(trade_id=trade_id, side=SIDE[0][0])
             orderModelBuy = orderProxyModel.get_order_by_trade_id(trade_id=trade_id, side=SIDE[1][0])
 
+            transactionModel = TransactionsProxyModel()
+
+            utils.info(3333333)
+            if orderModelBuy != None and orderModelBuy.actual_model != None:
+                utils.info(orderModelBuy.actual_model.id)
+                utils.info(3333333)
+                type_buy = transactionModel.get_latest_type(orderModelBuy.actual_model.id)
+                reason_buy = transactionModel.get_latest_transaction_reason_value(orderModelBuy.actual_model.id)
+            else:
+                type_buy = None
+                reason_buy = None
+
+            if orderModelSell != None and orderModelSell.actual_model != None:
+                type_sell = transactionModel.get_latest_type(orderModelSell.actual_model.id)
+                reason_sell = transactionModel.get_latest_transaction_reason_value(orderModelSell.actual_model.id)
+            else:
+                type_sell = None
+                reason_sell = None
+
         transaction_list = TradeTransactionModel.objects.filter(trade_model_id=trade_id).order_by("created")
         return render(request, 'zeroanda/transactions/change_list.html',
                       {
@@ -93,5 +113,9 @@ def transaction_list(request, trade_id):
                           'price_model': priceModel,
                           'order_model_sell': orderModelSell,
                           'order_model_buy': orderModelBuy,
+                          'type_buy': type_buy,
+                          'reason_buy': reason_buy,
+                          'type_sell': type_sell,
+                          'reason_sell': reason_sell,
                       })
     return HttpResponse('200')

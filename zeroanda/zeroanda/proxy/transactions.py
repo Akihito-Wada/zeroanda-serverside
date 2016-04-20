@@ -10,45 +10,67 @@ class TransactionsProxyModel:
     def __init__(self):
         self._streaming = Streaming()
 
-    def get_transactions(self, account_id, instrument, id = None, ids = None, count = None, etag = None):
-        if etag == None:
-            utils.info("none")
+    def get_transactions(self, account_id=None, instrument=None, id = None, ids = None, count = None, etag = None, actual_order_model_id=None):
+        if actual_order_model_id != None:
+            return TransactionModel.objects.filter(actual_order_model_id=actual_order_model_id)
+        else:
+            response = self._streaming.get_transactions(account_id, instrument, id=id, ids=ids, count=count, etag=etag)
+            return response
 
-        response = self._streaming.get_transactions(account_id, instrument, id=id, ids=ids, count=count, etag=etag)
-        utils.info("code: " + str(response.get_code()))
-        # if response.get_status():
-        return response
-        # if response.get_code() == 200 or response.get_code() == 304 :
-        #     return response
-            # return response.get_body()
+    def get_latest_type(self, actual_order_model_id):
+        try:
+            model = TransactionModel.objects.filter(actual_order_model_id=actual_order_model_id).order_by('-id')[:1][0]
+            return self.transaction_type_value(model.type)
+        except:
+            return None
+
+    def get_latest_transaction_reason_value(self, actual_order_model_id):
+        try:
+            model = TransactionModel.objects.filter(actual_order_model_id=actual_order_model_id).order_by('-id')[:1][0]
+            return self.transaction_reason_value(model.reason)
+        except:
+            return None
 
     def add(self, transaction, trade_id=0, schedule=None, actual_order_model=None):
         transaction_model = TransactionModel(
+            actual_order_id=transaction["id"],
             trade_id=trade_id,
             schedule=schedule,
             actual_order_model=actual_order_model,
-            instruments=transaction["instrument"],
-            units=transaction["units"],
-            side=transaction["side"],
-            expiry=timeutils.convert_timestamp2datetime(transaction["expiry"]),
-            price=transaction["price"],
-            upperBound=transaction["upperBound"],
-            lowerBound=transaction["lowerBound"],
-            stopLoss=transaction["stopLossPrice"],
-            type=self.transaction_type(transaction["type"]),
-            reason=self.transaction_reason(transaction["reason"]),
+            instruments=None if "instrument" not in transaction else transaction["instrument"],
+            units=0 if "units" not in transaction else transaction["units"],
+            side=None if "side" not in transaction else transaction["side"],
+            expiry=None if "expiry" not in transaction else timeutils.convert_timestamp2datetime(transaction["expiry"]),
+            price=0 if "price" not in transaction else transaction["price"],
+            upperBound=0 if "upperBound" not in transaction else transaction["upperBound"],
+            lowerBound=0 if "lowerBound" not in transaction else transaction["lowerBound"],
+            stopLoss=0 if "stopLoss" not in transaction else transaction["stopLossPrice"],
+            type=self.transaction_type_key(transaction["type"]),
+            reason=self.transaction_reason_key(transaction["reason"]),
             time=timeutils.convert_timestamp2datetime(transaction["time"]),
         )
         transaction_model.save()
 
-    def transaction_type(self, value):
+    def transaction_type_key(self, value):
         for item in TRANSACTION_TYPE:
             if item[1] == value:
                 return item[0]
         raise Exception('no constant for type.')
 
-    def transaction_reason(self, value):
+    def transaction_reason_key(self, value):
         for item in TRANSACTION_REASON:
             if item[1] == value:
                 return item[0]
+        raise Exception('no constant for reason.')
+
+    def transaction_type_value(self, key):
+        for item in TRANSACTION_TYPE:
+            if item[0] == key:
+                return item[1]
+        raise Exception('no constant for type.')
+
+    def transaction_reason_value(self, key):
+        for item in TRANSACTION_REASON:
+            if item[0] == key:
+                return item[1]
         raise Exception('no constant for reason.')

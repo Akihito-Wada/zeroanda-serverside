@@ -17,8 +17,8 @@ def test_api_transactions(request):
         etag = "df8446ef2ea9a10ac34216ce287b79e9e7d9e72d"
         ids = '10231579886,10231579885'
         id = '10233653978'
-        # result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], count=2)
-        result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], id=id)
+        result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], count=2)
+        # result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], id=id)
         # result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], id=id, etag=etag)
         # result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], ids=ids)
         # result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], ids=ids, etag=etag)
@@ -30,7 +30,7 @@ def test_api_transactions(request):
         else:
             transactions = result.get_body()["transactions"]
             for transaction in transactions:
-                transactionModel.add(result.get_body())
+                transactionModel.add(transaction)
         # transaction = result.get_body() if 'transactions' not in result.get_body() else result.get_body()["transactions"][0]
         # utils.info(transaction)
         # if 'expiry' in transaction:
