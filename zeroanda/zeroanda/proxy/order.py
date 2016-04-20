@@ -51,6 +51,7 @@ class OrderProxyModel:
     def get_order_by_trade_id(self, trade_id, side):
         models = OrderModel.objects.filter(trade_id=trade_id, side=side)
         if len(models) > 0:
+            utils.info(models[0].actual_model.actual_order_id)
             return models[0]
         else:
             return None
@@ -70,13 +71,13 @@ class OrderProxyModel:
                             )
             orderModel.save()
             response = self._streaming.order_market(
-                accountModel.account_id,
-                instruments,
-                units,
-                SIDE[1][0],
-                expiry,
-                upperBound,
-                lowerBound
+                account_id=accountModel.account_id,
+                instruments=instruments,
+                units=units,
+                side=SIDE[1][0],
+                expiry=expiry,
+                upperBound=upperBound,
+                lowerBound=lowerBound
             )
             if response.get_code() == 201:
                 self._add_actual_order(response, orderModel, scheduleModel)
@@ -106,17 +107,16 @@ class OrderProxyModel:
                             status=ORDER_STATUS[0][0]
                             )
             orderModel.save()
-
             response = self._streaming.order_ifdoco(
-                accountId if accountId != None else accountModel.account_id,
-                _instrument,
-                units,
-                SIDE[1][0],
-                _expiry,
-                target_price,
-                upper_bound,
-                lower_bound,
-                stop_loss
+                account_id=accountId if accountId != None else accountModel.account_id,
+                instruments=_instrument,
+                units=units,
+                side=SIDE[1][0],
+                expiry=_expiry,
+                price=target_price,
+                upperBound=upper_bound,
+                lowerBound=lower_bound,
+                stopLoss=stop_loss
             )
             if response.get_code() == 201:
                 return self._add_actual_order(response, orderModel, scheduleModel)
@@ -148,15 +148,15 @@ class OrderProxyModel:
             orderModel.save()
 
             response = self._streaming.order_ifdoco(
-                accountId if accountId != None else accountModel.account_id,
-                _instrument,
-                units,
-                SIDE[0][0],
-                _expiry,
-                target_price,
-                upper_bound,
-                lower_bound,
-                stop_loss
+                account_id=accountId if accountId != None else accountModel.account_id,
+                instruments=_instrument,
+                units=units,
+                side=SIDE[0][0],
+                expiry=_expiry,
+                price=target_price,
+                upperBound=upper_bound,
+                lowerBound=lower_bound,
+                stopLoss=stop_loss
             )
             # response = self._streaming.order_ifdoco(accountModel, orderModel)
             if response.get_code() == 201:

@@ -13,8 +13,8 @@ class TransactionsProxyModel:
 
         response = self._streaming.get_transactions(account_id, instrument, id=id, ids=ids, count=count, etag=etag)
         utils.info("code: " + str(response.get_code()))
-        if response.get_status():
-            return response
+        # if response.get_status():
+        return response
         # if response.get_code() == 200 or response.get_code() == 304 :
         #     return response
             # return response.get_body()

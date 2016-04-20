@@ -14,7 +14,7 @@ class RequestDataObject:
 
     def get_status(self):
         utils.info("status_code: " + str(self._code))
-        return self._code == 200 or self._code == 304 or self._code == 201
+        return self._code == 200 or self._code == 304 or self._code == 201 or self._code == 429
 
     def get_etag(self):
         # for k, v in self._headers.items():

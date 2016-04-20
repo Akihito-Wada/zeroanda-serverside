@@ -54,7 +54,7 @@ class OrderModel(models.Model):
 class ActualOrderModel(models.Model):
     trade_id    = models.IntegerField(default=0)
     schedule    = models.ForeignKey(ScheduleModel, blank=True, null=True)
-    order       = models.OneToOneField(OrderModel)
+    order       = models.OneToOneField(OrderModel, related_name='actual_model')
     actual_order_id    = models.BigIntegerField(default=0)
     instruments = models.CharField(max_length=200)
     units       = models.IntegerField(default=1)
@@ -71,6 +71,15 @@ class ActualOrderModel(models.Model):
     time        = models.DateTimeField('対象サーバー時刻', blank=True, null=True)
     created     = models.DateTimeField('登録時刻', auto_now_add=True)
     updated     = models.DateTimeField('更新時刻', null=True, blank=True)
+
+# class TransactionModel(models.Model):
+#     actual_order_id     = models.BigIntegerField(default=0)
+#     units = models.IntegerField(default=1)
+#     side = models.CharField(max_length=200)
+#     upperBound = models.FloatField("成立上限価格", default=0)
+#     created     = models.DateTimeField('登録時刻', auto_now_add=True, null=True)
+#     presentation_time= models.DateTimeField('実行予定時刻', null=True)
+#     excute_time= models.DateTimeField('実行時刻', null=True)
 
 class AccountModel(models.Model):
     # schedule    = models.ForeignKey(ScheduleModel)
@@ -101,6 +110,7 @@ class AccountInfoModel(models.Model):
     created     = models.DateTimeField('登録時刻', auto_now_add=True)
     updated     = models.DateTimeField('更新時刻', null=True, blank=True)
 
+
 class ErrorModel(models.Model):
     status_code = models.IntegerField(default=0)
     code        = models.IntegerField()
@@ -113,7 +123,7 @@ class TradeModel(models.Model):
     presentation_time   = models.DateTimeField('イベント時刻')
     created     = models.DateTimeField('登録時刻', auto_now_add=True)
 
-class TransactionModel(models.Model):
+class TradeTransactionModel(models.Model):
     trade_model     = models.ForeignKey(TradeModel)
     transaction_name= models.CharField(max_length=200)
     created     = models.DateTimeField('登録時刻', auto_now_add=True, null=True)

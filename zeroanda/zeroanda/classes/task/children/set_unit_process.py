@@ -2,7 +2,7 @@ from django.conf import settings
 
 from zeroanda.classes.task.children.aprocess import AbstractProcess
 from zeroanda.classes.utils import timeutils
-from zeroanda.models import TransactionModel
+from zeroanda.models import TradeTransactionModel
 from zeroanda import utils
 
 from multiprocessing import Process
@@ -33,5 +33,5 @@ class SetUnitProcess(AbstractProcess):
     def _set_target_date(self):
         self._presentation_date = self._task._presentation_date if settings.TEST else self._task.schedule.presentation_time
 
-        self.__transaction_model = TransactionModel(trade_model=self._task.trade_model, transaction_name=self.__class__.__name__)
+        self.__transaction_model = TradeTransactionModel(trade_model=self._task.trade_model, transaction_name=self.__class__.__name__)
         self.__transaction_model.save()

@@ -319,7 +319,6 @@ class Streaming(object):
                    'upperBound': upperBound,
                    'stopLoss': stopLoss
                    }
-
         if account_id == None:
             raise Exception('account_id is None.')
         # url = settings.STREAMING_DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/orders"

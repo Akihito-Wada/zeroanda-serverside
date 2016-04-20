@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, render
 from django.views   import generic
 
 from zeroanda.constant import SCHEDULE_STATUS, SCHEDULE_AVAILABLE, SIDE
-from zeroanda.models import TransactionModel, TradeModel, ScheduleModel
+from zeroanda.models import TradeTransactionModel, TradeModel, ScheduleModel
 from zeroanda.proxy.order import OrderProxyModel
 from zeroanda.proxy.account import AccountProxyModel
 from zeroanda.proxy.prices import PricesProxyModel
@@ -62,7 +62,7 @@ class TransactionListView(generic.ListView):
     def get_queryset(self):
         for key, value in self.request.GET.items():
             utils.info(key)
-        return TransactionModel.objects.all().order_by("-created")
+        return TradeTransactionModel.objects.all().order_by("-created")
 
     def get_template_names(self):
         return 'zeroanda/transactions/change_list.html'
@@ -82,7 +82,7 @@ def transaction_list(request, trade_id):
             orderModelSell = orderProxyModel.get_order_by_trade_id(trade_id=trade_id, side=SIDE[0][0])
             orderModelBuy = orderProxyModel.get_order_by_trade_id(trade_id=trade_id, side=SIDE[1][0])
 
-        transaction_list = TransactionModel.objects.filter(trade_model_id=trade_id).order_by("created")
+        transaction_list = TradeTransactionModel.objects.filter(trade_model_id=trade_id).order_by("created")
         return render(request, 'zeroanda/transactions/change_list.html',
                       {
                           'transaction_list': transaction_list,

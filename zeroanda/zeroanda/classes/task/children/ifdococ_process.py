@@ -4,7 +4,7 @@ from django.conf import settings
 from zeroanda.classes.task.children.aprocess import AbstractProcess
 from zeroanda.classes.utils import timeutils
 from zeroanda.constant import INSTRUMENTS
-from zeroanda.models import TransactionModel
+from zeroanda.models import TradeTransactionModel
 from zeroanda.proxy.order import OrderProxyModel
 from zeroanda.proxy.point_map_proxy import AskPointMapProxy, BidPointMapProxy
 from zeroanda import utils
@@ -80,8 +80,8 @@ class IfdococProcess(AbstractProcess):
     def _set_target_date(self):
         self._presentation_date = self._task._presentation_date if settings.TEST else self._task.schedule.presentation_time
         self._target_date = self._presentation_date + timedelta(seconds = settings.DURATION_IFDOCO_EXCUTE_TIME)
-        self.__transaction_model = TransactionModel(trade_model=self._task.trade_model, presentation_time=self._target_date, transaction_name=self.__class__.__name__)
+        self.__transaction_model = TradeTransactionModel(trade_model=self._task.trade_model, presentation_time=self._target_date, transaction_name=self.__class__.__name__)
         self.__transaction_model.save()
 
     def __get_priority(self):
-        return 0
+        return 1

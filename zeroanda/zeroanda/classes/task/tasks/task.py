@@ -35,7 +35,7 @@ class Task(IProcess):
         task.add_process(GetPriceProcess(task))
         task.add_process(SetUnitProcess(task))
         task.add_process(IfdococProcess(task))
-        # task.add_process(GetTransactionProcess(task))
+        task.add_process(GetTransactionProcess(task))
         return task
 
     def exec(self):

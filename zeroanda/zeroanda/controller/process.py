@@ -4,8 +4,11 @@ import time
 from datetime import datetime, timedelta
 from multiprocessing import Process
 
+from django.conf import settings
+
 from zeroanda import utils
 from zeroanda.classes.utils import timeutils
+from zeroanda.constant import INSTRUMENTS, SIDE
 from zeroanda.proxy.streaming import Streaming
 from zeroanda.errors import ZeroandaError
 from zeroanda.models import PricesModel
@@ -100,7 +103,7 @@ class OrderProcess:
     def collect_prices2(self):
         # proxyModel = PricesProxyModel(self._scheduleModel)
         # proxyModel.get_price()
-        count = 5
+        count = 1
         duration = 1 / count
         logger.info(duration)
         jobs = []
@@ -112,8 +115,8 @@ class OrderProcess:
         [job.join() for job in jobs]
 
     def f(self):
-        proxyModel = PricesProxyModel(self._scheduleModel)
-        proxyModel.get_price()
+        proxyModel = PricesProxyModel()
+        proxyModel.get_price(instrument=INSTRUMENTS[0][0])
 
     def test_order_buy(self, ask):
         proxyModel = PricesProxyModel(self._scheduleModel)
@@ -130,20 +133,26 @@ class OrderProcess:
     def test_ifdoco(self, instrument):
         proxyModel = PricesProxyModel()
         price = proxyModel.get_price(instrument)
-        units = int(math.floor(self._accountModelProxy.get_max_units(price.bid) / 2))
+        # units = int(math.floor(self._accountModelProxy.get_max_units(price.bid) / 2))
+        utils.info(price.ask)
+        units = utils.get_max_units(2999999, price.ask)
+        utils.info(units)
 
-        jobs = []
-        job = Process(target=self._order.sell_ifdoco, args=(self._accountModelProxy.get_account(), self._scheduleModel, price.bid - 100, units))
-        jobs.append(job)
-        job.start()
-        job = Process(target=self._order.buy_ifdoco, args=(self._accountModelProxy.get_account(), self._scheduleModel, price.ask + 100, units))
-        jobs.append(job)
-        job.start()
+        country = INSTRUMENTS[0][0]
+        target_price = price.ask + 0.003
+        upper_bound = target_price + 0.003
+        lower_bound = target_price - 0.003
+        stop_order = lower_bound - 0.003
+        # expiry = timeutils.get_now_with_utc() + timedelta(minutes=settings.EXPIRY_MINITES)
+        expiry = timeutils.get_now_with_utc() + timedelta(minutes=3)
+        orderProxy = OrderProxyModel()
+        result= orderProxy.buy_ifdoco(accountId=6818465,target_price=target_price, upper_bound=upper_bound,lower_bound=lower_bound,stop_loss=stop_order,units=units,expiry=expiry,instrument=country)
 
-        [job.join() for job in jobs]
+        utils.info(result)
+
 
     def test_ticking_price(self):
-        i = 0
+        i = 3
         while True:
             try:
                 remain_time = self._targetdate.timestamp() - datetime.now().timestamp()
