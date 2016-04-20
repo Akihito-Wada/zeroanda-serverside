@@ -78,7 +78,7 @@ class TransactionModel(models.Model):
     actual_order_model = models.ForeignKey(ActualOrderModel, blank=True, null=True)
     instruments = models.CharField(max_length=200)
     units       = models.IntegerField(default=1)
-    side        = models.CharField(max_length=200)
+    side        = models.CharField(max_length=200, choices=SIDE)
     expiry      = models.DateTimeField(blank=True, null=True)
     price       = models.FloatField()
     upperBound = models.FloatField("成立上限価格", default=0)
