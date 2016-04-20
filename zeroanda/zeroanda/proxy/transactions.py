@@ -1,3 +1,4 @@
+from zeroanda.constant import TRANSACTION_TYPE, TRANSACTION_REASON
 from zeroanda.proxy.streaming import Streaming
 from zeroanda   import utils
 
@@ -18,3 +19,6 @@ class TransactionsProxyModel:
         # if response.get_code() == 200 or response.get_code() == 304 :
         #     return response
             # return response.get_body()
+
+    def transaction_type(self, value):
+        pass
