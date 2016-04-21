@@ -2,8 +2,6 @@ from .sandbox_settings import *
 
 MODE    = 'production'
 
-TEST = False
-
 DOMAIN = 'https://api-fxtrade.oanda.com'
 STREAMING_DOMAIN = 'https://stream-fxtrade.oanda.com'
 
@@ -19,5 +17,9 @@ DATABASES = {
         'AUTOCOMMIT': True,
     }
 }
+
+DEBUG = False
+
+ALLOWED_HOSTS = ['*',]
 
 TEST = False

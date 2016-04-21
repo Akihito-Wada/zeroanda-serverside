@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth.models import User
-from rest_framework import routers, serializers, viewsets
+from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from zeroanda.api import order, cancel, cancelAll, prices, tick, ifdoco, candles
 from zeroanda.views import TradeListView, PositionListView, OrdersListView, TransactionListView, transaction_list
@@ -29,6 +29,8 @@ from zeroanda.test.test_api_process import test_api_process_countdown
 from zeroanda.test.test_call_action import test_api_call_action
 from zeroanda.test.test_api_transactions import test_api_transactions
 from zeroanda.test.test_api_events import test_api_events
+
+from rest_framework import routers, serializers, viewsets
 
 from test_multiprocess.views import index
 
@@ -58,9 +60,9 @@ urlpatterns = [
     url(r'^zeroanda/api/prices', prices),
     url(r'^zeroanda/api/candles', candles),
     url(r'^zeroanda/api/tick', tick),
-    url(r'^zeroanda/orders$', OrdersListView.as_view()),
-    url(r'^zeroanda/position', PositionListView.as_view()),
-    url(r'^zeroanda/trade', TradeListView.as_view()),
+    url(r'^zeroanda/orders$', login_required(OrdersListView.as_view())),
+    url(r'^zeroanda/position', login_required(PositionListView.as_view())),
+    url(r'^zeroanda/trade', login_required(TradeListView.as_view())),
     url(r'^zeroanda/transactions/(?P<trade_id>[0-9]+)/$', transaction_list),
 
     url(r'^zeroanda/test/orders', test_api_orders),

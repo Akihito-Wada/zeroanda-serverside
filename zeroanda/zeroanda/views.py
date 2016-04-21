@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
 from django.views   import generic
 
@@ -68,6 +69,7 @@ class TransactionListView(generic.ListView):
     def get_template_names(self):
         return 'zeroanda/transactions/change_list.html'
 
+@login_required
 def transaction_list(request, trade_id):
     if request.method == 'GET':
         tradeModel = TradeModel.objects.get(pk=trade_id)
@@ -85,10 +87,7 @@ def transaction_list(request, trade_id):
 
             transactionModel = TransactionsProxyModel()
 
-            utils.info(3333333)
             if orderModelBuy != None and orderModelBuy.actual_model != None:
-                utils.info(orderModelBuy.actual_model.id)
-                utils.info(3333333)
                 type_buy = transactionModel.get_latest_type(orderModelBuy.actual_model.id)
                 reason_buy = transactionModel.get_latest_transaction_reason_value(orderModelBuy.actual_model.id)
             else:
