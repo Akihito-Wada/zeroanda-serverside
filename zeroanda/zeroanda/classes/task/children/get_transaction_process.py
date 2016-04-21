@@ -2,9 +2,8 @@ from django import db
 from django.conf import settings
 
 from zeroanda.classes.task.children.aprocess import AbstractProcess
-from zeroanda.classes.enums.transaction_status import TransactionStatus
-from zeroanda.classes.enums.process_status import ProcessStatus
 from zeroanda.constant import INSTRUMENTS
+from zeroanda.controller.mail_manager import MailManager
 from zeroanda.models import TradeTransactionModel
 from zeroanda.proxy.transactions import TransactionsProxyModel
 from zeroanda.proxy.order import OrderProxyModel
@@ -41,6 +40,8 @@ class GetTransactionProcess(AbstractProcess):
             for transaction in transactions:
                 actual_order_model = orderProxy.get_actual_order_model(actual_order_id=transaction["orderId"])
                 transactionProxyModel.add(transaction, schedule=self._task.schedule, trade_id=self._task.pool['trade_id'],actual_order_model=actual_order_model)
+
+        MailManager.send_finish_mail(self._task.schedule)
 
     def _is_condition(self):
         now = timeutils.get_now_with_jst()

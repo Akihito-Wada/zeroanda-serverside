@@ -17,3 +17,19 @@ class MailManager:
             from_email=from_email,
             recipient_list= recipient_list
         )
+
+    @staticmethod
+    def send_finish_mail(schedule):
+        subject = "'" + schedule.title + "::" + timeutils.convert_datetime2str(
+            timeutils.convert_aware_datetime_from_utc_to_jst(
+                schedule.presentation_time)) + "' finish. at " + timeutils.convert_datetime2str(
+            timeutils.get_now_with_jst())
+        recipient_list = [settings.ADMIN_EMAIL]
+        from_email = settings.DEFAULT_FROM_EMAIL
+        message = "finish"
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=from_email,
+            recipient_list=recipient_list
+        )
