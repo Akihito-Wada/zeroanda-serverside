@@ -12,7 +12,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'zeroanda',
         'USER': 'wadaakihito',
-        'PASSWORD': '',
+        'PASSWORD': 'I@mfukuro1',
         'HOST': 'localhost',
         'AUTOCOMMIT': True,
     }

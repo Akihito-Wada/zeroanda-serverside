@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='pricesmodel',
             name='elapsed',
-            field=models.FloatField(verbose_name='経過時間', blank=True, null=True),
+            field=models.DateTimeField(verbose_name='経過時間', blank=True, null=True),
         ),
     ]

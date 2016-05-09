@@ -1,13 +1,13 @@
 from .sandbox_settings import *
 
 # zeroanda settings.
-DEBUG = False
+# DEBUG = False
 #
-ALLOWED_HOSTS = ['*',]
+# ALLOWED_HOSTS = ['*',]
 
 MODE    = 'practice'
 
-# TEST = False
+TEST = False
 
 DOMAIN = 'https://api-fxpractice.oanda.com'
 STREAMING_DOMAIN = 'https://stream-fxpractice.oanda.com'
