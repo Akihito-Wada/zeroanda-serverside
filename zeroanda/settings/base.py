@@ -171,12 +171,13 @@ BID_STOP_LOSS_MARGIN = IFDOCO_BID_ENTRY_POINT + 0.1
 # mail settings
 ADMIN_EMAIL = "13southdawn10@gmail.com"
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'localhost'
-EMAIL_PORT = 1025
+EMAIL_PORT = 25
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = False
-DEFAULT_FROM_EMAIL = 'system@example.com'
+DEFAULT_FROM_EMAIL = 'system@zeroanda.com'
 
 TEST = True
 
