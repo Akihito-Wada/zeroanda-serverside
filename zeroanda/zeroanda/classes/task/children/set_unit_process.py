@@ -18,8 +18,8 @@ class SetUnitProcess(AbstractProcess):
         self._jobs.append(Process(target=self._set_unit))
 
     def _set_unit(self):
-        self._task.pool['ask_unit'] = utils.get_max_units(int(self._task.pool['account_info_model'].balance), self._task.pool['price_model'].ask / 10)
-        self._task.pool['bid_unit'] = utils.get_max_units(int(self._task.pool['account_info_model'].balance), self._task.pool['price_model'].bid / 10)
+        self._task.pool['ask_unit'] = int(utils.get_max_units(int(self._task.pool['account_info_model'].balance), self._task.pool['price_model'].ask) / 10)
+        self._task.pool['bid_unit'] = int(utils.get_max_units(int(self._task.pool['account_info_model'].balance), self._task.pool['price_model'].bid) / 10)
 
     def _is_condition(self):
         now = timeutils.get_now_with_jst()
