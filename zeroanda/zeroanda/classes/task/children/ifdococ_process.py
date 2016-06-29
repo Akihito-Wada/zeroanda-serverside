@@ -25,7 +25,7 @@ class IfdococProcess(AbstractProcess):
 
     def _create_job(self):
         self._jobs.append(Process(target=self._order_buy))
-        self._jobs.append(Process(target=self._order_sell))
+        # self._jobs.append(Process(target=self._order_sell))
 
     def _order_buy(self):
         db.close_old_connections()
