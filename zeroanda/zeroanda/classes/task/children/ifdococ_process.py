@@ -39,7 +39,7 @@ class IfdococProcess(AbstractProcess):
                 lower_bound=proxy.get_lower_bound(),
                 stop_loss=proxy.get_stop_loss(),
                 units= self._task.pool['ask_unit'],
-                expiry= timeutils.get_now_with_utc() + timedelta(minutes=settings.EXPIRY_MINITES),
+                expiry= timeutils.get_now_with_utc() + timedelta(seconds=settings.EXPIRY_SECONDS),
                 accountId= self._task.pool['account_info_model'].account_id,
                 instrument=INSTRUMENTS[0][0],
                 trade_id=self._task.pool['trade_id']
@@ -58,7 +58,7 @@ class IfdococProcess(AbstractProcess):
                 lower_bound=proxy.get_lower_bound(),
                 stop_loss=proxy.get_stop_loss(),
                 units= self._task.pool['bid_unit'],
-                expiry= timeutils.get_now_with_utc() + timedelta(minutes=settings.EXPIRY_MINITES),
+                expiry= timeutils.get_now_with_utc() + timedelta(seconds=settings.EXPIRY_SECONDS),
                 accountId= self._task.pool['account_info_model'].account_id,
                 instrument=INSTRUMENTS[0][0],
                 trade_id=self._task.pool['trade_id']
