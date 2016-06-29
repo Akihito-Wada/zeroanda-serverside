@@ -41,7 +41,7 @@ class GetTransactionProcess(AbstractProcess):
                 actual_order_model = orderProxy.get_actual_order_model(actual_order_id=transaction["orderId"])
                 transactionProxyModel.add(transaction, schedule=self._task.schedule, trade_id=self._task.pool['trade_id'],actual_order_model=actual_order_model)
 
-        MailManager.send_finish_mail(self._task.schedule)
+        # MailManager.send_finish_mail(self._task.schedule)
 
     def _is_condition(self):
         now = timeutils.get_now_with_jst()
