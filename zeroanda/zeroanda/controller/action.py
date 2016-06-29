@@ -16,7 +16,7 @@ class Action:
 
     def startTickTack(self, schedule):
         # MailManager.send_opening_mail(schedule)
-        MailManager.send_mail_test()
+        # MailManager.send_mail_test()
 
         tickTack = TickTack()
         tickTack.tickTack(Task.create_task(schedule))
