@@ -15,7 +15,8 @@ class Action:
             proxy.set_status_proceed(schedules[0])
 
     def startTickTack(self, schedule):
-        MailManager.send_opening_mail(schedule)
+        # MailManager.send_opening_mail(schedule)
+        MailManager.send_mail_test()
 
         tickTack = TickTack()
         tickTack.tickTack(Task.create_task(schedule))
