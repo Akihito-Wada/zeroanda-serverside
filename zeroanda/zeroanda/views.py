@@ -1,8 +1,12 @@
-from django.http import HttpResponse
+from datetime import timedelta
+
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views   import generic
 
+from zeroanda.classes.utils import timeutils
 from zeroanda.constant import SCHEDULE_STATUS, SCHEDULE_AVAILABLE, SIDE
 from zeroanda.models import TradeTransactionModel, TradeModel, ScheduleModel
 from zeroanda.proxy.order import OrderProxyModel
@@ -16,8 +20,6 @@ class OrdersListView(generic.TemplateView):
     def get_context_data(self, **kwargs):
         accountModel = AccountProxyModel().get_account()
         orderClass = OrderProxyModel()
-        result = orderClass.get_orders(accountModel.account_id)
-        utils.info(result)
         context = super(OrdersListView, self).get_context_data(**kwargs)
         return context
 
@@ -81,6 +83,12 @@ def transaction_list(request, trade_id):
             priceProxyModel = PricesProxyModel()
             priceModel = priceProxyModel.get_price(trade_id=trade_id)
 
+            startdate = scheduleModel.presentation_time +  timedelta(seconds=settings.DURATION_IFDOCO_EXCUTE_TIME - 1)
+            enddate = scheduleModel.presentation_time + timedelta(seconds=settings.EXPIRY_SECONDS + 1)
+            price_list = priceProxyModel.get_candles(scheduleModel.country, timeutils.convert_rfc2unixtime(startdate), timeutils.convert_rfc2unixtime(enddate))
+            for price in price_list['candles']:
+                price['time'] = timeutils.format_unixtime_to_jst(timeutils.format_unixtime(price['time']))
+
             orderProxyModel = OrderProxyModel()
             orderModelSell = orderProxyModel.get_order_by_trade_id(trade_id=trade_id, side=SIDE[0][0])
             orderModelBuy = orderProxyModel.get_order_by_trade_id(trade_id=trade_id, side=SIDE[1][0])
@@ -116,5 +124,6 @@ def transaction_list(request, trade_id):
                           'reason_buy': reason_buy,
                           'type_sell': type_sell,
                           'reason_sell': reason_sell,
+                          'price_list': price_list,
                       })
     return HttpResponse('200')
