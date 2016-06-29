@@ -257,31 +257,31 @@
       <h1>Price List</h1>
       {% if price_list != None %}
       <table>
-          <!--<tr>-->
-              <!--<th></th>-->
-              <!--<th></th>-->
-              <!--<th></th>-->
-              <!--<th></th>-->
-              <!--<th></th>-->
-              <!--<th></th>-->
-              <!--<th></th>-->
-              <!--<th></th>-->
-              <!--<th></th>-->
-              <!--<th></th>-->
-              <!--<th></th>-->
-          <!--</tr>-->
+          <tr>
+              <th>openBid</th>
+              <th>closeBid</th>
+              <th>highBid</th>
+              <th>lowBid</th>
+              <th>openAsk</th>
+              <th>closeAsk</th>
+              <th>highAsk</th>
+              <th>lowAsk</th>
+              <th>volume</th>
+              <th>complete</th>
+              <th>time</th>
+          </tr>
           {% for price in price_list.candles %}
           <tr>
-              <td>{{ price.volume }}</td>
               <td>{{ price.openBid }}</td>
-              <td>{{ price.closeAsk }}</td>
-              <td>{{ price.complete }}</td>
-              <td>{{ price.openAsk }}</td>
-              <td>{{ price.lowBid }}</td>
-              <td>{{ price.lowAsk }}</td>
-              <td>{{ price.highBid }}</td>
               <td>{{ price.closeBid }}</td>
+              <td>{{ price.highBid }}</td>
+              <td>{{ price.lowBid }}</td>
+              <td>{{ price.openAsk }}</td>
+              <td>{{ price.closeAsk }}</td>
               <td>{{ price.highAsk }}</td>
+              <td>{{ price.lowAsk }}</td>
+              <td>{{ price.volume }}</td>
+              <td>{{ price.complete }}</td>
               <td>{{ price.time | date:"c" }}</td>
           </tr>
           {% endfor %}
