@@ -11,8 +11,8 @@ class Action:
     def WatchSchedule(self):
         schedules = self.__proxy.get_schedule()
         if len(schedules) > 0:
-            self.startTickTack(schedules[0])
             self.__proxy.update_status_proceed(schedules[0])
+            self.startTickTack(schedules[0])
 
     def startTickTack(self, schedule):
         # MailManager.send_opening_mail(schedule)
