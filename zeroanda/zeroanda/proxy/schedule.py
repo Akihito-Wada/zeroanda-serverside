@@ -19,8 +19,7 @@ class ScheduleProxyModel:
                 None
         except ScheduleModel.DoesNotExist as e:
             utils.error(e)
-        # except Exception as e:
-        #     utils.info(e)
+
 
     def _get_schedule_by_id(self, id):
         model = ScheduleModel.objects.get(id=id)
@@ -37,8 +36,17 @@ class ScheduleProxyModel:
         )
         return model
 
-    def set_status_proceed(self, schedule):
-        # schedule.status = SCHEDULE_STATUS[1][0]
+    def update_status_proceed(self, schedule):
+        schedule.status = SCHEDULE_STATUS[1][0]
+        db.close_old_connections()
+        try:
+            schedule.updated = timeutils.get_now_with_utc()
+            schedule.save()
+        except IntegrityError as e:
+            utils.info(e)
+
+    def update_status_complete(self, schedule):
+        schedule.status = SCHEDULE_STATUS[2][0]
         db.close_old_connections()
         try:
             schedule.updated = timeutils.get_now_with_utc()
