@@ -13,8 +13,6 @@ from datetime import timedelta
 
 from multiprocessing import Process
 
-import  pytz
-
 class IfdococProcess(AbstractProcess):
     def __init__(self, task):
         self._jobs = []
@@ -84,4 +82,4 @@ class IfdococProcess(AbstractProcess):
         self.__transaction_model.save()
 
     def __get_priority(self):
-        return 1
+        return self._task.schedule.priority
