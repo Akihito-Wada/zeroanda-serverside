@@ -1,7 +1,15 @@
+import logging
 import math
 
 from django.conf import settings
 
+logger =logging.getLogger("django")
+
+def info(value):
+    logger.info(value)
+
+def error(value):
+    logger.error(value)
 
 def get_max_units(balance, rate):
     units = balance * settings.LEVERAGE / rate / settings.CURRENCY;

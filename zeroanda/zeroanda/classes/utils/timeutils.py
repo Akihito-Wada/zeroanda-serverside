@@ -1,6 +1,5 @@
 from datetime import datetime, timezone, timedelta
 import calendar, pytz, logging, time
-from zeroanda.utils import utils
 from django.conf import settings
 
 logger =logging.getLogger("django")
