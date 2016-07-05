@@ -1,5 +1,5 @@
 from django.contrib import admin
-from zeroanda.models import ScheduleModel, ProcessModel, PricesModel, OrderModel, ErrorModel, AccountModel, ActualOrderModel, TradeModel
+from zeroanda.models import ScheduleModel, ProcessModel, PricesModel, OrderModel, ErrorModel, AccountModel, ActualOrderModel, TradeModel, AccountInfoModel
 from zeroanda import utils
 from zeroanda.classes.utils import timeutils
 from zeroanda.constant import ACTUAL_ORDER_STATUS
@@ -178,7 +178,11 @@ class ErrorModelAdmin(admin.ModelAdmin):
     def created_time(self, instance):
         return timeutils.convert_aware_datetime_from_utc_to_jst(instance.created)
 
+class AccountInfoInlineModel(admin.StackedInline):
+    model = AccountInfoModel
+
 class AccountModelAdmin(admin.ModelAdmin):
+    inlines = [AccountInfoInlineModel]
     exclude = ['updated']
     list_display = ('account_id',
                     'margin_rate',
@@ -205,7 +209,6 @@ class AccountModelAdmin(admin.ModelAdmin):
 
     def updated_time(self, instance):
         return timeutils.convert_aware_datetime_from_utc_to_jst(instance.updated)
-
 
 class TradesModelAdmin(admin.ModelAdmin):
     # exclude = ['updated']
