@@ -4,11 +4,11 @@ SIDE = (
 )
 
 PRIORITY = (
-    (1, "Lowest"),
-    (2, "Low"),
-    (3, "Intermediate"),
-    (4, "High"),
-    (5, "Highest"),
+    (0, "Lowest"),
+    (1, "Low"),
+    (2, "Intermediate"),
+    (3, "High"),
+    (4, "Highest"),
 )
 
 ACCOUNT_STATUS    = (
@@ -22,9 +22,9 @@ ORDER_STATUS    = (
 )
 
 ACTUAL_ORDER_STATUS =(
-    (1, "Progress"),
-    (2, "Finish"),
-    (3, "Cancel"),
+    (0, "Progress"),
+    (1, "Finish"),
+    (2, "Cancel"),
 )
 
 INSTRUMENTS = (
