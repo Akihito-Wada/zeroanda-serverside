@@ -22,7 +22,3 @@ class Action:
         tickTack.tickTack(Task.create_task(schedule))
 
         self.__proxy.update_status_complete(schedule)
-
-class TickTackPriceAction:
-    def tick_tack(self):
-        tickTack = TickTack()
