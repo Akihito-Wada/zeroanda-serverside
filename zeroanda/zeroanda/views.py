@@ -80,6 +80,12 @@ def transaction_list(request, trade_id):
             schedule_available = SCHEDULE_AVAILABLE[scheduleModel.target][1]
             schedule_status = SCHEDULE_STATUS[scheduleModel.status][1]
 
+            accountProxy = AccountProxyModel()
+            accountModel = accountProxy.get_account()
+            accountInfoModel = accountProxy.get_account_info()
+            utils.info((accountModel))
+            utils.info((accountInfoModel))
+
             priceProxyModel = PricesProxyModel()
             priceModel = priceProxyModel.get_price(trade_id=trade_id)
 
@@ -117,6 +123,8 @@ def transaction_list(request, trade_id):
                           'schedule_model': scheduleModel,
                           'schedule_available': schedule_available,
                           'schedule_status': schedule_status,
+                          'account_model': accountModel,
+                          'account_info_model': accountInfoModel,
                           'price_model': priceModel,
                           'order_model_sell': orderModelSell,
                           'order_model_buy': orderModelBuy,

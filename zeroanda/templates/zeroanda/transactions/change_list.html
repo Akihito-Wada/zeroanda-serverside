@@ -113,6 +113,66 @@
         <td>{{ trade_model.created | date:"c" }}</td>
       </tr>
     </table>
+
+    <h1>account</h1>
+    <table>
+      <tr>
+        <th>account_id</th>
+        <td>{{ account_model.account_id}}</td>
+      </tr>
+      <tr>
+        <th>account_currency</th>
+        <td>{{ account_model.account_currency}}</td>
+      </tr>
+      <tr>
+        <th>account_name</th>
+        <td>{{ account_model.account_name }}</td>
+      </tr>
+
+      <tr>
+        <th>balance</th>
+        <td>{{ account_info_model. }}</td>
+      </tr>
+      <tr>
+        <th>margin_rate</th>
+        <td>{{ account_info_model.margin_rate }}</td>
+      </tr>
+      <tr>
+        <th>margin_used</th>
+        <td>{{ account_info_model.margin_used }}</td>
+      </tr>
+      <tr>
+        <th>margin_avail</th>
+        <td>{{ account_info_model.margin_avail }}</td>
+      </tr>
+      <tr>
+        <th>open_orders</th>
+        <td>{{ account_info_model.open_orders }}</td>
+      </tr>
+      <tr>
+        <th>open_trades</th>
+        <td>{{ account_info_model.open_trades }}</td>
+      </tr>
+      <tr>
+        <th>unrealized_pl</th>
+        <td>{{ account_info_model.unrealized_pl }}</td>
+      </tr>
+      <tr>
+        <th>realized_pl</th>
+        <td>{{ account_info_model.realized_pl }}</td>
+      </tr>
+      <tr>
+        <th>created</th>
+        <td>{{ account_info_model.created | date:"c" }}</td>
+      </tr>
+      <tr>
+        <th>updated</th>
+        <td>{{ account_info_model.updated | date:"c" }}</td>
+      </tr>
+
+
+    </table>
+
     <h1>transaction list</h1>
     <table>
       <tr>

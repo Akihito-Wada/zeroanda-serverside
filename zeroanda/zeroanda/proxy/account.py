@@ -94,7 +94,7 @@ class AccountProxyModel:
 
         return self._accountModel
 
-    def update_account_info(self):
+    def get_latest_account_info(self):
         if self._accountModel == None:
             self._get_account_model()
         self._get_account_info_model()
