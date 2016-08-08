@@ -2,19 +2,19 @@
 //$(document).ready(function(){
 //    $.getScript("/static/zeroanda/js/logger.js", function(){});
 //})
-$(function(){
-    $("#buyButton").click(function() {
-        $.ajax({
-            type: "POST",
-            url: "http://" + location.host + "/zeroanda/api/order",
-            data: "schedule_id="+$("#scheduleModelId").val(),
-            success: function(msg){
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
-            }
-        });
-    });
-})
+// $(function(){
+//     $("#buyButton").click(function() {
+//         $.ajax({
+//             type: "POST",
+//             url: "http://" + location.host + "/zeroanda/api/order",
+//             data: "schedule_id="+$("#scheduleModelId").val(),
+//             success: function(msg){
+//             },
+//             error: function(XMLHttpRequest, textStatus, errorThrown) {
+//             }
+//         });
+//     });
+// })
 
 // ifdoco bid and ask.
 $(function(){
