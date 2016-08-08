@@ -46,7 +46,7 @@ class TransactionsProxyModel:
             lowerBound=0 if "lowerBound" not in transaction else transaction["lowerBound"],
             stopLoss=0 if "stopLoss" not in transaction else transaction["stopLossPrice"],
             type=self.transaction_type_key(transaction["type"]),
-            reason=self.transaction_reason_key(transaction["reason"]),
+            reason=0 if "reason" not in transaction else self.transaction_reason_key(transaction["reason"]),
             time=timeutils.convert_timestamp2datetime(transaction["time"]),
         )
         transaction_model.save()
