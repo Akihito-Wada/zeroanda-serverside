@@ -83,9 +83,6 @@ def transaction_list(request, trade_id):
             accountProxy = AccountProxyModel()
             accountModel = accountProxy.get_account()
             accountInfoModel = accountProxy.get_account_info()
-            utils.info(3)
-            utils.info(accountInfoModel.balance)
-            utils.info(4)
 
             priceProxyModel = PricesProxyModel()
             priceModel = priceProxyModel.get_price(trade_id=trade_id)
@@ -105,6 +102,7 @@ def transaction_list(request, trade_id):
             if orderModelBuy != None and orderModelBuy.actual_model != None:
                 type_buy = transactionModel.get_latest_type(orderModelBuy.actual_model.id)
                 reason_buy = transactionModel.get_latest_transaction_reason_value(orderModelBuy.actual_model.id)
+                buy_latest_transaction = transactionModel.get_latest_transaction_by_id(orderModelBuy.actual_model.id)
             else:
                 type_buy = None
                 reason_buy = None
@@ -112,6 +110,7 @@ def transaction_list(request, trade_id):
             if orderModelSell != None and orderModelSell.actual_model != None:
                 type_sell = transactionModel.get_latest_type(orderModelSell.actual_model.id)
                 reason_sell = transactionModel.get_latest_transaction_reason_value(orderModelSell.actual_model.id)
+                sell_latest_transaction = transactionModel.get_latest_transaction_by_id(orderModelSell.actual_model.id)
             else:
                 type_sell = None
                 reason_sell = None
@@ -129,6 +128,8 @@ def transaction_list(request, trade_id):
                           'price_model': priceModel,
                           'order_model_sell': orderModelSell,
                           'order_model_buy': orderModelBuy,
+                          'buy_latest_transaction': buy_latest_transaction,
+                          'sell_latest_transaction': sell_latest_transaction,
                           'type_buy': type_buy,
                           'reason_buy': reason_buy,
                           'type_sell': type_sell,

@@ -17,6 +17,12 @@ class TransactionsProxyModel:
             response = self._streaming.get_transactions(account_id, instrument, id=id, ids=ids, count=count, etag=etag)
             return response
 
+    def get_latest_transaction_by_id(self, actual_order_model_id):
+        try:
+            return TransactionModel.objects.filter(actual_order_model_id=actual_order_model_id).order_by('-id')[:1][0]
+        except:
+            return None
+
     def get_latest_type(self, actual_order_model_id):
         try:
             model = TransactionModel.objects.filter(actual_order_model_id=actual_order_model_id).order_by('-id')[:1][0]
@@ -38,6 +44,9 @@ class TransactionsProxyModel:
             schedule=schedule,
             actual_order_model=actual_order_model,
             instruments=None if "instrument" not in transaction else transaction["instrument"],
+            interest=None if "interest" not in transaction else transaction["interest"],
+            order_id=None if "order_id" not in transaction else transaction["order_id"],
+            pl=None if "pl" not in transaction else transaction["pl"],
             units=0 if "units" not in transaction else transaction["units"],
             side=None if "side" not in transaction else transaction["side"],
             expiry=None if "expiry" not in transaction else timeutils.convert_timestamp2datetime(transaction["expiry"]),

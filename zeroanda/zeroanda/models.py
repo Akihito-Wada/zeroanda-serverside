@@ -74,10 +74,14 @@ class ActualOrderModel(models.Model):
 
 class TransactionModel(models.Model):
     actual_order_id= models.BigIntegerField(default=0)
+    accountBalance  = models.FloatField(default=0)
     trade_id    = models.IntegerField(default=0)
     schedule    = models.ForeignKey(ScheduleModel, blank=True, null=True)
     actual_order_model = models.ForeignKey(ActualOrderModel, blank=True, null=True, related_name='transaction_model')
     instruments = models.CharField(max_length=200, blank=True, null=True)
+    interest    = models.FloatField(default=0)
+    order_id    = models.IntegerField(default=0)
+    pl          = models.FloatField(default=0)
     units       = models.IntegerField(default=1)
     side        = models.CharField(max_length=200, choices=SIDE, blank=True, null=True)
     expiry      = models.DateTimeField(blank=True, null=True)
