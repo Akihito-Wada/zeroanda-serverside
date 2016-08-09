@@ -83,6 +83,9 @@ def transaction_list(request, trade_id):
             accountProxy = AccountProxyModel()
             accountModel = accountProxy.get_account()
             accountInfoModel = accountProxy.get_account_info()
+            utils.info(3)
+            utils.info(accountInfoModel.balance)
+            utils.info(4)
 
             priceProxyModel = PricesProxyModel()
             priceModel = priceProxyModel.get_price(trade_id=trade_id)
