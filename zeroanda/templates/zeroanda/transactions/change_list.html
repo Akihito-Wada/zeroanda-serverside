@@ -296,22 +296,6 @@
           </tr>
           <tr>
               <th>transaction</th>
-              <td>{% if buy_latest_transaction != none %}
-                  accountBalance:{{ buy_latest_transaction.accountBalance }}<br>
-                  interest:{{ buy_latest_transaction.interest }}<br>
-                  pl:{{ buy_latest_transaction.pl }}<br>
-                  units:{{ buy_latest_transaction.units }}<br>
-                  side:{{ buy_latest_transaction.side }}<br>
-                  expiry:{{ buy_latest_transaction.expiry | date:"c" }}<br>
-                  price:{{ buy_latest_transaction.price }}<br>
-                  upperBound:{{ buy_latest_transaction.upperBound }}<br>
-                  lowerBound:{{ buy_latest_transaction.lowerBound }}<br>
-                  stopLoss:{{ buy_latest_transaction.stopLoss }}<br>
-                  type:{{ buy_latest_transaction.type }}<br>
-                  reason:{{ buy_latest_transaction.reason }}<br>
-                  time:{{ buy_latest_transaction.time | date:"c" }}<br>
-                  created:{{ buy_latest_transaction.created | date:"c" }}<br>
-                  {% endif %}</td>
               <td>{% if sell_latest_transaction != none %}
                   accountBalance:{{ sell_latest_transaction.accountBalance }}<br>
                   interest:{{ sell_latest_transaction.interest }}<br>
@@ -327,6 +311,22 @@
                   reason:{{ sell_latest_transaction.reason }}<br>
                   time:{{ sell_latest_transaction.time | date:"c" }}<br>
                   created:{{ sell_latest_transaction.created | date:"c" }}<br>
+                  {% endif %}</td>
+              <td>{% if buy_latest_transaction != none %}
+                  accountBalance:{{ buy_latest_transaction.accountBalance }}<br>
+                  interest:{{ buy_latest_transaction.interest }}<br>
+                  pl:{{ buy_latest_transaction.pl }}<br>
+                  units:{{ buy_latest_transaction.units }}<br>
+                  side:{{ buy_latest_transaction.side }}<br>
+                  expiry:{{ buy_latest_transaction.expiry | date:"c" }}<br>
+                  price:{{ buy_latest_transaction.price }}<br>
+                  upperBound:{{ buy_latest_transaction.upperBound }}<br>
+                  lowerBound:{{ buy_latest_transaction.lowerBound }}<br>
+                  stopLoss:{{ buy_latest_transaction.stopLoss }}<br>
+                  type:{{ buy_latest_transaction.type }}<br>
+                  reason:{{ buy_latest_transaction.reason }}<br>
+                  time:{{ buy_latest_transaction.time | date:"c" }}<br>
+                  created:{{ buy_latest_transaction.created | date:"c" }}<br>
                   {% endif %}</td>
           </tr>
           <tr>
