@@ -309,10 +309,8 @@
                   stopLoss:{{ buy_latest_transaction.stopLoss }}<br>
                   type:{{ buy_latest_transaction.type }}<br>
                   reason:{{ buy_latest_transaction.reason }}<br>
-                  type:{{ buy_latest_transaction.type }}<br>
                   time:{{ buy_latest_transaction.time | date:"c" }}<br>
                   created:{{ buy_latest_transaction.created | date:"c" }}<br>
-                  type:{{ buy_latest_transaction.type }}
                   {% endif %}</td>
               <td>{% if sell_latest_transaction != none %}
                   accountBalance:{{ sell_latest_transaction.accountBalance }}<br>
@@ -327,10 +325,8 @@
                   stopLoss:{{ sell_latest_transaction.stopLoss }}<br>
                   type:{{ sell_latest_transaction.type }}<br>
                   reason:{{ sell_latest_transaction.reason }}<br>
-                  type:{{ sell_latest_transaction.type }}<br>
                   time:{{ sell_latest_transaction.time | date:"c" }}<br>
                   created:{{ sell_latest_transaction.created | date:"c" }}<br>
-                  type:{{ sell_latest_transaction.type }}
                   {% endif %}</td>
           </tr>
           <tr>
