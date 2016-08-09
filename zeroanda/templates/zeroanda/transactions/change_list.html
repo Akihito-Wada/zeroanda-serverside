@@ -297,125 +297,41 @@
           <tr>
               <th>transaction</th>
               <td>{% if buy_latest_transaction != none %}
-                  <table>
-                      <tr>
-                          <th>accountBalance</th>
-                          <td>{{ buy_latest_transaction.accountBalance }}</td>
-                      </tr>
-                      <tr>
-                          <th>interest</th>
-                          <td>{{ buy_latest_transaction.interest }}</td>
-                      </tr>
-                      <tr>
-                          <th>pl</th>
-                          <td>{{ buy_latest_transaction.pl }}</td>
-                      </tr>
-                      <tr>
-                          <th>units</th>
-                          <td>{{ buy_latest_transaction.units }}</td>
-                      </tr>
-                      <tr>
-                          <th>side</th>
-                          <td>{{ buy_latest_transaction.side }}</td>
-                      </tr>
-                      <tr>
-                          <th>expiry</th>
-                          <td>{{ buy_latest_transaction.expiry | date:"c" }}</td>
-                      </tr>
-                      <tr>
-                          <th>price</th>
-                          <td>{{ buy_latest_transaction.price }}</td>
-                      </tr>
-                      <tr>
-                          <th>upperBound</th>
-                          <td>{{ buy_latest_transaction.upperBound }}</td>
-                      </tr>
-                      <tr>
-                          <th>lowerBound</th>
-                          <td>{{ buy_latest_transaction.lowerBound }}</td>
-                      </tr>
-                      <tr>
-                          <th>stopLoss</th>
-                          <td>{{ buy_latest_transaction.stopLoss }}</td>
-                      </tr>
-                      <tr>
-                          <th>type</th>
-                          <td>{{ buy_latest_transaction.type }}</td>
-                      </tr>
-                      <tr>
-                          <th>reason</th>
-                          <td>{{ buy_latest_transaction.reason }}</td>
-                      </tr>
-                      <tr>
-                          <th>time</th>
-                          <td>{{ buy_latest_transaction.time }}</td>
-                      </tr>
-                      <tr>
-                          <th>created</th>
-                          <td>{{ buy_latest_transaction.created }}</td>
-                      </tr>
-                  </table>
+                  accountBalance:{{ buy_latest_transaction.accountBalance }}<br>
+                  interest:{{ buy_latest_transaction.interest }}<br>
+                  pl:{{ buy_latest_transaction.pl }}<br>
+                  units:{{ buy_latest_transaction.units }}<br>
+                  side:{{ buy_latest_transaction.side }}<br>
+                  expiry:{{ buy_latest_transaction.expiry | date:"c" }}<br>
+                  price:{{ buy_latest_transaction.price }}<br>
+                  upperBound:{{ buy_latest_transaction.upperBound }}<br>
+                  lowerBound:{{ buy_latest_transaction.lowerBound }}<br>
+                  stopLoss:{{ buy_latest_transaction.stopLoss }}<br>
+                  type:{{ buy_latest_transaction.type }}<br>
+                  reason:{{ buy_latest_transaction.reason }}<br>
+                  type:{{ buy_latest_transaction.type }}<br>
+                  time:{{ buy_latest_transaction.time | date:"c" }}<br>
+                  created:{{ buy_latest_transaction.created | date:"c" }}<br>
+                  type:{{ buy_latest_transaction.type }}
                   {% endif %}</td>
               <td>
               <td>{% if sell_latest_transaction != none %}
-                  <table>
-                      <tr>
-                          <th>accountBalance</th>
-                          <td>{{ sell_latest_transaction.accountBalance }}</td>
-                      </tr>
-                      <tr>
-                          <th>interest</th>
-                          <td>{{ sell_latest_transaction.interest }}</td>
-                      </tr>
-                      <tr>
-                          <th>pl</th>
-                          <td>{{ sell_latest_transaction.pl }}</td>
-                      </tr>
-                      <tr>
-                          <th>units</th>
-                          <td>{{ sell_latest_transaction.units }}</td>
-                      </tr>
-                      <tr>
-                          <th>side</th>
-                          <td>{{ sell_latest_transaction.side }}</td>
-                      </tr>
-                      <tr>
-                          <th>expiry</th>
-                          <td>{{ sell_latest_transaction.expiry | date:"c" }}</td>
-                      </tr>
-                      <tr>
-                          <th>price</th>
-                          <td>{{ sell_latest_transaction.price }}</td>
-                      </tr>
-                      <tr>
-                          <th>upperBound</th>
-                          <td>{{ sell_latest_transaction.upperBound }}</td>
-                      </tr>
-                      <tr>
-                          <th>lowerBound</th>
-                          <td>{{ sell_latest_transaction.lowerBound }}</td>
-                      </tr>
-                      <tr>
-                          <th>stopLoss</th>
-                          <td>{{ sell_latest_transaction.stopLoss }}</td>
-                      </tr>
-                      <tr>
-                          <th>type</th>
-                          <td>{{ sell_latest_transaction.type }}</td>
-                      </tr>
-                      <tr>
-                          <th>reason</th>
-                          <td>{{ sell_latest_transaction.reason }}</td>
-                      </tr>
-                      <tr>
-                          <th>time</th>
-                          <td>{{ sell_latest_transaction.time }}</td>
-                      </tr>
-                      <tr>
-                          <th>created</th>
-                          <td>{{ sell_latest_transaction.created }}</td>
-                      </tr>
-                  </table>
+                  accountBalance:{{ sell_latest_transaction.accountBalance }}<br>
+                  interest:{{ sell_latest_transaction.interest }}<br>
+                  pl:{{ sell_latest_transaction.pl }}<br>
+                  units:{{ sell_latest_transaction.units }}<br>
+                  side:{{ sell_latest_transaction.side }}<br>
+                  expiry:{{ sell_latest_transaction.expiry | date:"c" }}<br>
+                  price:{{ sell_latest_transaction.price }}<br>
+                  upperBound:{{ sell_latest_transaction.upperBound }}<br>
+                  lowerBound:{{ sell_latest_transaction.lowerBound }}<br>
+                  stopLoss:{{ sell_latest_transaction.stopLoss }}<br>
+                  type:{{ sell_latest_transaction.type }}<br>
+                  reason:{{ sell_latest_transaction.reason }}<br>
+                  type:{{ sell_latest_transaction.type }}<br>
+                  time:{{ sell_latest_transaction.time | date:"c" }}<br>
+                  created:{{ sell_latest_transaction.created | date:"c" }}<br>
+                  type:{{ sell_latest_transaction.type }}
                   {% endif %}</td>
           </tr>
           <tr>
