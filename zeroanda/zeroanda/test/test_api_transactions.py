@@ -16,25 +16,22 @@ def test_api_transactions(request):
         transactionModel = TransactionsProxyModel()
         etag = "df8446ef2ea9a10ac34216ce287b79e9e7d9e72d"
         ids = '10231579886,10231579885'
-        id = '10233653978'
-        result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], count=10)
+        id = '10408274445'
+        result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], count=20)
         # result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], id=id)
         # result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], id=id, etag=etag)
         # result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], ids=ids)
         # result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], ids=ids, etag=etag)
-        utils.info(result.get_body())
-        if result.get_code() == 429:
-            return HttpResponse('200')
-        if 'transactions' not in result.get_body():
-            transactionModel.add(result.get_body())
-        else:
-            transactions = result.get_body()["transactions"]
-            for transaction in transactions:
-                transactionModel.add(transaction)
-        # transaction = result.get_body() if 'transactions' not in result.get_body() else result.get_body()["transactions"][0]
-        # utils.info(transaction)
-        # if 'expiry' in transaction:
-        #     utils.info(timeutils.convert_timestamp2datetime(transaction['expiry']))
+        # utils.info(result.get_body())
+        # if result.get_code() == 429:
+        #     return HttpResponse('200')
+        # if 'transactions' not in result.get_body():
+        #     transactionModel.add(result.get_body())
+        # else:
+        #     transactions = result.get_body()["transactions"]
+        #     for transaction in transactions:
+        #         transactionModel.add(transaction)
+        utils.info(result)
 
         return HttpResponse('200')
     else:

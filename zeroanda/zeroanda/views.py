@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, render
 from django.views   import generic
 
 from zeroanda.classes.utils import timeutils
-from zeroanda.constant import SCHEDULE_STATUS, SCHEDULE_AVAILABLE, SIDE
+from zeroanda.constant import SCHEDULE_STATUS, SCHEDULE_AVAILABLE, SIDE, INSTRUMENTS
 from zeroanda.models import TradeTransactionModel, TradeModel, ScheduleModel
 from zeroanda.proxy.order import OrderProxyModel
 from zeroanda.proxy.account import AccountProxyModel
@@ -70,6 +70,18 @@ class TransactionListView(generic.ListView):
 
     def get_template_names(self):
         return 'zeroanda/transactions/change_list.html'
+
+class TransactionsView(generic.ListView):
+    context_object_name = "transactions"
+
+    def get_queryset(self):
+        accountModel = AccountProxyModel().get_account()
+        transactionModel = TransactionsProxyModel()
+        result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], count=20)
+        return result
+
+    def get_template_names(self):
+        return 'zeroanda/transactions/list.html'
 
 @login_required
 def transaction_list(request, trade_id):

@@ -1,3 +1,5 @@
+from operator import attrgetter
+
 from zeroanda.classes.utils import timeutils
 from zeroanda.constant import TRANSACTION_TYPE, TRANSACTION_REASON
 from zeroanda.models import TransactionModel
@@ -6,6 +8,7 @@ from zeroanda   import utils
 
 class TransactionsProxyModel:
     _streaming = None
+    transactionList = []
 
     def __init__(self):
         self._streaming = Streaming()
@@ -14,8 +17,25 @@ class TransactionsProxyModel:
         if actual_order_model_id != None:
             return TransactionModel.objects.filter(actual_order_model_id=actual_order_model_id)
         else:
-            response = self._streaming.get_transactions(account_id, instrument, id=id, ids=ids, count=count, etag=etag)
-            return response
+            try:
+                transactionList = []
+                response = self._streaming.get_transactions(account_id, instrument, id=id, ids=ids, count=count, etag=etag)
+                utils.info(response.get_body())
+                if response.get_code() == 200:
+                    if 'transactions' not in response.get_body():
+                        self.transactionList.append(TransactionValueObject(response.get_body()))
+                    else:
+                        transactions = response.get_body()["transactions"]
+                        for transaction in transactions:
+                            vo = TransactionValueObject(transaction)
+                            self.transactionList.append(vo)
+                        # sorted(self.transactionList, key=lambda x: (x.orderId, x.time))
+                        sorted(self.transactionList, key=attrgetter('orderId'))
+                        sorted(self.transactionList, key=attrgetter('time'), reverse = True)
+                        # sorted(self.transactionList, key=lambda x: x.orderId)
+                return self.transactionList
+            except:
+                return None
 
     def get_latest_transaction_by_id(self, actual_order_model_id):
         try:
@@ -26,14 +46,14 @@ class TransactionsProxyModel:
     def get_latest_type(self, actual_order_model_id):
         try:
             model = TransactionModel.objects.filter(actual_order_model_id=actual_order_model_id).order_by('-id')[:1][0]
-            return self.transaction_type_value(model.type)
+            return self.__transaction_type_value(model.type)
         except:
             return None
 
     def get_latest_transaction_reason_value(self, actual_order_model_id):
         try:
             model = TransactionModel.objects.filter(actual_order_model_id=actual_order_model_id).order_by('-id')[:1][0]
-            return self.transaction_reason_value(model.reason)
+            return self.__transaction_reason_value(model.reason)
         except:
             return None
 
@@ -54,32 +74,85 @@ class TransactionsProxyModel:
             upperBound=0 if "upperBound" not in transaction else transaction["upperBound"],
             lowerBound=0 if "lowerBound" not in transaction else transaction["lowerBound"],
             stopLoss=0 if "stopLoss" not in transaction else transaction["stopLossPrice"],
-            type=self.transaction_type_key(transaction["type"]),
-            reason=0 if "reason" not in transaction else self.transaction_reason_key(transaction["reason"]),
+            type=self.__transaction_type_key(transaction["type"]),
+            reason=0 if "reason" not in transaction else self.__transaction_reason_key(transaction["reason"]),
             time=timeutils.convert_timestamp2datetime(transaction["time"]),
         )
         transaction_model.save()
 
-    def transaction_type_key(self, value):
+    def __transaction_type_key(self, value):
         for item in TRANSACTION_TYPE:
             if item[1] == value:
                 return item[0]
         raise Exception('no constant for type.')
 
-    def transaction_reason_key(self, value):
+    def __transaction_reason_key(self, value):
         for item in TRANSACTION_REASON:
             if item[1] == value:
                 return item[0]
         raise Exception('no constant for reason.')
 
-    def transaction_type_value(self, key):
+    def __transaction_type_value(self, key):
         for item in TRANSACTION_TYPE:
             if item[0] == key:
                 return item[1]
         raise Exception('no constant for type.')
 
-    def transaction_reason_value(self, key):
+    def __transaction_reason_value(self, key):
         for item in TRANSACTION_REASON:
             if item[0] == key:
                 return item[1]
         raise Exception('no constant for reason.')
+
+class TransactionValueObject:
+    id          = None
+    side        = None
+    accountId   = None
+    tradeId     = None
+    orderId     = None
+    reason      = None
+    instrument  = None
+    type        = None
+    units       = None
+    time        = None
+    expiry      = None
+    price       = None
+    interest    = None
+    pl          = None
+    accountBalance  = None
+    stopLossPrice   = None
+    upperBound      = None
+    lowerBound      = None
+    tradeReducedId  = None
+    tradeReducedPl  = None
+    tradeReducedUnits   = None
+    tradeReducedInterest    = None
+    tradeOpenedId           = None
+    tradeOpenedUnits        = None
+
+    def __init__(self, response):
+        self.id          = response["id"]
+        self.accountId   = response["accountId"]
+        self.type        = response["type"]
+        self.time        = timeutils.convert_timestamp2datetime(response["time"])
+
+        self.orderId     = 0 if "orderId" not in response else response["orderId"]
+        self.reason      = None if "reason" not in response else response["reason"]
+        self.units       = 0 if "units" not in response else response["units"]
+        self.instrument  = None if "instrument" not in response else response["instrument"]
+        self.side        = None if "side" not in response else response["side"]
+        self.tradeId     = 0 if "tradeId" not in response else response["tradeId"]
+        self.expiry      = 0 if "expiry" not in response else timeutils.convert_timestamp2datetime(response["expiry"])
+        self.price       = 0 if "price" not in response else response["price"]
+        self.interest    = 0 if "interest" not in response else response["interest"]
+        self.pl          = 0 if "pl" not in response else response["pl"]
+        self.accountBalance  = 0 if "accountBalance" not in response else response["accountBalance"]
+        self.stopLossPrice   = 0 if "stopLossPrice" not in response else response["stopLossPrice"]
+        self.upperBound      = 0 if "upperBound" not in response else response["upperBound"]
+        self.lowerBound      = 0 if "lowerBound" not in response else response["lowerBound"]
+        self.tradeReducedId  = 0 if "tradeReduced" not in response or "id" not in response["tradeReduced"] else response["tradeReduced"]["id"]
+        self.tradeReducedPl  = 0 if "tradeReduced" not in response or "pl" not in response["tradeReduced"] else response["tradeReduced"]["pl"]
+        self.tradeReducedUnits   = 0 if "tradeReduced" not in response or "units" not in response["tradeReduced"] else response["tradeReduced"]["units"]
+        self.tradeReducedInterest    = 0 if "tradeReduced" not in response or "interest" not in response["tradeReduced"] else response["tradeReduced"]["interest"]
+        self.tradeOpenedId           = 0 if "tradeOpened" not in response or "id" not in response["tradeOpened"] else response["tradeOpened"]["id"]
+        self.tradeOpenedUnits        = 0 if "tradeOpened" not in response or "units" not in response["tradeOpened"] else response["tradeOpened"]["units"]

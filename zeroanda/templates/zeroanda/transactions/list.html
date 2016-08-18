@@ -1,0 +1,131 @@
+{% extends "zeroanda/base_site.html" %}
+{% load i18n admin_urls admin_static admin_list %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}" />
+  {% if cl.formset %}
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />
+  {% endif %}
+  {% if cl.formset or action_form %}
+    <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+  {% endif %}
+  {{ media.css }}
+  {% if not actions_on_top and not actions_on_bottom %}
+    <style>
+      #changelist table thead th:first-child {width: inherit}
+    </style>
+  {% endif %}
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+{{ media.js }}
+{% if action_form %}{% if actions_on_top or actions_on_bottom %}
+<script type="text/javascript">
+(function($) {
+    $(document).ready(function($) {
+        $("tr input.action-select").actions();
+    });
+})(django.jQuery);
+</script>
+{% endif %}{% endif %}
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} change-list{% endblock %}
+
+{% if not is_popup %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+&rsaquo; <a href="{% url 'admin:app_list' app_label=cl.opts.app_label %}">{{ cl.opts.app_config.verbose_name }}</a>
+&rsaquo; {{ cl.opts.verbose_name_plural|capfirst }}
+</div>
+{% endblock %}
+{% endif %}
+
+{% block coltype %}flex{% endblock %}
+
+{% block content %}
+  <div id="content-main">
+    {% block object-tools %}
+      {% if has_add_permission %}
+        <ul class="object-tools">
+          {% block object-tools-items %}
+            <li>
+              {% url cl.opts|admin_urlname:'add' as add_url %}
+              <a href="{% add_preserved_filters add_url is_popup to_field %}" class="addlink">
+                {% blocktrans with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktrans %}
+              </a>
+            </li>
+          {% endblock %}
+        </ul>
+      {% endif %}
+    {% endblock %}
+    {% if cl.formset.errors %}
+        <p class="errornote">
+        {% if cl.formset.total_error_count == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
+        </p>
+        {{ cl.formset.non_form_errors }}
+    {% endif %}
+
+      {% if transactions != None %}
+      <table>
+          <tr>
+              <th>id</th>
+              <th>accountId</th>
+              <th>type</th>
+              <th>time</th>
+              <th>orderId</th>
+              <th>reason</th>
+              <th>units</th>
+              <th>instrument</th>
+              <th>side</th>
+              <th>tradeId</th>
+              <th>expiry</th>
+              <th>price</th>
+              <th>interest</th>
+              <th>pl</th>
+              <th>accountBalance</th>
+              <th>stopLossPrice</th>
+              <th>upperBound</th>
+              <th>lowerBound</th>
+              <th>tradeReducedId</th>
+              <th>tradeReducedPl</th>
+              <th>tradeReducedUnits</th>
+              <th>tradeReducedInterest</th>
+              <th>tradeOpenedId</th>
+              <th>tradeOpenedUnits</th>
+          </tr>
+          {% for transaction in transactions %}
+          <tr>
+              <td>{{ transaction.id }}</td>
+              <td>{{ transaction.accountId }}</td>
+              <td>{{ transaction.type }}</td>
+              <td>{{ transaction.time | date:"c" }}</td>
+              <td>{{ transaction.orderId }}</td>
+              <td>{{ transaction.reason }}</td>
+              <td>{{ transaction.units }}</td>
+              <td>{{ transaction.instrument }}</td>
+              <td>{{ transaction.side }}</td>
+              <td>{{ transaction.tradeId }}</td>
+              <td>{{ transaction.expiry | date:"c" }}</td>
+              <td>{{ transaction.price }}</td>
+              <td>{{ transaction.interest }}</td>
+              <td>{{ transaction.pl }}</td>
+              <td>{{ transaction.accountBalance }}</td>
+              <td>{{ transaction.stopLossPrice }}</td>
+              <td>{{ transaction.upperBound }}</td>
+              <td>{{ transaction.lowerBound }}</td>
+              <td>{{ transaction.tradeReducedId }}</td>
+              <td>{{ transaction.tradeReducedPl }}</td>
+              <td>{{ transaction.tradeReducedUnits }}</td>
+              <td>{{ transaction.tradeReducedInterest }}</td>
+              <td>{{ transaction.tradeOpenedId }}</td>
+              <td>{{ transaction.tradeOpenedUnits }}</td>
+          </tr>
+          {% endfor %}
+      </table>
+      {% endif %}
+  </div>
+{% endblock %}

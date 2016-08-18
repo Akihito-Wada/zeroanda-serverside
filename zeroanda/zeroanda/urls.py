@@ -19,7 +19,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from zeroanda.api import order, cancel, cancelAll, prices, tick, ifdoco, candles
-from zeroanda.views import TradeListView, PositionListView, OrdersListView, TransactionListView, transaction_list
+from zeroanda.views import TradeListView, PositionListView, OrdersListView, TransactionListView, transaction_list, TransactionsView
 
 from zeroanda.test.test_api_positions import test_api_positions
 from zeroanda.test.test_api_trades import test_api_trades
@@ -64,6 +64,7 @@ urlpatterns = [
     url(r'^zeroanda/position', login_required(PositionListView.as_view())),
     url(r'^zeroanda/trade', login_required(TradeListView.as_view())),
     url(r'^zeroanda/transactions/(?P<trade_id>[0-9]+)/$', transaction_list),
+    url(r'^zeroanda/transactions/', login_required(TransactionsView.as_view())),
 
     url(r'^zeroanda/test/orders', test_api_orders),
     url(r'^zeroanda/test/order/buy_market', test_order_buy_market),
