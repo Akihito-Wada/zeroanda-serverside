@@ -64,7 +64,7 @@ urlpatterns = [
     url(r'^zeroanda/position', login_required(PositionListView.as_view())),
     url(r'^zeroanda/trade', login_required(TradeListView.as_view())),
     url(r'^zeroanda/transactions/(?P<trade_id>[0-9]+)/$', transaction_list),
-    url(r'^zeroanda/transactions/', login_required(TransactionsView.as_view())),
+    url(r'^zeroanda/transactions$', login_required(TransactionsView.as_view())),
 
     url(r'^zeroanda/test/orders', test_api_orders),
     url(r'^zeroanda/test/order/buy_market', test_order_buy_market),
