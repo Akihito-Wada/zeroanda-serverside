@@ -13,13 +13,13 @@ class TransactionsProxyModel:
     def __init__(self):
         self._streaming = Streaming()
 
-    def get_transactions(self, account_id=None, instrument=None, id = None, ids = None, count = None, etag = None, actual_order_model_id=None):
+    def get_transactions(self, account_id=None, instrument=None, id = None, ids = None, count = None, max_id = None, min_id = None, etag = None, actual_order_model_id=None):
         if actual_order_model_id != None:
             return TransactionModel.objects.filter(actual_order_model_id=actual_order_model_id)
         else:
             try:
                 transactionList = []
-                response = self._streaming.get_transactions(account_id, instrument, id=id, ids=ids, count=count, etag=etag)
+                response = self._streaming.get_transactions(account_id, instrument, id=id, ids=ids, count=count, max_id=max_id, min_id=min_id, etag=etag)
                 utils.info(response.get_body())
                 if response.get_code() == 200:
                     if 'transactions' not in response.get_body():
