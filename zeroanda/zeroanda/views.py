@@ -6,6 +6,8 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views   import generic
 
+from operator import attrgetter
+
 from zeroanda.classes.utils import timeutils
 from zeroanda.constant import SCHEDULE_STATUS, SCHEDULE_AVAILABLE, SIDE, INSTRUMENTS
 from zeroanda.models import TradeTransactionModel, TradeModel, ScheduleModel
@@ -115,7 +117,6 @@ def transaction_list(request, trade_id):
                 buy_transaction_list = __sort_out_transaction(transactions, orderModelBuy.actual_model.actual_order_id)
             else:
                 buy_transaction_list = None
-
             if orderModelSell != None and orderModelSell.actual_model != None:
                 sell_transaction_list = __sort_out_transaction(transactions, orderModelSell.actual_model.actual_order_id)
             else:
@@ -142,22 +143,13 @@ def transaction_list(request, trade_id):
 
 def __sort_out_transaction(transaction_list, actual_transaction_id):
     target_list = []
-    utils.info('len')
-    utils.info(len(transaction_list))
     for transaction in transaction_list:
-        utils.info(transaction.id)
         if actual_transaction_id == transaction.id:
-            utils.info('initial')
-            utils.info(transaction)
             target_list.append(transaction)
             break
     if len(target_list) == 0:
         return target_list
-    utils.info('len')
-    utils.info(len(transaction_list))
     for transaction in transaction_list:
         if target_list[0].id == transaction.orderId:
-            utils.info('same.')
-            utils.info(transaction.id)
             target_list.append(transaction)
-    return target_list
+    return sorted(target_list, key=attrgetter('id'))
