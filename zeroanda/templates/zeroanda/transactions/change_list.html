@@ -216,137 +216,262 @@
       <h2>none</h2>
       {% endif %}
 
-      <h1>Order Models (Actual Order Models)</h1>
-      {% if order_model_sell != None or order_model_buy != None %}
-      <table>
-          <tr>
-              <th></th>
-              <th>sell</th>
-              <th>buy</th>
-          </tr>
+      <h1>Order Models: Sell (Actual Order Models)</h1>
+      {% if order_model_sell != None %}
+        <table>
           <tr>
               <th>actual order id</th>
               <td>{{ order_model_sell.actual_model.actual_order_id }}</td>
-              <td>{{ order_model_buy.actual_model.actual_order_id }}</td>
           </tr>
           <tr>
               <th>instruments</th>
               <td>{{ order_model_sell.instruments }}</td>
-              <td>{{ order_model_buy.instruments }}</td>
           </tr>
           <tr>
               <th>units</th>
               <td>{{ order_model_sell.units }} ( {{ order_model_sell.actual_model.units }} )</td>
-              <td>{{ order_model_buy.units }} ( {{ order_model_buy.actual_model.units }} )</td>
           </tr>
           <tr>
               <th>side</th>
               <td>{{ order_model_sell.side }}</td>
-              <td>{{ order_model_buy.side }}</td>
           </tr>
           <tr>
               <th>expiry</th>
               <td>{{ order_model_sell.expiry | date:"c" }}</td>
-              <td>{{ order_model_buy.expiry | date:"c" }}</td>
           </tr>
           <tr>
               <th>price</th>
               <td>{{ order_model_sell.price }} ( {{ order_model_sell.actual_model.price }} )</td>
-              <td>{{ order_model_buy.price }} ( {{ order_model_buy.actual_model.price }} )</td>
           </tr>
           <tr>
               <th>upperBound</th>
               <td>{{ order_model_sell.upperBound }} ( {{ order_model_sell.actual_model.upperBound }} )</td>
-              <td>{{ order_model_buy.upperBound }} ( {{ order_model_buy.actual_model.upperBound }} )</td>
           </tr>
           <tr>
               <th>lowerBound</th>
               <td>{{ order_model_sell.lowerBound }} ( {{ order_model_sell.actual_model.lowerBound }} )</td>
-              <td>{{ order_model_buy.lowerBound }} ( {{ order_model_buy.actual_model.lowerBound }} )</td>
           </tr>
           <tr>
               <th>stopLoss</th>
               <td>{{ order_model_sell.stopLoss }} ( {{ order_model_sell.actual_model.stopLoss }} )</td>
-              <td>{{ order_model_buy.stopLoss }} ( {{ order_model_buy.actual_model.stopLoss }} )</td>
           </tr>
           <tr>
               <th>takeProfit</th>
               <td>{{ order_model_sell.takeProfit }} ( {{ order_model_sell.actual_model.takeProfit }} )</td>
-              <td>{{ order_model_buy.takeProfit }} ( {{ order_model_buy.actual_model.takeProfit }} )</td>
           </tr>
           <tr>
               <th>status</th>
               <td>{{ order_model_sell.status }}</td>
-              <td>{{ order_model_buy.status }}</td>
           </tr>
           <tr>
               <th>error_code</th>
               <td>{{ order_model_sell.actual_model.error_code }}</td>
-              <td>{{ order_model_buy.actual_model.error_code }}</td>
-          </tr>
-          <tr>
-              <th>type</th>
-              <td>{{ type_sell }}</td>
-              <td>{{ type_buy }}</td>
-          </tr>
-          <tr>
-              <th>reason</th>
-              <td>{{ reason_sell }}</td>
-              <td>{{ reason_buy }}</td>
           </tr>
           <tr>
               <th>transaction</th>
-              <td>{% if sell_latest_transaction != none %}
-                  accountBalance:{{ sell_latest_transaction.accountBalance }}<br>
-                  interest:{{ sell_latest_transaction.interest }}<br>
-                  pl:{{ sell_latest_transaction.pl }}<br>
-                  units:{{ sell_latest_transaction.units }}<br>
-                  side:{{ sell_latest_transaction.side }}<br>
-                  expiry:{{ sell_latest_transaction.expiry | date:"c" }}<br>
-                  price:{{ sell_latest_transaction.price }}<br>
-                  upperBound:{{ sell_latest_transaction.upperBound }}<br>
-                  lowerBound:{{ sell_latest_transaction.lowerBound }}<br>
-                  stopLoss:{{ sell_latest_transaction.stopLoss }}<br>
-                  type:{{ sell_latest_transaction.type }}<br>
-                  reason:{{ sell_latest_transaction.reason }}<br>
-                  time:{{ sell_latest_transaction.time | date:"c" }}<br>
-                  created:{{ sell_latest_transaction.created | date:"c" }}<br>
-                  {% endif %}</td>
-              <td>{% if buy_latest_transaction != none %}
-                  accountBalance:{{ buy_latest_transaction.accountBalance }}<br>
-                  interest:{{ buy_latest_transaction.interest }}<br>
-                  pl:{{ buy_latest_transaction.pl }}<br>
-                  units:{{ buy_latest_transaction.units }}<br>
-                  side:{{ buy_latest_transaction.side }}<br>
-                  expiry:{{ buy_latest_transaction.expiry | date:"c" }}<br>
-                  price:{{ buy_latest_transaction.price }}<br>
-                  upperBound:{{ buy_latest_transaction.upperBound }}<br>
-                  lowerBound:{{ buy_latest_transaction.lowerBound }}<br>
-                  stopLoss:{{ buy_latest_transaction.stopLoss }}<br>
-                  type:{{ buy_latest_transaction.type }}<br>
-                  reason:{{ buy_latest_transaction.reason }}<br>
-                  time:{{ buy_latest_transaction.time | date:"c" }}<br>
-                  created:{{ buy_latest_transaction.created | date:"c" }}<br>
-                  {% endif %}</td>
+              <td>
+                  <table>
+                      <tr>
+                          <th>id</th>
+                          <th>accountId</th>
+                          <th>type</th>
+                          <th>time</th>
+                          <th>orderId</th>
+                          <th>reason</th>
+                          <th>units</th>
+                          <th>instrument</th>
+                          <th>side</th>
+                          <th>tradeId</th>
+                          <th>expiry</th>
+                          <th>price</th>
+                          <th>interest</th>
+                          <th>pl</th>
+                          <th>accountBalance</th>
+                          <th>stopLossPrice</th>
+                          <th>upperBound</th>
+                          <th>lowerBound</th>
+                          <th>tradeReducedId</th>
+                          <th>tradeReducedPl</th>
+                          <th>tradeReducedUnits</th>
+                          <th>tradeReducedInterest</th>
+                          <th>tradeOpenedId</th>
+                          <th>tradeOpenedUnits</th>
+                      </tr>
+                      {% if sell_transaction_list != None %}
+                      {% for transaction in sell_transaction_list %}
+                      <tr>
+                          <td>{{ transaction.id }}</td>
+                          <td>{{ transaction.accountId }}</td>
+                          <td>{{ transaction.type }}</td>
+                          <td>{{ transaction.time | date:"c" }}</td>
+                          <td>{{ transaction.orderId }}</td>
+                          <td>{{ transaction.reason }}</td>
+                          <td>{{ transaction.units }}</td>
+                          <td>{{ transaction.instrument }}</td>
+                          <td>{{ transaction.side }}</td>
+                          <td>{{ transaction.tradeId }}</td>
+                          <td>{{ transaction.expiry | date:"c" }}</td>
+                          <td>{{ transaction.price }}</td>
+                          <td>{{ transaction.interest }}</td>
+                          <td>{{ transaction.pl }}</td>
+                          <td>{{ transaction.accountBalance }}</td>
+                          <td>{{ transaction.stopLossPrice }}</td>
+                          <td>{{ transaction.upperBound }}</td>
+                          <td>{{ transaction.lowerBound }}</td>
+                          <td>{{ transaction.tradeReducedId }}</td>
+                          <td>{{ transaction.tradeReducedPl }}</td>
+                          <td>{{ transaction.tradeReducedUnits }}</td>
+                          <td>{{ transaction.tradeReducedInterest }}</td>
+                          <td>{{ transaction.tradeOpenedId }}</td>
+                          <td>{{ transaction.tradeOpenedUnits }}</td>
+                      </tr>
+                      {% endfor %}
+                      {% endif %}
+                  </table>
+              </td>
           </tr>
           <tr>
               <th>time</th>
               <td>{{ order_model_sell.actual_model.time | date:"c" }}</td>
-              <td>{{ order_model_buy.actual_model.time | date:"c" }}</td>
           </tr>
           <tr>
               <th>created</th>
               <td>{{ order_model_sell.created | date:"c" }} ( {{ order_model_sell.actual_model.created | date:"c" }} )</td>
-              <td>{{ order_model_buy.created | date:"c" }} ( {{ order_model_buy.actual_model.created | date:"c" }} )</td>
           </tr>
           <tr>
               <th>updated</th>
               <td>{{ order_model_sell.updated | date:"c" }}</td>
+          </tr>
+      </table>
+      {% endif %}
+
+      <h1>Order Models: Buy (Actual Order Models)</h1>
+      {% if order_model_buy != None %}
+            <table>
+          <tr>
+              <th>actual order id</th>
+              <td>{{ order_model_buy.actual_model.actual_order_id }}</td>
+          </tr>
+          <tr>
+              <th>instruments</th>
+              <td>{{ order_model_buy.instruments }}</td>
+          </tr>
+          <tr>
+              <th>units</th>
+              <td>{{ order_model_buy.units }} ( {{ order_model_buy.actual_model.units }} )</td>
+          </tr>
+          <tr>
+              <th>side</th>
+              <td>{{ order_model_buy.side }}</td>
+          </tr>
+          <tr>
+              <th>expiry</th>
+              <td>{{ order_model_buy.expiry | date:"c" }}</td>
+          </tr>
+          <tr>
+              <th>price</th>
+              <td>{{ order_model_buy.price }} ( {{ order_model_buy.actual_model.price }} )</td>
+          </tr>
+          <tr>
+              <th>upperBound</th>
+              <td>{{ order_model_buy.upperBound }} ( {{ order_model_buy.actual_model.upperBound }} )</td>
+          </tr>
+          <tr>
+              <th>lowerBound</th>
+              <td>{{ order_model_buy.lowerBound }} ( {{ order_model_buy.actual_model.lowerBound }} )</td>
+          </tr>
+          <tr>
+              <th>stopLoss</th>
+              <td>{{ order_model_buy.stopLoss }} ( {{ order_model_buy.actual_model.stopLoss }} )</td>
+          </tr>
+          <tr>
+              <th>takeProfit</th>
+              <td>{{ order_model_buy.takeProfit }} ( {{ order_model_buy.actual_model.takeProfit }} )</td>
+          </tr>
+          <tr>
+              <th>status</th>
+              <td>{{ order_model_buy.status }}</td>
+          </tr>
+          <tr>
+              <th>error_code</th>
+              <td>{{ order_model_buy.actual_model.error_code }}</td>
+          </tr>
+          <tr>
+              <th>transaction</th>
+              <td>
+                  <table>
+                      <tr>
+                          <th>id</th>
+                          <th>accountId</th>
+                          <th>type</th>
+                          <th>time</th>
+                          <th>orderId</th>
+                          <th>reason</th>
+                          <th>units</th>
+                          <th>instrument</th>
+                          <th>side</th>
+                          <th>tradeId</th>
+                          <th>expiry</th>
+                          <th>price</th>
+                          <th>interest</th>
+                          <th>pl</th>
+                          <th>accountBalance</th>
+                          <th>stopLossPrice</th>
+                          <th>upperBound</th>
+                          <th>lowerBound</th>
+                          <th>tradeReducedId</th>
+                          <th>tradeReducedPl</th>
+                          <th>tradeReducedUnits</th>
+                          <th>tradeReducedInterest</th>
+                          <th>tradeOpenedId</th>
+                          <th>tradeOpenedUnits</th>
+                      </tr>
+                      {% if buy_transaction_list != None %}
+                      {% for transaction in buy_transaction_list %}
+                      <tr>
+                          <td>{{ transaction.id }}</td>
+                          <td>{{ transaction.accountId }}</td>
+                          <td>{{ transaction.type }}</td>
+                          <td>{{ transaction.time | date:"c" }}</td>
+                          <td>{{ transaction.orderId }}</td>
+                          <td>{{ transaction.reason }}</td>
+                          <td>{{ transaction.units }}</td>
+                          <td>{{ transaction.instrument }}</td>
+                          <td>{{ transaction.side }}</td>
+                          <td>{{ transaction.tradeId }}</td>
+                          <td>{{ transaction.expiry | date:"c" }}</td>
+                          <td>{{ transaction.price }}</td>
+                          <td>{{ transaction.interest }}</td>
+                          <td>{{ transaction.pl }}</td>
+                          <td>{{ transaction.accountBalance }}</td>
+                          <td>{{ transaction.stopLossPrice }}</td>
+                          <td>{{ transaction.upperBound }}</td>
+                          <td>{{ transaction.lowerBound }}</td>
+                          <td>{{ transaction.tradeReducedId }}</td>
+                          <td>{{ transaction.tradeReducedPl }}</td>
+                          <td>{{ transaction.tradeReducedUnits }}</td>
+                          <td>{{ transaction.tradeReducedInterest }}</td>
+                          <td>{{ transaction.tradeOpenedId }}</td>
+                          <td>{{ transaction.tradeOpenedUnits }}</td>
+                      </tr>
+                      {% endfor %}
+                      {% endif %}
+                  </table>
+              </td>
+          </tr>
+          <tr>
+              <th>time</th>
+              <td>{{ order_model_buy.actual_model.time | date:"c" }}</td>
+          </tr>
+          <tr>
+              <th>created</th>
+              <td>{{ order_model_buy.created | date:"c" }} ( {{ order_model_buy.actual_model.created | date:"c" }} )</td>
+          </tr>
+          <tr>
+              <th>updated</th>
               <td>{{ order_model_buy.updated | date:"c" }}</td>
           </tr>
       </table>
-      {% else %}
-      <h2>none</h2>
       {% endif %}
 
       <h1>Price List</h1>

@@ -18,7 +18,7 @@ class TransactionsProxyModel:
             return TransactionModel.objects.filter(actual_order_model_id=actual_order_model_id)
         else:
             try:
-                response = self._streaming.get_transactions(account_id, instrument, id=id, ids=ids, count=count, max_id=max_id, min_id=min_id, etag=etag)
+                response = self._streaming.get_transactions(account_id=account_id,instrument=instrument, id=id, ids=ids, count=count, max_id=max_id, min_id=min_id, etag=etag)
                 if response.get_code() == 200:
                     if 'transactions' not in response.get_body():
                         self.transactionList.append(TransactionValueObject(response.get_body()))

@@ -108,24 +108,18 @@ def transaction_list(request, trade_id):
             orderProxyModel = OrderProxyModel()
             orderModelSell = orderProxyModel.get_order_by_trade_id(trade_id=trade_id, side=SIDE[0][0])
             orderModelBuy = orderProxyModel.get_order_by_trade_id(trade_id=trade_id, side=SIDE[1][0])
-
+            min_id = orderModelBuy.actual_model.actual_order_id if orderModelBuy.actual_model.actual_order_id < orderModelSell.actual_model.actual_order_id else orderModelSell.actual_model.actual_order_id
             transactionModel = TransactionsProxyModel()
-
+            transactions = transactionModel.get_transactions(account_id=accountModel.account_id, instrument=scheduleModel.country, min_id=min_id)
             if orderModelBuy != None and orderModelBuy.actual_model != None:
-                type_buy = transactionModel.get_latest_type(orderModelBuy.actual_model.id)
-                reason_buy = transactionModel.get_latest_transaction_reason_value(orderModelBuy.actual_model.id)
-                buy_latest_transaction = transactionModel.get_latest_transaction_by_id(orderModelBuy.actual_model.id)
+                buy_transaction_list = __sort_out_transaction(transactions, orderModelBuy.actual_model.actual_order_id)
             else:
-                type_buy = None
-                reason_buy = None
+                buy_transaction_list = None
 
             if orderModelSell != None and orderModelSell.actual_model != None:
-                type_sell = transactionModel.get_latest_type(orderModelSell.actual_model.id)
-                reason_sell = transactionModel.get_latest_transaction_reason_value(orderModelSell.actual_model.id)
-                sell_latest_transaction = transactionModel.get_latest_transaction_by_id(orderModelSell.actual_model.id)
+                sell_transaction_list = __sort_out_transaction(transactions, orderModelSell.actual_model.actual_order_id)
             else:
-                type_sell = None
-                reason_sell = None
+                sell_transaction_list = None
 
         transaction_list = TradeTransactionModel.objects.filter(trade_model_id=trade_id).order_by("created")
         return render(request, 'zeroanda/transactions/change_list.html',
@@ -140,12 +134,30 @@ def transaction_list(request, trade_id):
                           'price_model': priceModel,
                           'order_model_sell': orderModelSell,
                           'order_model_buy': orderModelBuy,
-                          'buy_latest_transaction': buy_latest_transaction,
-                          'sell_latest_transaction': sell_latest_transaction,
-                          'type_buy': type_buy,
-                          'reason_buy': reason_buy,
-                          'type_sell': type_sell,
-                          'reason_sell': reason_sell,
                           'price_list': price_list,
+                          'buy_transaction_list': buy_transaction_list,
+                          'sell_transaction_list': sell_transaction_list,
                       })
     return HttpResponse('200')
+
+def __sort_out_transaction(transaction_list, actual_transaction_id):
+    target_list = []
+    utils.info('len')
+    utils.info(len(transaction_list))
+    for transaction in transaction_list:
+        utils.info(transaction.id)
+        if actual_transaction_id == transaction.id:
+            utils.info('initial')
+            utils.info(transaction)
+            target_list.append(transaction)
+            break
+    if len(target_list) == 0:
+        return target_list
+    utils.info('len')
+    utils.info(len(transaction_list))
+    for transaction in transaction_list:
+        if target_list[0].id == transaction.orderId:
+            utils.info('same.')
+            utils.info(transaction.id)
+            target_list.append(transaction)
+    return target_list
