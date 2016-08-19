@@ -18,9 +18,7 @@ class TransactionsProxyModel:
             return TransactionModel.objects.filter(actual_order_model_id=actual_order_model_id)
         else:
             try:
-                transactionList = []
                 response = self._streaming.get_transactions(account_id, instrument, id=id, ids=ids, count=count, max_id=max_id, min_id=min_id, etag=etag)
-                utils.info(response.get_body())
                 if response.get_code() == 200:
                     if 'transactions' not in response.get_body():
                         self.transactionList.append(TransactionValueObject(response.get_body()))
@@ -29,10 +27,8 @@ class TransactionsProxyModel:
                         for transaction in transactions:
                             vo = TransactionValueObject(transaction)
                             self.transactionList.append(vo)
-                        # sorted(self.transactionList, key=lambda x: (x.orderId, x.time))
                         sorted(self.transactionList, key=attrgetter('orderId'))
                         sorted(self.transactionList, key=attrgetter('time'), reverse = True)
-                        # sorted(self.transactionList, key=lambda x: x.orderId)
                 return self.transactionList
             except:
                 return None
