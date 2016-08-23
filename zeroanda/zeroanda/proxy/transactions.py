@@ -8,7 +8,6 @@ from zeroanda   import utils
 
 class TransactionsProxyModel:
     _streaming = None
-    transactionList = []
 
     def __init__(self):
         self._streaming = Streaming()
@@ -18,18 +17,17 @@ class TransactionsProxyModel:
             return TransactionModel.objects.filter(actual_order_model_id=actual_order_model_id)
         else:
             try:
+                transactionList = []
                 response = self._streaming.get_transactions(account_id=account_id,instrument=instrument, id=id, ids=ids, count=count, max_id=max_id, min_id=min_id, etag=etag)
                 if response.get_code() == 200:
                     if 'transactions' not in response.get_body():
-                        return self.transactionList.append(TransactionValueObject(response.get_body()))
+                        return transactionList.append(TransactionValueObject(response.get_body()))
                     else:
                         transactions = response.get_body()["transactions"]
                         for transaction in transactions:
                             vo = TransactionValueObject(transaction)
-                            self.transactionList.append(vo)
-                        return sorted(self.transactionList, key=attrgetter('id'), reverse=True)
-                        # sorted(self.transactionList, key=attrgetter('time'), reverse = True)
-                # return self.transactionList
+                            transactionList.append(vo)
+                        return sorted(transactionList, key=attrgetter('id'), reverse=True)
             except:
                 return None
 
