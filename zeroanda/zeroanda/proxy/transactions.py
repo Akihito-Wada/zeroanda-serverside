@@ -27,7 +27,7 @@ class TransactionsProxyModel:
                         for transaction in transactions:
                             vo = TransactionValueObject(transaction)
                             self.transactionList.append(vo)
-                        return sorted(self.transactionList, key=attrgetter('id'))
+                        return sorted(self.transactionList, key=attrgetter('id'), reverse=True)
                         # sorted(self.transactionList, key=attrgetter('time'), reverse = True)
                 # return self.transactionList
             except:
