@@ -79,7 +79,7 @@ class TransactionsView(generic.ListView):
     def get_queryset(self):
         accountModel = AccountProxyModel().get_account()
         transactionModel = TransactionsProxyModel()
-        result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], count=20)
+        result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], count=50)
         return result
 
     def get_template_names(self):
