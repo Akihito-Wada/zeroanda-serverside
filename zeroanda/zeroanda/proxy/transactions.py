@@ -21,15 +21,15 @@ class TransactionsProxyModel:
                 response = self._streaming.get_transactions(account_id=account_id,instrument=instrument, id=id, ids=ids, count=count, max_id=max_id, min_id=min_id, etag=etag)
                 if response.get_code() == 200:
                     if 'transactions' not in response.get_body():
-                        self.transactionList.append(TransactionValueObject(response.get_body()))
+                        return self.transactionList.append(TransactionValueObject(response.get_body()))
                     else:
                         transactions = response.get_body()["transactions"]
                         for transaction in transactions:
                             vo = TransactionValueObject(transaction)
                             self.transactionList.append(vo)
-                        sorted(self.transactionList, key=attrgetter('orderId'))
-                        sorted(self.transactionList, key=attrgetter('time'), reverse = True)
-                return self.transactionList
+                        return sorted(self.transactionList, key=attrgetter('id'))
+                        # sorted(self.transactionList, key=attrgetter('time'), reverse = True)
+                # return self.transactionList
             except:
                 return None
 
