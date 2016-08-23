@@ -152,7 +152,7 @@ def __sort_out_transaction(transaction_list, actual_transaction_id):
     for transaction in transaction_list:
         if target_list[0].id == transaction.orderId:
             target_list.append(transaction)
-            __sort_out_transaction_by_trade_id(target_list, transaction_list, transaction)
+            __sort_out_transaction_by_trade_id(target_list, transaction_list, transaction.orderId)
     return sorted(target_list, key=attrgetter('id'))
 
 
