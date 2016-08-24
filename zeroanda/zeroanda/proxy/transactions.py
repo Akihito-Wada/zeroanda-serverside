@@ -114,6 +114,7 @@ class TransactionValueObject:
     interest    = None
     pl          = None
     accountBalance  = None
+    takeProfitPrice = None
     stopLossPrice   = None
     upperBound      = None
     lowerBound      = None
@@ -141,6 +142,7 @@ class TransactionValueObject:
         self.interest    = 0 if "interest" not in response else response["interest"]
         self.pl          = 0 if "pl" not in response else response["pl"]
         self.accountBalance  = 0 if "accountBalance" not in response else response["accountBalance"]
+        self.takeProfitPrice = 0 if "takeProfitPrice" not in response else response["takeProfitPrice"]
         self.stopLossPrice   = 0 if "stopLossPrice" not in response else response["stopLossPrice"]
         self.upperBound      = 0 if "upperBound" not in response else response["upperBound"]
         self.lowerBound      = 0 if "lowerBound" not in response else response["lowerBound"]

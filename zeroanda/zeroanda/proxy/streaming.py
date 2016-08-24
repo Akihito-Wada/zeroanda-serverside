@@ -204,10 +204,11 @@ class Streaming(object):
             params['count'] = count
 
         result = self.get(url, self.get_headers(None, True), params)
-        if result.get_status():
+        if result != None and result.get_status():
             return result
         else:
-            utils.error(result.get_body())
+            if result != None:
+                utils.error(result.get_body())
             raise ZeroandaError(result)
 
     '''
@@ -307,7 +308,7 @@ class Streaming(object):
             utils.error(result.get_body())
             raise ZeroandaError(result)
 
-    def order_ifdoco(self, account_id, instruments, units, side, expiry, price, lowerBound, upperBound, stopLoss):
+    def order_ifdoco(self, account_id, instruments, units, side, expiry, price, lowerBound, upperBound, takeProfit, stopLoss):
         payload = {'instrument': instruments,
                    'units': units,
                    'side': side,
@@ -316,6 +317,7 @@ class Streaming(object):
                    'price': price,
                    'lowerBound': lowerBound,
                    'upperBound': upperBound,
+                   'takeProfit': takeProfit,
                    'stopLoss': stopLoss
                    }
         if account_id == None:
@@ -408,9 +410,9 @@ class Streaming(object):
     def get(self, url, headers, params = None):
         try:
             s = requests.Session()
+            utils.info(url)
             utils.info(headers)
             utils.info(params)
-            utils.info(url)
             req = requests.Request('GET', url, headers = headers, params = params)
             pre = req.prepare()
             response = s.send(pre, stream = True, verify = False)

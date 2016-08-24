@@ -88,7 +88,7 @@ class OrderProxyModel:
             orderModel.save()
             return
 
-    def buy_ifdoco(self, target_price, upper_bound, lower_bound, stop_loss, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None, trade_id=0):
+    def buy_ifdoco(self, target_price, upper_bound, lower_bound, take_profit, stop_loss, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None, trade_id=0):
         try :
             _instrument = instrument if instrument != None else scheduleModel.country
             _expiry = expiry if expiry != None else scheduleModel.presentation_time + timedelta(seconds=settings.EXPIRY_SECONDS)
@@ -103,6 +103,7 @@ class OrderProxyModel:
                             price=target_price,
                             upperBound=upper_bound,
                             lowerBound=lower_bound,
+                            takeProfit=take_profit,
                             stopLoss=stop_loss,
                             status=ORDER_STATUS[0][0]
                             )
@@ -116,6 +117,7 @@ class OrderProxyModel:
                 price=target_price,
                 upperBound=upper_bound,
                 lowerBound=lower_bound,
+                takeProfit=take_profit,
                 stopLoss=stop_loss
             )
             if response.get_code() == 201:
@@ -127,7 +129,7 @@ class OrderProxyModel:
             orderModel.save()
             return
 
-    def sell_ifdoco(self, target_price, upper_bound, lower_bound, stop_loss, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None, trade_id=0):
+    def sell_ifdoco(self, target_price, upper_bound, lower_bound, take_profit, stop_loss, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None, trade_id=0):
         _instrument = instrument if instrument != None else scheduleModel.country
         _expiry = expiry if expiry != None else scheduleModel.presentation_time + timedelta(seconds=settings.EXPIRY_SECONDS)
         try :
@@ -142,6 +144,7 @@ class OrderProxyModel:
                             price=target_price,
                             upperBound=upper_bound,
                             lowerBound=lower_bound,
+                            takeProfit=take_profit,
                             stopLoss=stop_loss,
                             status=ORDER_STATUS[0][0]
                             )
@@ -156,6 +159,7 @@ class OrderProxyModel:
                 price=target_price,
                 upperBound=upper_bound,
                 lowerBound=lower_bound,
+                takeProfit=take_profit,
                 stopLoss=stop_loss
             )
             # response = self._streaming.order_ifdoco(accountModel, orderModel)
