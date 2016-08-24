@@ -223,8 +223,7 @@ class Streaming(object):
             raise ZeroandaError(result)
 
     def close_trade(self, accountModel, trade_id):
-        url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/trades/" + trade_id
-        # params = {'instruments' : instruments}
+        url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/trades/" + str(trade_id)
         result = self.delete(url, self._compressed_headers)
         if result.get_status():
             return result

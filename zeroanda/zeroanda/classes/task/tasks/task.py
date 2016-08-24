@@ -4,6 +4,7 @@ from zeroanda.classes.task.children.get_account_process import GetAccountProcess
 from zeroanda.classes.task.children.get_price_process import GetPriceProcess
 from zeroanda.classes.task.children.set_unit_process import SetUnitProcess
 from zeroanda.classes.task.children.ifdococ_process import IfdococProcess
+from zeroanda.classes.task.children.close_all_trade_process import CloseTradesProcess
 from zeroanda.classes.task.children.get_transaction_process import GetTransactionProcess
 from zeroanda.classes.task.children.get_account_info_process import GetAccountInfoProcess
 from zeroanda.classes.utils import timeutils
@@ -35,6 +36,7 @@ class Task(IProcess):
         task.add_process(GetPriceProcess(task))
         task.add_process(SetUnitProcess(task))
         task.add_process(IfdococProcess(task))
+        task.add_process(CloseTradesProcess(task))
         task.add_process(GetTransactionProcess(task))
         task.add_process(GetAccountInfoProcess(task))
         return task
