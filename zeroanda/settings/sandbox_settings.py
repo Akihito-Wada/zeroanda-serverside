@@ -50,7 +50,7 @@ LOGGING = {
         #     'filters': ['special']
         # },
         'to_file': {
-            'formatter': 'simple',
+            'formatter': 'verbose',
             'level': 'DEBUG',
             # 'class': 'logging.FileHandler',
             'class': 'logging.handlers.TimedRotatingFileHandler',
@@ -62,6 +62,11 @@ LOGGING = {
     },
     'loggers': {
         'django': {
+            'handlers':['to_file'],
+            'propagate': True,
+            'level':'DEBUG',
+        },
+        'trade': {
             'handlers':['to_file'],
             'propagate': True,
             'level':'DEBUG',
