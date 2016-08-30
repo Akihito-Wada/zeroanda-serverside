@@ -67,7 +67,6 @@ $(function(){
 // cancel all of the orders
 $(function(){
     $("#cancelAllButton").click(function() {
-        logger.info('test')
         $.ajax({
             type: "POST",
             url: "http://" + location.host + "/zeroanda/api/order/cancelall",
@@ -114,7 +113,6 @@ $(function(){
 // get prices
 $(function(){
     $("#getTickingPriceButton").click(function() {
-        logger.info('test')
         $.ajax({
             type: "GET",
             url: "http://" + location.host + "/zeroanda/api/tick",

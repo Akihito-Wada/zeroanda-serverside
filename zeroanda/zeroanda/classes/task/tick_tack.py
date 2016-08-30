@@ -21,7 +21,7 @@ class TickTack:
 
                 nexttime = math.floor((datetime.now() + timedelta(seconds=1)).timestamp())
                 duration = nexttime - datetime.now().timestamp()
-                utils.info(duration)
+                # utils.info(duration)
                 time.sleep(duration)
             except Exception as e:
                 utils.info(e)

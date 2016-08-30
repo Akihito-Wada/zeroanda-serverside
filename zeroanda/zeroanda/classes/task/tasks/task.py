@@ -1,4 +1,3 @@
-from zeroanda import utils
 from zeroanda.classes.task.interface.iprocess import IProcess
 from zeroanda.classes.task.children.get_account_process import GetAccountProcess
 from zeroanda.classes.task.children.get_price_process import GetPriceProcess
@@ -8,6 +7,7 @@ from zeroanda.classes.task.children.close_all_trade_process import CloseTradesPr
 from zeroanda.classes.task.children.get_transaction_process import GetTransactionProcess
 from zeroanda.classes.task.children.get_account_info_process import GetAccountInfoProcess
 from zeroanda.classes.utils import timeutils
+from zeroanda.classes.utils.loggerutils import Logger
 from zeroanda.models import TradeModel
 
 from django.conf import settings
@@ -54,9 +54,9 @@ class Task(IProcess):
         try:
             if self.__target_process == None or self.__target_process != None and self.__target_process.is_finished():
                 self.__target_process = self._process_list.pop(0)
-            utils.info(self.__target_process)
+            Logger.info(self.__target_process)
         except Exception as e:
-            utils.info(e)
+            Logger.fatal(e)
             return True
         else:
             return False

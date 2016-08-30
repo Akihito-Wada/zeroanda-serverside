@@ -1,4 +1,5 @@
 from zeroanda.classes.utils import timeutils
+from zeroanda.classes.utils.loggerutils import Logger
 from zeroanda.constant import SCHEDULE_STATUS, SCHEDULE_AVAILABLE
 from zeroanda.models import ScheduleModel
 from zeroanda import utils
