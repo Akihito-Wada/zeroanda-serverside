@@ -3,11 +3,11 @@ from django.conf import settings
 
 from zeroanda.classes.task.children.aprocess import AbstractProcess
 from zeroanda.classes.utils import timeutils
+from zeroanda.classes.utils.loggerutils import Logger
 from zeroanda.constant import INSTRUMENTS
 from zeroanda.models import TradeTransactionModel
 from zeroanda.proxy.order import OrderProxyModel
 from zeroanda.proxy.point_map_proxy import AskPointMapProxy, BidPointMapProxy
-from zeroanda import utils
 
 from datetime import timedelta
 
@@ -67,7 +67,7 @@ class IfdococProcess(AbstractProcess):
 
     def _is_condition(self):
         now = timeutils.get_now_with_jst()
-        utils.info(self.__class__.__name__ + "::_is_condition::now: " + str(now) + ", target_date: " + str(self._target_date))
+        Logger.info(self.__class__.__name__ + "::_is_condition::now: " + str(now) + ", target_date: " + str(self._target_date))
         if now > self._presentation_date:
             raise Exception('IfdococProcess::presentation time has already passed.')
 

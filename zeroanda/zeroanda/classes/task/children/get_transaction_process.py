@@ -2,6 +2,7 @@ from django import db
 from django.conf import settings
 
 from zeroanda.classes.task.children.aprocess import AbstractProcess
+from zeroanda.classes.utils.loggerutils import Logger
 from zeroanda.constant import INSTRUMENTS
 from zeroanda.controller.mail_manager import MailManager
 from zeroanda.models import TradeTransactionModel
@@ -45,7 +46,7 @@ class GetTransactionProcess(AbstractProcess):
 
     def _is_condition(self):
         now = timeutils.get_now_with_jst()
-        utils.info(self.__class__.__name__ + "::_is_condition::now: " + str(now) + ", target_date: " + str(self._target_date))
+        Logger.info(self.__class__.__name__ + "::_is_condition::now: " + str(now) + ", target_date: " + str(self._target_date))
         result = now > self._target_date
         if result == True:
             db.close_old_connections()

@@ -1,7 +1,6 @@
 from django.conf import settings
 
 from zeroanda.classes.task.children.aprocess import AbstractProcess
-from zeroanda.classes.utils import timeutils
 from zeroanda.proxy.order import OrderProxyModel
 
 from multiprocessing import Process

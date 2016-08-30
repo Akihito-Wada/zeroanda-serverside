@@ -1,6 +1,7 @@
 from django.conf import settings
 
 from zeroanda.classes.task.children.aprocess import AbstractProcess
+from zeroanda.classes.utils.loggerutils import Logger
 from zeroanda.classes.utils import timeutils
 from zeroanda.models import TradeTransactionModel
 from zeroanda import utils
@@ -23,6 +24,7 @@ class SetUnitProcess(AbstractProcess):
 
     def _is_condition(self):
         now = timeutils.get_now_with_jst()
+        Logger.info(self.__class__.__name__ + "::_is_condition::now: " + str(now) + ", target_date: " + str(self._target_date))
         if now > self._presentation_date:
             raise Exception('presentation time has already passed.')
 
