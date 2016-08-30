@@ -52,9 +52,7 @@ LOGGING = {
         'to_file': {
             'formatter': 'verbose',
             'level': 'DEBUG',
-            # 'class': 'logging.FileHandler',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            # 'filename': BASE_DIR/'logs/debug.log',
             'filename': os.path.join(BASE_DIR, 'logs/debug.log'),
             # 'maxBytes': 1024 * 1024 * 5,
             'backupCount': 20,
@@ -67,7 +65,7 @@ LOGGING = {
             'level':'DEBUG',
         },
         'trade': {
-            'handlers':['to_file'],
+            # 'handlers':['to_file'],
             'propagate': True,
             'level':'DEBUG',
         },
