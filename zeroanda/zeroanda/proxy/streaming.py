@@ -9,9 +9,8 @@ To show heartbeat, replace [options] by -b or --displayHeartBeat
 """
 
 import requests
-import json
 import logging
-from zeroanda.classes.utils import timeutils
+from zeroanda.classes.utils.loggerutils import Logger
 
 logger =logging.getLogger("django")
 
@@ -366,68 +365,67 @@ class Streaming(object):
             utils.error(result.get_body())
             raise ZeroandaError(result)
 
-    # def delete(self, accountModel, trade_id):
-    #     url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/trades/" + str(trade_id)
-    #     result = self.delete(url, self._compressed_headers)
-    #     utils.info(result)
-    #     if result.get_status():
-    #         return result
-    #     else:
-    #         utils.error(result.get_body())
-    #         raise ZeroandaError(result)
-
     def events(self):
         url = settings.DOMAIN + "/v1/events/"
 
     def delete(self, url, headers, params = None):
         try:
-            utils.info(headers)
-            utils.info(url)
-            utils.info(params)
+            Logger.info("url: " + url)
+            Logger.info("headers: " + str(headers))
+            Logger.info("params: " + str(params))
 
             s = requests.Session()
             req = requests.Request('DELETE', url, headers=headers, params=params)
             pre = req.prepare()
             response = s.send(pre, stream = True, verify = False)
-            return RequestDataObject(response)
-            # return resp
+            rdo = RequestDataObject(response)
+            Logger.info(rdo)
+            return rdo
         except Exception as e:
             s.close()
 
     def post(self, url, headers, payload):
         try:
-            utils.info(headers)
-            utils.info(url)
-            utils.info(payload)
+            Logger.info("url: " + url)
+            Logger.info("headers: " + str(headers))
+            Logger.info("payload: " + str(payload))
             s = requests.Session()
             req = requests.Request('POST', url, headers = headers, data = payload)
             pre = req.prepare()
             response = s.send(pre, stream = True, verify = False)
-            return RequestDataObject(response)
+            rdo = RequestDataObject(response)
+            Logger.info(rdo)
+            return rdo
         except Exception as e:
             s.close()
 
     def get(self, url, headers, params = None):
         try:
             s = requests.Session()
-            utils.info(url)
-            utils.info(headers)
-            utils.info(params)
+            Logger.info("url: " + url)
+            Logger.info("headers: " + str(headers))
+            Logger.info("params: " + str(params))
             req = requests.Request('GET', url, headers = headers, params = params)
             pre = req.prepare()
             response = s.send(pre, stream = True, verify = False)
-            return RequestDataObject(response)
+            rdo = RequestDataObject(response)
+            Logger.info(rdo)
+            return rdo
         except Exception as e:
             s.close()
 
     def options(self, url, headers, params = None):
         try:
             s = requests.Session()
-            utils.info(headers)
-            utils.info(url)
+            Logger.info("url: " + url)
+            Logger.info("headers: " + str(headers))
+            Logger.info("params: " + str(params))
             req = requests.Request('OPTIONS', url, headers = headers, params = params)
             pre = req.prepare()
             response = s.send(pre, stream = True, verify = False)
-            return RequestDataObject(response)
+            rdo = RequestDataObject(response)
+            Logger.info(rdo)
+            return rdo
         except Exception as e:
+            Logger.error(e)
             s.close()
