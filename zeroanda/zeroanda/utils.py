@@ -12,7 +12,7 @@ def error(value):
     logger.error(value)
 
 def get_max_units(balance, rate):
-    units = balance * settings.LEVERAGE / rate / settings.CURRENCY;
+    units = balance * settings.LEVERAGE / rate / settings.CURRENCY * 1000;
     return int(math.floor(units))
 
 def get_ask_target_point(reference_value):
