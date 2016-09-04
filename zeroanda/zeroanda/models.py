@@ -126,9 +126,9 @@ class AccountInfoModel(models.Model):
 
 class ErrorModel(models.Model):
     status_code = models.IntegerField(default=0)
-    code        = models.IntegerField()
-    message      = models.CharField(max_length=200)
-    info        = models.CharField(max_length=200)
+    code        = models.IntegerField(default=None)
+    message      = models.CharField(max_length=200, default=None)
+    info        = models.CharField(max_length=200, default=None)
     created     = models.DateTimeField('登録時刻', auto_now_add=True)
 
 class TradeModel(models.Model):
