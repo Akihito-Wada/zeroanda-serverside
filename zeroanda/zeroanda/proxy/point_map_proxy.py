@@ -13,7 +13,7 @@ class AskPointMapProxy(PointMapProxy):
         super(AskPointMapProxy, self).__init__(reference_value, priority)
 
     def get_target_point(self):
-        return math.floor((self._reference_value + POINT_MAP[self._priority]["IFDOCO_ASK_ENTRY_POINT"]) * 1000) / 1000
+        return math.floor((self._reference_value + POINT_MAP[self._priority]["IFDOCO_ASK_ENTRY_POINT"]) * 1000)
 
     def get_upper_bound(self):
         target = math.floor((self.get_target_point() + POINT_MAP[self._priority]["ASK_UPPER_BOUND_PROFIT_MARGIN"]) * 1000) / 1000
@@ -38,7 +38,7 @@ class BidPointMapProxy(PointMapProxy):
         super(BidPointMapProxy, self).__init__(reference_value, priority)
         
     def get_target_point(self):
-        return math.floor((self._reference_value + POINT_MAP[self._priority]["IFDOCO_BID_ENTRY_POINT"]) * 1000) / 1000
+        return math.floor((self._reference_value + POINT_MAP[self._priority]["IFDOCO_BID_ENTRY_POINT"]) * 1000)
 
     def get_upper_bound(self):
         target = math.floor((self.get_target_point() + POINT_MAP[self._priority]["BID_UPPER_BOUND_PROFIT_MARGIN"]) * 1000) / 1000
