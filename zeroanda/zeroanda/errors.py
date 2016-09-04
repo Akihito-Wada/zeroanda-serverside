@@ -5,6 +5,8 @@ class ZeroandaError(Exception):
     _message    = None
     info    = None
     def __init__(self, response):
+        if response == None:
+            return
         self._status_code   = response.get_code()
         self._code = response.get_body()["code"]
         self._message = response.get_body()["message"]
