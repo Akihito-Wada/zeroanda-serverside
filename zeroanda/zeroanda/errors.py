@@ -4,13 +4,17 @@ class ZeroandaError(Exception):
     _code   = None
     _message    = None
     info    = None
-    def __init__(self, response):
+    def __init__(self, response = None):
         if response == None:
-            return
-        self._status_code   = response.get_code()
-        self._code = response.get_body()["code"]
-        self._message = response.get_body()["message"]
-        self._info = response.get_body()["moreInfo"]
+            self._status_code = 0
+            self._code = 0
+            self._message = "response is empty."
+            self._info = ""
+        else:
+            self._status_code   = response.get_code()
+            self._code = response.get_body()["code"]
+            self._message = response.get_body()["message"]
+            self._info = response.get_body()["moreInfo"]
 
     def save(self):
         model = ErrorModel(code=self._code, message = self._message, info = self._info)
