@@ -358,7 +358,6 @@ class Streaming(object):
     def cancel_order(self, accountModel, actual_order_id):
         url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/orders/" + str(actual_order_id)
         result = self.delete(url, self._compressed_headers)
-        utils.info(result)
         if result.get_status():
             return result
         else:
@@ -378,11 +377,17 @@ class Streaming(object):
             req = requests.Request('DELETE', url, headers=headers, params=params)
             pre = req.prepare()
             response = s.send(pre, stream = True, verify = False)
-            rdo = RequestDataObject(response)
-            Logger.info(rdo)
-            return rdo
+            if response == None:
+                error = ZeroandaError()
+                error.save()
+                raise error
+            else:
+                rdo = RequestDataObject(response)
+                Logger.info(rdo)
+                return rdo
         except Exception as e:
             s.close()
+            raise e
 
     def post(self, url, headers, payload):
         try:
@@ -393,11 +398,17 @@ class Streaming(object):
             req = requests.Request('POST', url, headers = headers, data = payload)
             pre = req.prepare()
             response = s.send(pre, stream = True, verify = False)
-            rdo = RequestDataObject(response)
-            Logger.info(rdo)
-            return rdo
+            if response == None:
+                error = ZeroandaError()
+                error.save()
+                raise error
+            else:
+                rdo = RequestDataObject(response)
+                Logger.info(rdo)
+                return rdo
         except Exception as e:
             s.close()
+            raise e
 
     def get(self, url, headers, params = None):
         try:
@@ -408,11 +419,17 @@ class Streaming(object):
             req = requests.Request('GET', url, headers = headers, params = params)
             pre = req.prepare()
             response = s.send(pre, stream = True, verify = False)
-            rdo = RequestDataObject(response)
-            Logger.info(rdo)
-            return rdo
+            if response == None:
+                error = ZeroandaError()
+                error.save()
+                raise error
+            else:
+                rdo = RequestDataObject(response)
+                Logger.info(rdo)
+                return rdo
         except Exception as e:
             s.close()
+            raise e
 
     def options(self, url, headers, params = None):
         try:
@@ -423,9 +440,14 @@ class Streaming(object):
             req = requests.Request('OPTIONS', url, headers = headers, params = params)
             pre = req.prepare()
             response = s.send(pre, stream = True, verify = False)
-            rdo = RequestDataObject(response)
-            Logger.info(rdo)
-            return rdo
+            if response == None:
+                error = ZeroandaError()
+                error.save()
+                raise error
+            else:
+                rdo = RequestDataObject(response)
+                Logger.info(rdo)
+                return rdo
         except Exception as e:
-            Logger.error(e)
             s.close()
+            raise e
