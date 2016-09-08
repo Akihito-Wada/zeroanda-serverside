@@ -1,3 +1,4 @@
+from django import db
 from django.conf import settings
 from zeroanda.classes.task.children.aprocess import AbstractProcess
 from zeroanda.classes.utils import timeutils
@@ -31,6 +32,7 @@ class GetPriceProcess(AbstractProcess):
             raise Exception('IfdococProcess::presentation time has already passed.')
         result = now > self._target_date
         if result == True:
+            db.close_old_connections()
             self.__transaction_model.excute_time = now
             self.__transaction_model.save()
         return result
@@ -56,6 +58,7 @@ class GetPriceProcessContinuously(GetPriceProcess):
             raise Exception('IfdococProcess::presentation time has already passed.')
         result = now > self._target_date
         if result == True:
+            db.close_old_connections()
             self.__transaction_model.excute_time = now
             self.__transaction_model.save()
         return result

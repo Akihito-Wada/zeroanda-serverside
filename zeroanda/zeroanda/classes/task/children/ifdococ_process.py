@@ -75,6 +75,7 @@ class IfdococProcess(AbstractProcess):
 
         result = now > self._target_date
         if result == True:
+            db.close_old_connections()
             self.__transaction_model.excute_time = now
             self.__transaction_model.save()
         return result

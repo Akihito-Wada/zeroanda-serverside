@@ -1,3 +1,4 @@
+from django import db
 from django.conf import settings
 
 from zeroanda.classes.task.children.aprocess import AbstractProcess
@@ -27,7 +28,7 @@ class SetUnitProcess(AbstractProcess):
         Logger.info(self.__class__.__name__ + "::_is_condition::now: " + str(now) + ", _presentation_date: " + str(self._presentation_date))
         if now > self._presentation_date:
             raise Exception('presentation time has already passed.')
-
+        db.close_old_connections()
         self.__transaction_model.excute_time = now
         self.__transaction_model.save()
         return True

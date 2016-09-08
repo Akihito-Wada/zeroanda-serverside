@@ -1,3 +1,4 @@
+from django import db
 from django.conf import settings
 
 from datetime import timedelta
@@ -33,6 +34,7 @@ class GetAccountProcess(AbstractProcess):
             raise Exception('presentation time has already passed.')
         result = now > self._target_date
         if result == True:
+            db.close_old_connections()
             self.__transaction_model.excute_time = timeutils.get_now_with_jst()
             self.__transaction_model.save()
         return result
