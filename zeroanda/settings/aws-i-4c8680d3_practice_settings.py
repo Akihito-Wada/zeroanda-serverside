@@ -20,7 +20,7 @@ DATABASES = {
         'NAME': 'dev_zeroanda',
         'USER': 'wadaakihito',
         'PASSWORD': 'fukuronomono1',
-        'HOST': 'aws-postgresql-practice.cedwl7sfyyos.ap-northeast-1.rds.amazonaws.com',
+        'HOST': 'i-2ccfc9b3-postgres-test.cedwl7sfyyos.ap-northeast-1.rds.amazonaws.com',
         'AUTOCOMMIT': True,
     }
 }
