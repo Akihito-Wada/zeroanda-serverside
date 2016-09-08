@@ -26,17 +26,15 @@ class AskPointMapProxy(PointMapProxy):
     def get_take_profit(self):
         target = math.floor((self.get_target_point() + POINT_MAP[self._priority]["ASK_TAKE_PROFIT_MARGIN"]) * 1000) / 1000
         return target
-        # return POINT_MAP[self._priority]["ASK_TAKE_PROFIT_MARGIN"]
 
     def get_stop_loss(self):
         target = math.floor((self.get_target_point() + POINT_MAP[self._priority]["ASK_STOP_LOSS_MARGIN"]) * 1000) / 1000
         return target
-        # return POINT_MAP[self._priority]["ASK_STOP_LOSS_MARGIN"]
 
 class BidPointMapProxy(PointMapProxy):
     def __init__(self, reference_value, priority):
         super(BidPointMapProxy, self).__init__(reference_value, priority)
-        
+
     def get_target_point(self):
         return math.floor((self._reference_value + POINT_MAP[self._priority]["IFDOCO_BID_ENTRY_POINT"]) * 1000) / 1000
 
@@ -56,7 +54,7 @@ class BidPointMapProxy(PointMapProxy):
     def get_stop_loss(self):
         target = math.floor((self.get_target_point() + POINT_MAP[self._priority]["BID_STOP_LOSS_MARGIN"]) * 1000) / 1000
         return target
-        # return POINT_MAP[self._priority]["BID_STOP_LOSS_MARGIN"]
+    # return POINT_MAP[self._priority]["BID_STOP_LOSS_MARGIN"]
 
 POINT_MAP = (
     {

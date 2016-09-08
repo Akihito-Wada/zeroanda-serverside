@@ -7,6 +7,7 @@ from zeroanda.classes.utils.loggerutils import Logger
 from zeroanda.models import TradeTransactionModel
 from zeroanda.proxy.order import OrderProxyModel
 from zeroanda.proxy.account import AccountProxyModel
+from zeroanda.proxy.setting import SettingProxy
 from zeroanda.proxy.trades import TradesProxyModel
 
 from zeroanda import utils
@@ -45,6 +46,7 @@ class CloseTradesProcess(AbstractProcess):
 
     def _set_target_date(self):
         self._presentation_date = self._task._presentation_date if settings.TEST else self._task.schedule.presentation_time
-        self._target_date = self._presentation_date + timedelta(seconds = settings.CLOSE_ALL_TRADES_EXCUTE_TIME)
+        # self._target_date = self._presentation_date + timedelta(seconds = settings.CLOSE_ALL_TRADES_EXCUTE_TIME)
+        self._target_date = self._presentation_date + timedelta(seconds=SettingProxy.get_close_all_trades_excute_time(self._get_priority()))
         self.__transaction_model = TradeTransactionModel(trade_model=self._task.trade_model, presentation_time=self._target_date, transaction_name=self.__class__.__name__)
         self.__transaction_model.save()

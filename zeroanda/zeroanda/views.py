@@ -14,6 +14,7 @@ from zeroanda.models import TradeTransactionModel, TradeModel, ScheduleModel
 from zeroanda.proxy.order import OrderProxyModel
 from zeroanda.proxy.account import AccountProxyModel
 from zeroanda.proxy.prices import PricesProxyModel
+from zeroanda.proxy.setting import SettingProxy
 from zeroanda.proxy.transactions import TransactionsProxyModel
 
 from zeroanda import utils
@@ -101,8 +102,9 @@ def transaction_list(request, trade_id):
             priceProxyModel = PricesProxyModel()
             priceModel = priceProxyModel.get_price(trade_id=trade_id)
 
-            startdate = scheduleModel.presentation_time +  timedelta(seconds=settings.DURATION_IFDOCO_EXCUTE_TIME - 1)
-            enddate = scheduleModel.presentation_time + timedelta(seconds=settings.EXPIRY_SECONDS + 1)
+            startdate = scheduleModel.presentation_time +  timedelta(seconds=settings.DURATION_IFDOCO_EXCUTE_TIME - 10)
+            # enddate = scheduleModel.presentation_time + timedelta(seconds=settings.EXPIRY_SECONDS + 1)
+            enddate = scheduleModel.presentation_time + timedelta(seconds=SettingProxy.get_expire_time(scheduleModel.priority) + 20)
             price_list = priceProxyModel.get_candles(scheduleModel.country, timeutils.convert_rfc2unixtime(startdate), timeutils.convert_rfc2unixtime(enddate))
             if price_list is not None:
                 for price in price_list['candles']:

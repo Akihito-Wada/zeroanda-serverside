@@ -6,6 +6,7 @@ from zeroanda.classes.utils.loggerutils import Logger
 from zeroanda.constant import INSTRUMENTS
 from zeroanda.controller.mail_manager import MailManager
 from zeroanda.models import TradeTransactionModel
+from zeroanda.proxy.setting import SettingProxy
 from zeroanda.proxy.transactions import TransactionsProxyModel
 from zeroanda.proxy.order import OrderProxyModel
 from zeroanda import utils
@@ -56,8 +57,8 @@ class GetTransactionProcess(AbstractProcess):
 
     def _set_target_date(self):
         self._presentation_date = self._task._presentation_date if settings.TEST else self._task.schedule.presentation_time
-        self._target_date = self._presentation_date + timedelta(seconds = settings.GET_TRANSACTION_EXCUTE_TIME)
-
+        # self._target_date = self._presentation_date + timedelta(seconds = settings.GET_TRANSACTION_EXCUTE_TIME)
+        self._target_date = self._presentation_date + timedelta(seconds=SettingProxy.get_transaction_excute_time(self._get_priority()))
         self.__transaction_model = TradeTransactionModel(trade_model=self._task.trade_model, presentation_time=self._target_date,
                                                     transaction_name=self.__class__.__name__)
         self.__transaction_model.save()
