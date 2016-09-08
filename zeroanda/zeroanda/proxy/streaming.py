@@ -203,12 +203,16 @@ class Streaming(object):
             params['count'] = count
 
         result = self.get(url, self.get_headers(None, True), params)
-        if result != None and result.get_status():
-            return result
-        else:
-            if result != None:
-                utils.error(result.get_body())
-            raise ZeroandaError(result)
+        return result
+        # if result.get_status():
+        #     return result
+        # else:
+        #     utils.info(3)
+        #     utils.info(result)
+        #     utils.info(5)
+        #     if result != None:
+        #         utils.error(result.get_body())
+        #     raise ZeroandaError(result)
 
     '''
     ticket
