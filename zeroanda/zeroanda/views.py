@@ -104,8 +104,9 @@ def transaction_list(request, trade_id):
             startdate = scheduleModel.presentation_time +  timedelta(seconds=settings.DURATION_IFDOCO_EXCUTE_TIME - 1)
             enddate = scheduleModel.presentation_time + timedelta(seconds=settings.EXPIRY_SECONDS + 1)
             price_list = priceProxyModel.get_candles(scheduleModel.country, timeutils.convert_rfc2unixtime(startdate), timeutils.convert_rfc2unixtime(enddate))
-            for price in price_list['candles']:
-                price['time'] = timeutils.format_unixtime_to_jst(timeutils.format_unixtime(price['time']))
+            if price_list is not None:
+                for price in price_list['candles']:
+                    price['time'] = timeutils.format_unixtime_to_jst(timeutils.format_unixtime(price['time']))
 
             orderProxyModel = OrderProxyModel()
             orderModelSell = orderProxyModel.get_order_by_trade_id(trade_id=trade_id, side=SIDE[0][0])
