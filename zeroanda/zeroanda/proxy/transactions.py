@@ -28,6 +28,8 @@ class TransactionsProxyModel:
                             vo = TransactionValueObject(transaction)
                             transactionList.append(vo)
                         return sorted(transactionList, key=attrgetter('id'), reverse=True)
+                else:
+                    return None
             except:
                 return None
 

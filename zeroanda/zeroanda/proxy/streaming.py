@@ -267,12 +267,12 @@ class Streaming(object):
                 params["minId"] = min_id
         # result = self.get(url, self.get_headers(etag), params)
         result = self.get(url, self._streaming_headers, params)
-
-        if result.get_status():
-            return result
-        else:
-            utils.error(result.get_body())
-            raise ZeroandaError(result)
+        return result
+        # if result.get_status():
+        #     return result
+        # else:
+        #     utils.error(result.get_body())
+        #     raise ZeroandaError(result)
     '''
     events
     '''
