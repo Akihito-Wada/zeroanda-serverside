@@ -13,7 +13,7 @@ class AskPointMapProxy(PointMapProxy):
         super(AskPointMapProxy, self).__init__(reference_value, priority)
 
     def get_target_point(self):
-        return math.floor((self._reference_value + POINT_MAP[self._priority]["IFDOCO_ASK_ENTRY_POINT"]) * 1000)
+        return math.floor((self._reference_value + POINT_MAP[self._priority]["IFDOCO_ASK_ENTRY_POINT"]) * 1000) / 1000
 
     def get_upper_bound(self):
         target = math.floor((self.get_target_point() + POINT_MAP[self._priority]["ASK_UPPER_BOUND_PROFIT_MARGIN"]) * 1000) / 1000
@@ -38,7 +38,7 @@ class BidPointMapProxy(PointMapProxy):
         super(BidPointMapProxy, self).__init__(reference_value, priority)
         
     def get_target_point(self):
-        return math.floor((self._reference_value + POINT_MAP[self._priority]["IFDOCO_BID_ENTRY_POINT"]) * 1000)
+        return math.floor((self._reference_value + POINT_MAP[self._priority]["IFDOCO_BID_ENTRY_POINT"]) * 1000) / 1000
 
     def get_upper_bound(self):
         target = math.floor((self.get_target_point() + POINT_MAP[self._priority]["BID_UPPER_BOUND_PROFIT_MARGIN"]) * 1000) / 1000
@@ -87,16 +87,16 @@ POINT_MAP = (
     },
     {
         "IFDOCO_ASK_ENTRY_POINT": 0.03,
-        "ASK_UPPER_BOUND_PROFIT_MARGIN": 0.05,
+        "ASK_UPPER_BOUND_PROFIT_MARGIN": 0.1,
         "ASK_LOWER_BOUND_PROFIT_MARGIN": -0.03,
         "ASK_STOP_LOSS_MARGIN": -0.04,
-        "ASK_TAKE_PROFIT_MARGIN": 0.05,
+        "ASK_TAKE_PROFIT_MARGIN": 0.1,
 
         "IFDOCO_BID_ENTRY_POINT": -0.03,
         "BID_UPPER_BOUND_PROFIT_MARGIN": 0.03,
-        "BID_LOWER_BOUND_PROFIT_MARGIN": -0.05,
+        "BID_LOWER_BOUND_PROFIT_MARGIN": -0.1,
         "BID_STOP_LOSS_MARGIN": 0.04,
-        "BID_TAKE_PROFIT_MARGIN": -0.05,
+        "BID_TAKE_PROFIT_MARGIN": -0.1,
     },
     {
         "IFDOCO_ASK_ENTRY_POINT": 0.04,
@@ -105,7 +105,7 @@ POINT_MAP = (
         "ASK_STOP_LOSS_MARGIN": -0.15,
         "ASK_TAKE_PROFIT_MARGIN": 0.5,
 
-        "IFDOCO_BID_ENTRY_POINT": -0.05,
+        "IFDOCO_BID_ENTRY_POINT": -0.04,
         "BID_UPPER_BOUND_PROFIT_MARGIN": 0.1,
         "BID_LOWER_BOUND_PROFIT_MARGIN": -0.5,
         "BID_STOP_LOSS_MARGIN": 0.15,
@@ -113,15 +113,15 @@ POINT_MAP = (
     },
     {
         "IFDOCO_ASK_ENTRY_POINT": 0.05,
-        "ASK_UPPER_BOUND_PROFIT_MARGIN": 3,
-        "ASK_LOWER_BOUND_PROFIT_MARGIN": -0.5,
-        "ASK_STOP_LOSS_MARGIN": -1,
-        "ASK_TAKE_PROFIT_MARGIN": 3,
+        "ASK_UPPER_BOUND_PROFIT_MARGIN": 1,
+        "ASK_LOWER_BOUND_PROFIT_MARGIN": -0.2,
+        "ASK_STOP_LOSS_MARGIN": -0.2,
+        "ASK_TAKE_PROFIT_MARGIN": 1,
 
         "IFDOCO_BID_ENTRY_POINT": -0.05,
-        "BID_UPPER_BOUND_PROFIT_MARGIN": 0.5,
-        "BID_LOWER_BOUND_PROFIT_MARGIN": -3,
-        "BID_STOP_LOSS_MARGIN": 1,
-        "BID_TAKE_PROFIT_MARGIN": -3,
+        "BID_UPPER_BOUND_PROFIT_MARGIN": 0.2,
+        "BID_LOWER_BOUND_PROFIT_MARGIN": -1,
+        "BID_STOP_LOSS_MARGIN": 0.2,
+        "BID_TAKE_PROFIT_MARGIN": -1,
     },
 )
