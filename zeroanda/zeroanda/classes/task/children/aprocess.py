@@ -45,9 +45,6 @@ class AbstractProcess(IProcess):
 
     def is_finished(self):
         for job in self._get_job_list():
-            # utils.info(job.is_alive())
-            # utils.info(job.exitcode)
-            # utils.info(-signal.SIGTERM)
             if job.is_alive() == True or job.is_alive() == False and job.exitcode == None:
                 return False
 
@@ -62,3 +59,6 @@ class AbstractProcess(IProcess):
 
     def _get_job_list(self):
         return self._jobs
+
+    def _get_priority(self):
+        return self._task.schedule.priority
