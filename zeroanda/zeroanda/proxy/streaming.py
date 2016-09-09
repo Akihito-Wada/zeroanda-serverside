@@ -371,6 +371,17 @@ class Streaming(object):
     def events(self):
         url = settings.DOMAIN + "/v1/events/"
 
+    def calender(self, instrument, period = 2592000):
+        utils.info('calender')
+        utils.info(period)
+        params = {
+            'instrument': instrument,
+            'period': period,
+        }
+        url = settings.DOMAIN + "/labs/v1/calendar"
+        result = self.get(url, self._streaming_headers, params)
+        return result
+
     def delete(self, url, headers, params = None):
         try:
             Logger.info("url: " + url)

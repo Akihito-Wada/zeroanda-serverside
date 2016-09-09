@@ -1,3 +1,5 @@
+from enum import Enum
+
 SIDE = (
     ("sell", "Sell"),
     ("buy", "Buy"),
@@ -108,3 +110,13 @@ TRANSACTION_TYPE = (
     (20, "DAILY_INTEREST"),
     (21, "FEE"),
 )
+
+class CALENDER_PERIOD(Enum):
+    YEAR    =   31536000
+    HALF_YEAR   = 15552000
+    THREE_MONTH = 7776000
+    ONE_MONTH   = 2592000
+    ONE_WEEK    = 604800
+    ONE_DAY     = 86400
+    HALF_DAY    = 43200
+    ONE_HOUR    = 3600
