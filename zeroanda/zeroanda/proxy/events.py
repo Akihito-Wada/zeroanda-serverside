@@ -1,5 +1,6 @@
-from zeroanda.proxy.streaming import Streaming
 from zeroanda   import utils
+from zeroanda.classes.net.streaming import Streaming
+
 
 class EventsProxyModel:
     _streaming = None

@@ -1,9 +1,7 @@
+from zeroanda.classes.net.streaming import Streaming
 from zeroanda.classes.utils import timeutils
-from zeroanda.proxy.streaming import Streaming
 from zeroanda.models import PricesModel
-from zeroanda import utils
 
-from datetime   import datetime
 
 class PricesProxyModel:
     _priceModel     = None

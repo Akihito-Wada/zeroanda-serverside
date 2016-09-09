@@ -1,15 +1,15 @@
-from zeroanda.models import OrderModel, ActualOrderModel
-from zeroanda.classes.utils import timeutils
-from zeroanda.constant import SIDE, TYPE, ACTUAL_ORDER_STATUS, INSTRUMENTS, ERROR_CODE, ORDER_STATUS
-from zeroanda.errors import ZeroandaError
-from zeroanda.proxy.streaming import Streaming
-from zeroanda   import utils
+import logging
+from datetime import timedelta
 
 from django.conf import settings
 
-from datetime import timedelta
-import math
-import logging
+from zeroanda   import utils
+from zeroanda.classes.net.streaming import Streaming
+from zeroanda.classes.utils import timeutils
+from zeroanda.constant import SIDE, TYPE, ACTUAL_ORDER_STATUS, ERROR_CODE, ORDER_STATUS
+from zeroanda.errors import ZeroandaError
+from zeroanda.models import OrderModel, ActualOrderModel
+
 logger =logging.getLogger("django")
 
 class OrderProxyModel:

@@ -1,12 +1,11 @@
-from zeroanda.models import AccountModel, AccountInfoModel
-from zeroanda.proxy.streaming import Streaming
-from zeroanda import utils
-from zeroanda.constant import INSTRUMENTS, ACCOUNT_STATUS
-from zeroanda.cache import etag
+import math
 
 from django.conf import settings
 
-import math
+from zeroanda.classes.net.streaming import Streaming
+from zeroanda.constant import ACCOUNT_STATUS
+from zeroanda.models import AccountModel, AccountInfoModel
+
 
 class AccountProxyModel:
     _accountModel = None

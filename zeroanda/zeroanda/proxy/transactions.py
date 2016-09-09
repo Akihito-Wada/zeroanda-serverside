@@ -1,10 +1,10 @@
 from operator import attrgetter
 
+from zeroanda.classes.net.streaming import Streaming
 from zeroanda.classes.utils import timeutils
 from zeroanda.constant import TRANSACTION_TYPE, TRANSACTION_REASON
 from zeroanda.models import TransactionModel
-from zeroanda.proxy.streaming import Streaming
-from zeroanda   import utils
+
 
 class TransactionsProxyModel:
     _streaming = None

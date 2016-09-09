@@ -4,12 +4,10 @@ import time
 from datetime import datetime, timedelta
 from multiprocessing import Process
 
-from django.conf import settings
-
 from zeroanda import utils
+from zeroanda.classes.net.streaming import Streaming
 from zeroanda.classes.utils import timeutils
-from zeroanda.constant import INSTRUMENTS, SIDE
-from zeroanda.proxy.streaming import Streaming
+from zeroanda.constant import INSTRUMENTS
 from zeroanda.errors import ZeroandaError
 from zeroanda.models import PricesModel
 from zeroanda.proxy.account import AccountProxyModel
