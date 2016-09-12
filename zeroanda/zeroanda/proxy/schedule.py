@@ -1,14 +1,12 @@
-from zeroanda.proxy.service.http_service import HttpService
+from datetime import datetime, timedelta
+
+from django import db
+from django.db import IntegrityError
+
+from zeroanda import utils
 from zeroanda.classes.utils import timeutils
-from zeroanda.classes.utils.loggerutils import Logger
 from zeroanda.constant import SCHEDULE_STATUS, SCHEDULE_AVAILABLE
 from zeroanda.models import ScheduleModel
-from zeroanda import utils
-
-from django.db import IntegrityError
-from django import db
-
-from datetime import datetime, timedelta
 
 class ScheduleProxyModel:
     def get_schedule(self, id = None):
@@ -55,10 +53,3 @@ class ScheduleProxyModel:
             schedule.save()
         except IntegrityError as e:
             utils.info(e)
-
-    def get_economic_indicator(self):
-        try:
-            result = HttpService.create().get_latest_economic_indicator()
-        except Exception as e:
-            utils.info(e)
-            return None
