@@ -15,3 +15,16 @@ $(function(){
         });
     });
 })
+
+$(function(){
+    $("#testGetCsv").click(function() {
+        $.ajax({
+            type: "GET",
+            url: "http://" + location.host + "/zeroanda/test/csv",
+            success: function(msg){
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+            }
+        });
+    });
+})
