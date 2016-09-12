@@ -99,6 +99,8 @@ WSGI_APPLICATION = 'zeroanda.wsgi.application'
 
 LANGUAGE_CODE = 'ja-jp'
 
+STANDARD_TIME_ZONE = 'Europe/London'
+
 TIME_ZONE = 'Asia/Tokyo'
 
 USE_I18N = True
