@@ -4,6 +4,9 @@ from django.views.decorators.csrf import csrf_exempt
 from zeroanda.constant import INSTRUMENTS, CALENDER_PERIOD
 from zeroanda.proxy.calender import CalenderProxyModel
 from zeroanda.proxy.schedule import ScheduleProxyModel
+
+from zeroanda.services.economic_indicator.economic_indicator_service import EconomicInidcatorService
+
 from zeroanda   import utils
 
 @csrf_exempt
@@ -15,7 +18,9 @@ def test_api_calender(request):
 
 @csrf_exempt
 def test_api_csv(request):
-    proxy = ScheduleProxyModel()
-    result = proxy.get_economic_indicator()
+    service = EconomicInidcatorService()
+    service.getsom()
+    # proxy = ScheduleProxyModel()
+    # result = proxy.get_economic_indicator()
     return HttpResponse('200')
 
