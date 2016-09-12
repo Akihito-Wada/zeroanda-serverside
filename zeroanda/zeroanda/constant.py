@@ -111,6 +111,12 @@ TRANSACTION_TYPE = (
     (21, "FEE"),
 )
 
+ECONOMIC_SINDICATOR_IMPORTANCE = (
+    (0, "LOW"),
+    (1, "MIDDLE"),
+    (2, "HIGH"),
+)
+
 class CALENDER_PERIOD(Enum):
     YEAR    =   31536000
     HALF_YEAR   = 15552000
