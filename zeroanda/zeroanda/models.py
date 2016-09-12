@@ -17,6 +17,7 @@ class ScheduleModel(models.Model):
 
 class EconomicIndicatorManagementModel(models.Model):
     origin      = models.CharField('取得先', max_length=200)
+    unique_id   = models.IntegerField(default=0)
     url         = models.CharField('取得URL', max_length=200)
     filename    = models.CharField('取得ファイル', max_length=200)
     created     = models.DateTimeField(auto_now_add=True)
