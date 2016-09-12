@@ -111,9 +111,9 @@ TRANSACTION_TYPE = (
     (21, "FEE"),
 )
 
-ECONOMIC_SINDICATOR_IMPORTANCE = (
+ECONOMIC_INDICATOR_IMPORTANCE = (
     (0, "LOW"),
-    (1, "MIDDLE"),
+    (1, "MEDIUM"),
     (2, "HIGH"),
 )
 

@@ -1,5 +1,5 @@
 from django.db import models
-from zeroanda.constant import ORDER_STATUS, PRIORITY, SIDE, ACTUAL_ORDER_STATUS, INSTRUMENTS, TYPE, SCHEDULE_AVAILABLE, SCHEDULE_STATUS, COUNTRY_LIST, ERROR_CODE, ACCOUNT_STATUS, TRANSACTION_REASON, TRANSACTION_TYPE, ECONOMIC_SINDICATOR_IMPORTANCE
+from zeroanda.constant import ORDER_STATUS, PRIORITY, SIDE, ACTUAL_ORDER_STATUS, INSTRUMENTS, TYPE, SCHEDULE_AVAILABLE, SCHEDULE_STATUS, COUNTRY_LIST, ERROR_CODE, ACCOUNT_STATUS, TRANSACTION_REASON, TRANSACTION_TYPE, ECONOMIC_INDICATOR_IMPORTANCE
 
 class ScheduleModel(models.Model):
     created     = models.DateTimeField(auto_now_add=True)
@@ -24,19 +24,19 @@ class EconomicIndicatorManagementModel(models.Model):
     updated     = models.DateTimeField('更新時刻', null=True, blank=True)
 
 class EconomicIndicatorModel(models.Model):
-    schedule    = models.ForeignKey(EconomicIndicatorManagementModel)
-    raw_date    = models.CharField('日付', max_length=200, null=True, blank=True)
-    raw_time    = models.CharField('時刻', max_length=200, null=True, blank=True)
-    timezone    = models.IntegerField('タイムゾーン', choices=PRIORITY, default=PRIORITY[2][0])
-    currency    = models.BooleanField('通貨', choices=SCHEDULE_AVAILABLE, default=SCHEDULE_AVAILABLE[0][0])
-    event       = models.IntegerField('イベント')
-    importance  = models.DateTimeField('重要度', choices=ECONOMIC_SINDICATOR_IMPORTANCE, default=ECONOMIC_SINDICATOR_IMPORTANCE[0][0])
-    actual      = models.FloatField(default=0)
-    forecast    = models.FloatField(default=0)
-    previous    = models.FloatField(default=0)
-    date        = models.DateTimeField('更新時刻', null=True, blank=True)
-    created     = models.DateTimeField('生成時刻', auto_now_add=True)
-    updated     = models.DateTimeField('更新時刻', null=True, blank=True)
+    management_model= models.ForeignKey(EconomicIndicatorManagementModel)
+    raw_date        = models.CharField('日付', max_length=200, null=True, blank=True)
+    raw_time        = models.CharField('時刻', max_length=200, null=True, blank=True)
+    time_zone       = models.CharField('タイムゾーン', max_length=200)
+    currency        = models.CharField('通貨', max_length=200)
+    event           = models.CharField('イベント', max_length=200)
+    importance      = models.IntegerField('重要度', choices=ECONOMIC_INDICATOR_IMPORTANCE, default=ECONOMIC_INDICATOR_IMPORTANCE[0][0])
+    actual          = models.CharField(default=0, max_length=200, null=True, blank=True)
+    forecast        = models.CharField(default=0, max_length=200, null=True, blank=True)
+    previous        = models.CharField(default=0, max_length=200, null=True, blank=True)
+    date            = models.DateTimeField('更新時刻', null=True, blank=True)
+    created         = models.DateTimeField('生成時刻', auto_now_add=True)
+    updated         = models.DateTimeField('更新時刻', null=True, blank=True)
 
 class ProcessModel(models.Model):
     schedule    = models.ForeignKey(ScheduleModel)
