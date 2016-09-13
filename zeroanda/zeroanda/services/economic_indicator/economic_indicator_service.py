@@ -1,4 +1,4 @@
-from zeroanda.services.economic_indicator.economy_indicator_proxy import EconomicIndicatorProxyModel
+from zeroanda.services.economic_indicator.economic_indicator_proxy import EconomicIndicatorProxyModel
 
 class EconomicInidcatorService:
     def __init__(self): return
