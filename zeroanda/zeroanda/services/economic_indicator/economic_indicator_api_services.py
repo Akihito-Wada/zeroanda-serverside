@@ -1,11 +1,11 @@
-import calendar
-import csv
+import calendar, csv, os
 from datetime   import datetime
-
 from dateutil.relativedelta import relativedelta
+from django.conf    import settings
 
 from zeroanda import utils
-from  zeroanda.classes.net.http import Http
+from zeroanda.classes.net.http import Http
+from zeroanda.classes.utils.csv_utils import CSVFactory
 from zeroanda.services.economic_indicator.vo.economy_indication_value_object import EconomyIndicationValueObject
 
 
@@ -34,14 +34,11 @@ class DailyFXService(HttpService):
         day = 11
 
         target_date = self.__get_next_sunday_datetime(year, month, day)
-        unique_id = "{month}-{day}-{year}".format(month=str("{0:02d}".format(target_date.month)), day=str("{0:02d}".format(target_date.day)), year=str(target_date.year))
+        unique_id   = "{month}-{day}-{year}".format(month=str("{0:02d}".format(target_date.month)), day=str("{0:02d}".format(target_date.day)), year=str(target_date.year))
         filename    = "Calendar-{unique_id}.csv".format(unique_id=unique_id)
-        target_url = "{url}/files/{filename}".format(url=self._url, filename=filename)
-        utils.info(target_url)
-        result = self.get_economic_indicator(target_url)
-        decoded_content = result.content.decode('utf-8')
-        cr = csv.reader(decoded_content.splitlines(), delimiter=',')
-        _tmp_list = list(cr)
+        target_url  = "{url}/files/{filename}".format(url=self._url, filename=filename)
+        result      = self.get_economic_indicator(target_url)
+        _tmp_list   = CSVFactory.create().reader(result.content)
         _list = []
         for index, row in enumerate(_tmp_list):
             if index == 0:
@@ -49,7 +46,7 @@ class DailyFXService(HttpService):
             vo = EconomyIndicationValueObject(row, target_date)
             # utils.info(vo)
             _list.append(vo)
-        dto = EconomicIndicatorDTO(self._service_name, unique_id, target_url, filename, _list)
+        dto = EconomicIndicatorDTO(self._service_name, unique_id, target_url, filename, _list, year, month, day)
         return dto
 
     def __get_next_sunday_datetime(self, year, month, day):
@@ -70,12 +67,18 @@ class EconomicIndicatorDTO:
     _url        = None
     _filename   = None
     _list       = None
-    def __init__(self, origin, unique_id, url, filename, list):
+    _year       = 0
+    _month      = 0
+    _day        = 0
+    def __init__(self, origin, unique_id, url, filename, list, year, month, day):
         self._origin    = origin
         self._unique_id = unique_id
         self._url       = url
         self._filename  = filename
         self._list      = list
+        self._year      = year
+        self._month     = month
+        self._day       = day
 
     def get_origin(self):
         return self._origin
@@ -91,6 +94,9 @@ class EconomicIndicatorDTO:
 
     def get_economic_indicator_list(self):
         return self._list
+
+    def get_csv_path(self):
+        return os.path.join(settings.ECONOMIC_INDICATOR_CSV_FILES, str(self._year), str("{0:02d}".format(self._month)))
 
     def __str__(self):
         return "{origin}: {unique_id}".format(origin=self._origin, unique_id=self._unique_id)

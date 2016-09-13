@@ -17,6 +17,7 @@ class EconomyIndicationValueObject:
     forecast   = None
     previous   = None
     date       = None
+    description = None
 
     def __init__(self, responce, target_date):
         if responce is None:
@@ -51,6 +52,14 @@ class EconomyIndicationValueObject:
                 d = timeutils.get_datetime(year=year, month=month, day=day, hour=hour, second=second, tzinfo=pytz.timezone(settings.STANDARD_TIME_ZONE))
                 self.date = timeutils.convert_aware_datetime_from_utc_to_jst(d)
 
+        self.description = "event: {event}, currency: {currency}, date={date} {timezone}, importance={importance}, actual={actual}, previous={previous}, forecast={forcast}".format(
+            event=self.event, currency=self.currency, date=self.date, timezone=self.time_zone,
+            importance=self.__importance_type_value(self.importance), actual=self.actual,
+            previous=self.previous, forcast=self.forecast)
+
+    def get_importance(self):
+        return self.__importance_type_value(self.importance)
+
     def __importance_type_key(self, value):
 
         for item in ECONOMIC_INDICATOR_IMPORTANCE:
@@ -58,9 +67,12 @@ class EconomyIndicationValueObject:
                 return item[0]
         raise Exception('no constant for type.')
 
-    def __str__(self):
-        return self.event + ", " + self.raw_date + ", " + self.raw_time + ", " + self.time_zone
+    def __importance_type_value(self, value):
 
-        # return self.event + ", " + self.raw_date + ", " + self.raw_time + ", " + self.time_zone + ", " + str(
-        # self.currency) + ", " + self.importance + ", " + str(self.actual) + ", " + str(self.previous) + ", " + str(
-        # self.forecast)
+        for item in ECONOMIC_INDICATOR_IMPORTANCE:
+            if item[0] == value:
+                return item[1]
+        raise Exception('no constant for type.')
+
+    def __str__(self):
+        return self.description
