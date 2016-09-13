@@ -99,7 +99,7 @@ WSGI_APPLICATION = 'zeroanda.wsgi.application'
 
 LANGUAGE_CODE = 'ja-jp'
 
-STANDARD_TIME_ZONE = 'Europe/London'
+STANDARD_TIME_ZONE = 'UTC'
 
 TIME_ZONE = 'Asia/Tokyo'
 
@@ -186,6 +186,9 @@ EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = False
 DEFAULT_FROM_EMAIL = 'system@zeroanda.com'
+
+# csv files path
+ECONOMIC_INDICATOR_CSV_FILES = os.path.join(BASE_DIR, 'zeroanda', 'files', 'csv')
 
 TEST = True
 
