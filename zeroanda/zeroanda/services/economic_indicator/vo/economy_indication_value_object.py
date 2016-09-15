@@ -31,7 +31,6 @@ class EconomyIndicationValueObject:
         self.actual    = responce[6]
         self.forecast  = responce[7]
         self.previous  = responce[8]
-
         if self.raw_date != None and self.raw_time != None:
             date_arr = self.raw_date.split(" ")
             time_arr = self.raw_time.split(":")
@@ -44,12 +43,12 @@ class EconomyIndicationValueObject:
 
                 day     = int(date_arr[2])
                 hour    = int(time_arr[0])
-                second  = int(time_arr[1])
+                minute  = int(time_arr[1])
                 for i, v in enumerate(calendar.month_abbr):
                     if v == date_arr[1]:
                         month = i
                         break
-                d = timeutils.get_datetime(year=year, month=month, day=day, hour=hour, second=second, tzinfo=pytz.timezone(settings.STANDARD_TIME_ZONE))
+                d = timeutils.get_datetime(year=year, month=month, day=day, hour=hour, minute=minute, tzinfo=pytz.timezone(settings.STANDARD_TIME_ZONE))
                 self.date = timeutils.convert_aware_datetime_from_utc_to_jst(d)
 
         self.description = "event: {event}, currency: {currency}, date={date} {timezone}, importance={importance}, actual={actual}, previous={previous}, forecast={forcast}".format(

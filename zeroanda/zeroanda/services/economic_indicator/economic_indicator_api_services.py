@@ -37,6 +37,7 @@ class DailyFXService(HttpService):
         unique_id   = "{month}-{day}-{year}".format(month=str("{0:02d}".format(target_date.month)), day=str("{0:02d}".format(target_date.day)), year=str(target_date.year))
         filename    = "Calendar-{unique_id}.csv".format(unique_id=unique_id)
         target_url  = "{url}/files/{filename}".format(url=self._url, filename=filename)
+        # utils.info(target_url)
         result      = self.get_economic_indicator(target_url)
         _tmp_list   = CSVFactory.create().reader(result.content)
         _list = []
@@ -51,7 +52,6 @@ class DailyFXService(HttpService):
 
     def __get_next_sunday_datetime(self, year, month, day):
         origin_date = datetime(year=year, month=month, day=day)
-        utils.info(origin_date)
         for x in calendar.monthcalendar(year, month):
             if x[calendar.SUNDAY] <= 0:
                 break

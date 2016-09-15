@@ -1,3 +1,6 @@
+from django.db.models import Max, Q
+from zeroanda.constant import ECONOMIC_INDICATOR_IMPORTANCE
+
 from zeroanda import utils
 from zeroanda.models import EconomicIndicatorManagementModel, EconomicIndicatorModel
 from zeroanda.services.economic_indicator.economic_indicator_api_services import EconomicIndicatorApiServiceFactory
@@ -12,40 +15,33 @@ class EconomicIndicatorProxyModel:
             model = EconomicIndicatorManagementModel.objects.filter(unique_id=result.get_unique_id())
             if model.count() == 0:
                 self.__save(result)
-                # eim_model = EconomicIndicatorManagementModel(
-                #     origin      = result.get_origin(),
-                #     unique_id    = result.get_unique_id(),
-                #     url         = result.get_url(),
-                #     filename    = result.get_filename(),
-                #     created     = timeutils.get_now_with_jst()
-                # )
-                # eim_model.save()
-                # list = result.get_economic_indicator_list()
-                # for vo in list:
-                #     eim = EconomicIndicatorModel(
-                #         management_model= eim_model,
-                #         raw_date        = vo.raw_date,
-                #         raw_time        = vo.raw_time,
-                #         time_zone       = vo.time_zone,
-                #         currency        = vo.currency,
-                #         event           = vo.event,
-                #         importance      = vo.importance,
-                #         actual          = vo.actual,
-                #         forecast        = vo.forecast,
-                #         previous        = vo.previous,
-                #         date            = vo.date
-                #         )
-                #     eim.save()
-            # utils.info(settings.ECONOMIC_INDICATOR_CSV_FILES)
-            # utils.info(result.get_csv_path())
-            # os.makedirs(result.get_csv_path(), exist_ok=True)
-            CSVFactory.create().writer(result)
+            return result
         except Exception as e:
             utils.info(e)
             return None
 
-    def __save(self, dto):
+    def save_as_csv(self, dto):
+        csv = CSVFactory.create()
+        directory = dto.get_csv_path()
+        body = []
+        for vo in dto.get_economic_indicator_list():
+            if vo.date == None or vo.event == None: continue
+            row = []
+            row.append(vo.event)
+            row.append(csv.format_date(vo.date))
+            row.append(csv.format_time(vo.date))
+            row.append(csv.format_date(vo.date))
+            row.append(csv.format_time(vo.date))
+            row.append("False")
+            row.append(vo)
+            row.append("")
+            row.append("True")
+            row.append(vo.currency)
+            row.append(vo.get_importance())
+            body.append(row)
+        csv.writer(directory, dto.get_unique_id(), body)
 
+    def __save(self, dto):
         eim_model = EconomicIndicatorManagementModel(
             origin=dto.get_origin(),
             unique_id=dto.get_unique_id(),
@@ -70,3 +66,43 @@ class EconomicIndicatorProxyModel:
                 date=vo.date
             )
             eim.save()
+
+    def get_unique_economic_indicator_model_list(self, unique_id, dto):
+        models = EconomicIndicatorModel.objects.filter(management_model=unique_id).order_by('date', '-importance')
+
+        # directory = dto.get_csv_path()
+        # csv = CSVFactory.create()
+        # body = []
+        target_model = None
+        _list = []
+        for model in models:
+            if model.date == None:
+                continue
+            if target_model == None:
+                target_model = model
+            elif target_model.date == model.date:
+                continue
+            _list.append(model)
+            target_model = model
+            # row = []
+            # date = timeutils.convert_aware_datetime_from_utc_to_jst(model.date)
+            # row.append(model.event)
+            # row.append(csv.format_date(date))
+            # row.append(csv.format_time(date))
+            # row.append(csv.format_date(date))
+            # row.append(csv.format_time(date))
+            # row.append("False")
+            # row.append("")
+            # row.append("")
+            # row.append("True")
+            # row.append(model.currency)
+            # row.append(self.get_importance(model.importance))
+        #     body.append(row)
+        # csv.writer(directory, "test", body=body)
+        return _list
+
+    def get_importance(self, value):
+
+        for item in ECONOMIC_INDICATOR_IMPORTANCE:
+            if item[0] == value:
+                return item[1]
