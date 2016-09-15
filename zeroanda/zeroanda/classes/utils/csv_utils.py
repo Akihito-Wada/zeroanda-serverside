@@ -17,29 +17,11 @@ class CSV(object):
 class GoolgleCalendarCSV(CSV):
     calendar_name   = "economic_indicator_calendar"
     header          = ['Subject', 'Start Date', 'Start Time', 'End Date', 'End Time', 'All Day Event', 'Description', 'Location', 'Private', 'Currency', 'Importance']
-    @classmethod
-    def writer(cls, dto):
-        directory = dto.get_csv_path()
-        os.makedirs(directory, exist_ok=True)
 
-        target_file = os.path.join(directory, "{calendar_name}_{unique_id}.csv".format(calendar_name=cls.calendar_name, unique_id=dto.get_unique_id()))
-        # if os.path.isfile(target_file):
-        body = []
-        for vo in dto.get_economic_indicator_list():
-            if vo.date == None or vo.event == None: continue
-            row = []
-            row.append(vo.event)
-            row.append(GoolgleCalendarCSV.format_date(vo.date))
-            row.append(GoolgleCalendarCSV.format_time(vo.date))
-            row.append(GoolgleCalendarCSV.format_date(vo.date))
-            row.append(GoolgleCalendarCSV.format_time(vo.date))
-            row.append("False")
-            row.append(vo)
-            row.append("")
-            row.append("True")
-            row.append(vo.currency)
-            row.append(vo.get_importance())
-            body.append(row)
+    @classmethod
+    def writer(cls, path, target_file_name, body):
+        os.makedirs(path, exist_ok=True)
+        target_file = os.path.join(path, "{calendar_name}_{target_file_name}.csv".format(calendar_name=cls.calendar_name, target_file_name=target_file_name))
 
         with open(target_file, 'w') as f:
             writer = csv.writer(f)  # writerオブジェクトを作成
