@@ -37,6 +37,8 @@ class EconomicIndicatorModel(models.Model):
     date            = models.DateTimeField('更新時刻', null=True, blank=True)
     created         = models.DateTimeField('生成時刻', auto_now_add=True)
     updated         = models.DateTimeField('更新時刻', null=True, blank=True)
+    def __str__(self):
+        return "management_model_id: {management_model_id}, event: {event}, importance:{importance}, date: {date}".format(management_model_id=self.management_model, event=self.event, importance=self.importance, date=self.date)
 
 class ProcessModel(models.Model):
     schedule    = models.ForeignKey(ScheduleModel)
