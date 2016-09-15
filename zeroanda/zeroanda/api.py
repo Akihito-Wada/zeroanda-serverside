@@ -43,7 +43,6 @@ def ifdoco(request):
     if request.method == 'POST':
         # scheduleModel = ScheduleProxyModel().get_schedule(request.POST.get('schedule_id'))
         scheduleModel = ScheduleProxyModel().get_schedule(4)
-        utils.info(scheduleModel.country)
         OrderProcess.create(scheduleModel).test_ifdoco(scheduleModel.country)
         return HttpResponse('200')
     else:
