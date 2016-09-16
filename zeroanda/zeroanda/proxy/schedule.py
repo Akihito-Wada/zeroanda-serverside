@@ -5,7 +5,7 @@ from django.db import IntegrityError
 
 from zeroanda import utils
 from zeroanda.classes.utils import timeutils
-from zeroanda.constant import SCHEDULE_STATUS, SCHEDULE_AVAILABLE
+from zeroanda.constant import SCHEDULE_STATUS, SCHEDULE_AVAILABLE, PRIORITY
 from zeroanda.models import ScheduleModel
 
 class ScheduleProxyModel:
@@ -14,9 +14,26 @@ class ScheduleProxyModel:
             if id != None:
                 return self._get_schedule_by_id(id)
             elif datetime != None:
-                return self._get_schedule_by_presentationdate()
+                return self.__get_schedule_with_highest_importance()
             else:
                 None
+        except ScheduleModel.DoesNotExist as e:
+            utils.error(e)
+
+    def __get_schedule_with_highest_importance(self, id = None):
+        try:
+            now = datetime.now()
+            target_startdate = now + timedelta(minutes=60)
+            model = ScheduleModel.objects.filter(
+                    presentation_time__lt=target_startdate,
+                    presentation_time__gt=now,
+                    target=SCHEDULE_AVAILABLE[0][0],
+                    status=SCHEDULE_STATUS[0][0],
+            ).order_by('-priority')
+            if len(model) != 0:
+                return model[0]
+            else:
+                return None
         except ScheduleModel.DoesNotExist as e:
             utils.error(e)
 
@@ -53,3 +70,15 @@ class ScheduleProxyModel:
             schedule.save()
         except IntegrityError as e:
             utils.info(e)
+
+    def add_schedule(self, title, country, presentation_time, priority=PRIORITY[2][0], target=SCHEDULE_AVAILABLE[0][0], status=SCHEDULE_STATUS[0][0]):
+        utils.info("{title}, {country}, {priority}, {target}, {status}, {presentation_time}".format(title=title, country=country, priority=priority, target=target, status=status, presentation_time=presentation_time))
+        model = ScheduleModel(
+            title               = title,
+            country             = country,
+            priority            = priority,
+            target              = target,
+            status              = status,
+            presentation_time   = presentation_time
+        )
+        model.save()

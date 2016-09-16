@@ -1,10 +1,11 @@
 from django.db import models
 from zeroanda.constant import ORDER_STATUS, PRIORITY, SIDE, ACTUAL_ORDER_STATUS, INSTRUMENTS, TYPE, SCHEDULE_AVAILABLE, SCHEDULE_STATUS, COUNTRY_LIST, ERROR_CODE, ACCOUNT_STATUS, TRANSACTION_REASON, TRANSACTION_TYPE, ECONOMIC_INDICATOR_IMPORTANCE
+from zeroanda.services.country.country_proxy import CountryProxyModel
 
 class ScheduleModel(models.Model):
     created     = models.DateTimeField(auto_now_add=True)
     title       = models.CharField('イベント名', max_length=200)
-    country     = models.CharField('対象国', max_length=200, choices=COUNTRY_LIST)
+    country     = models.CharField('対象国', max_length=200, choices=CountryProxyModel().country_list(), default=4)
     priority    = models.IntegerField('イベントの重要性', choices=PRIORITY, default=PRIORITY[2][0])
     target      = models.BooleanField('対象の可否', choices=SCHEDULE_AVAILABLE, default=SCHEDULE_AVAILABLE[0][0])
     status      = models.IntegerField('状況', choices=SCHEDULE_STATUS, default=SCHEDULE_STATUS[0][0])
