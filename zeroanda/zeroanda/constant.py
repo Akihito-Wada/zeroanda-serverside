@@ -55,7 +55,16 @@ SCHEDULE_STATUS = (
 )
 
 COUNTRY_LIST = (
-    ("USD_JPY", "US"),
+    # ("USD_JPY", "US"),
+    ("0", "Australia",       "AU", "AUD"),
+    ("1", "Canada",          "CA", "CAD"),
+    ("2", "England",         "GB", "GBP"),
+    ("3", "European Union",  "EU", "EUR"),
+    ("4", "Japan",           "JP", "JPY"),
+    ("5", "New Zealand",     "NZ", "NZD"),
+    ("6", "Switzerland",     "CH", "CHF"),
+    ("7", "United States",   "US", "USD"),
+    ("8", "People's Republic of China",   "CN", "CNY"),
 )
 
 ERROR_CODE = (
