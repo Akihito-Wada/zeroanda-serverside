@@ -5,7 +5,7 @@ from django.db import IntegrityError
 
 from zeroanda import utils
 from zeroanda.classes.utils import timeutils
-from zeroanda.constant import SCHEDULE_STATUS, SCHEDULE_AVAILABLE, PRIORITY
+from zeroanda.constant import SCHEDULE_STATUS, SCHEDULE_AVAILABLE, PRIORITY, INSTRUMENTS
 from zeroanda.models import ScheduleModel
 
 class ScheduleProxyModel:
@@ -71,11 +71,12 @@ class ScheduleProxyModel:
         except IntegrityError as e:
             utils.info(e)
 
-    def add_schedule(self, title, country, presentation_time, priority=PRIORITY[2][0], target=SCHEDULE_AVAILABLE[0][0], status=SCHEDULE_STATUS[0][0]):
-        utils.info("{title}, {country}, {priority}, {target}, {status}, {presentation_time}".format(title=title, country=country, priority=priority, target=target, status=status, presentation_time=presentation_time))
+    def add_schedule(self, title, country, presentation_time, instrument=INSTRUMENTS[0][0], priority=PRIORITY[2][0], target=SCHEDULE_AVAILABLE[0][0], status=SCHEDULE_STATUS[0][0]):
+        utils.info("{title}, {country}, {instrument}, {priority}, {target}, {status}, {presentation_time}".format(title=title, country=country, instrument=instrument, priority=priority, target=target, status=status, presentation_time=presentation_time))
         model = ScheduleModel(
             title               = title,
             country             = country,
+            instrument          = instrument,
             priority            = priority,
             target              = target,
             status              = status,

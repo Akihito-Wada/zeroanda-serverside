@@ -1,3 +1,4 @@
+from zeroanda.constant import INSTRUMENTS
 from zeroanda.classes.utils import timeutils
 from zeroanda.proxy.schedule import ScheduleProxyModel
 from zeroanda.proxy.priority import PriorityProxyModel
@@ -16,6 +17,7 @@ class ScheduleService:
                 scheduleProxy.add_schedule(
                     title=item.event,
                     country=countryProxy.get_index(item.currency),
+                    instrument=INSTRUMENTS[0][0],
                     priority=PriorityProxyModel.convert_prioriy(item.importance),
                     presentation_time=timeutils.convert_aware_datetime_from_utc_to_jst(item.date)
                 )
