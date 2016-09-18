@@ -12,9 +12,12 @@ class EconomicIndicatorProxyModel:
     def get_latest_economic_indicator(self):
         try:
             result = EconomicIndicatorApiServiceFactory.create().get_latest_economic_indicator()
-            model = EconomicIndicatorManagementModel.objects.filter(unique_id=result.get_unique_id())
-            if model.count() == 0:
-                self.__save(result)
+            models = EconomicIndicatorManagementModel.objects.filter(unique_id=result.get_unique_id())
+            if models.count() == 0:
+                model = self.__save(result)
+                result.set_management_id(model.id)
+            else:
+                result.set_management_id(models[0].id)
             return result
         except Exception as e:
             utils.info(e)
@@ -66,9 +69,10 @@ class EconomicIndicatorProxyModel:
                 date=vo.date
             )
             eim.save()
+        return eim_model
 
-    def get_unique_economic_indicator_model_list(self, unique_id, dto):
-        models = EconomicIndicatorModel.objects.filter(management_model=unique_id).order_by('date', '-importance')
+    def get_unique_economic_indicator_model_list(self, dto):
+        models = EconomicIndicatorModel.objects.filter(management_model=dto.get_management_id()).order_by('date', '-importance')
 
         # directory = dto.get_csv_path()
         # csv = CSVFactory.create()

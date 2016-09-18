@@ -30,8 +30,8 @@ class DailyFXService(HttpService):
     def get_latest_economic_indicator(self):
         year = datetime.now().year
         month = datetime.now().month
-        # day = datetime.now().day
-        day = 11
+        day = datetime.now().day
+        # day = 18
 
         target_date = self.__get_next_sunday_datetime(year, month, day)
         unique_id   = "{month}-{day}-{year}".format(month=str("{0:02d}".format(target_date.month)), day=str("{0:02d}".format(target_date.day)), year=str(target_date.year))
@@ -70,6 +70,7 @@ class EconomicIndicatorDTO:
     _year       = 0
     _month      = 0
     _day        = 0
+    _management_id  = 0
     def __init__(self, origin, unique_id, url, filename, list, year, month, day):
         self._origin    = origin
         self._unique_id = unique_id
@@ -79,6 +80,13 @@ class EconomicIndicatorDTO:
         self._year      = year
         self._month     = month
         self._day       = day
+
+
+    def set_management_id(self, id):
+        self._management_id = id
+
+    def get_management_id(self):
+        return self._management_id
 
     def get_origin(self):
         return self._origin
@@ -99,4 +107,4 @@ class EconomicIndicatorDTO:
         return os.path.join(settings.ECONOMIC_INDICATOR_CSV_FILES, str(self._year), str("{0:02d}".format(self._month)))
 
     def __str__(self):
-        return "{origin}: {unique_id}".format(origin=self._origin, unique_id=self._unique_id)
+        return "{origin}: {unique_id}, management_id:{management_id}".format(origin=self._origin, unique_id=self._unique_id, management_id=self._management_id)
