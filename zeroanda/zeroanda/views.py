@@ -105,7 +105,7 @@ def transaction_list(request, trade_id):
             startdate = scheduleModel.presentation_time +  timedelta(seconds=settings.DURATION_IFDOCO_EXCUTE_TIME - 10)
             # enddate = scheduleModel.presentation_time + timedelta(seconds=settings.EXPIRY_SECONDS + 1)
             enddate = scheduleModel.presentation_time + timedelta(seconds=SettingProxy.get_expire_time(scheduleModel.priority) + 20)
-            price_list = priceProxyModel.get_candles(scheduleModel.country, timeutils.convert_rfc2unixtime(startdate), timeutils.convert_rfc2unixtime(enddate))
+            price_list = priceProxyModel.get_candles(scheduleModel.instrument, timeutils.convert_rfc2unixtime(startdate), timeutils.convert_rfc2unixtime(enddate))
             if price_list is not None:
                 for price in price_list['candles']:
                     price['time'] = timeutils.format_unixtime_to_jst(timeutils.format_unixtime(price['time']))
@@ -115,7 +115,7 @@ def transaction_list(request, trade_id):
             orderModelBuy = orderProxyModel.get_order_by_trade_id(trade_id=trade_id, side=SIDE[1][0])
             min_id = orderModelBuy.actual_model.actual_order_id if orderModelBuy.actual_model.actual_order_id < orderModelSell.actual_model.actual_order_id else orderModelSell.actual_model.actual_order_id
             transactionModel = TransactionsProxyModel()
-            transactions = transactionModel.get_transactions(account_id=accountModel.account_id, instrument=scheduleModel.country, min_id=min_id)
+            transactions = transactionModel.get_transactions(account_id=accountModel.account_id, instrument=scheduleModel.instrument, min_id=min_id)
             if orderModelBuy != None and orderModelBuy.actual_model != None:
                 buy_transaction_list = __sort_out_transaction(transactions, orderModelBuy.actual_model.actual_order_id)
             else:

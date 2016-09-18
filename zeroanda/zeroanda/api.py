@@ -43,7 +43,7 @@ def ifdoco(request):
     if request.method == 'POST':
         # scheduleModel = ScheduleProxyModel().get_schedule(request.POST.get('schedule_id'))
         scheduleModel = ScheduleProxyModel().get_schedule(4)
-        OrderProcess.create(scheduleModel).test_ifdoco(scheduleModel.country)
+        OrderProcess.create(scheduleModel).test_ifdoco(scheduleModel.instrument)
         return HttpResponse('200')
     else:
         return HttpResponse('403')
@@ -76,7 +76,7 @@ def prices(request):
             scheduleModel = ScheduleProxyModel().get_schedule(5)
             model = PricesProxyModel()
             utils.info(model)
-            result = model.get_price(scheduleModel.country)
+            result = model.get_price(scheduleModel.instrument)
             return HttpResponse('200')
         except Exception as e:
             utils.info(e)

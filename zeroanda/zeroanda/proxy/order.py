@@ -90,7 +90,7 @@ class OrderProxyModel:
 
     def buy_ifdoco(self, target_price, upper_bound, lower_bound, take_profit, stop_loss, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None, trade_id=0):
         try :
-            _instrument = instrument if instrument != None else scheduleModel.country
+            _instrument = instrument if instrument != None else scheduleModel.instrument
             _expiry = expiry if expiry != None else scheduleModel.presentation_time + timedelta(seconds=settings.EXPIRY_SECONDS)
             orderModel = OrderModel(
                             trade_id=trade_id,
@@ -130,7 +130,7 @@ class OrderProxyModel:
             return
 
     def sell_ifdoco(self, target_price, upper_bound, lower_bound, take_profit, stop_loss, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None, trade_id=0):
-        _instrument = instrument if instrument != None else scheduleModel.country
+        _instrument = instrument if instrument != None else scheduleModel.instrument
         _expiry = expiry if expiry != None else scheduleModel.presentation_time + timedelta(seconds=settings.EXPIRY_SECONDS)
         try :
             orderModel = OrderModel(

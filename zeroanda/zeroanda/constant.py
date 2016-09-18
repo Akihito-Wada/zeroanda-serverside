@@ -30,10 +30,10 @@ ACTUAL_ORDER_STATUS =(
 )
 
 INSTRUMENTS = (
-    ("USD_JPY", "us_jp"),
-    ("EUR_JPY", "eu_jp"),
-    ("EUR_USD", "eu_us"),
-    ("EUR_CAD", "eu_ca"),
+    ("USD_JPY", "USD_JPY"),
+    ("EUR_JPY", "EUR_JPY"),
+    ("EUR_USD", "EUR_USD"),
+    ("EUR_CAD", "EUR_CAD"),
 )
 
 TYPE = (

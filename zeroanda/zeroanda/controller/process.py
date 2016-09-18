@@ -74,7 +74,7 @@ class OrderProcess:
         model = PricesModel(schedule=self._scheduleModel, begin=datetime.now())
         model.save()
         try :
-            result = self._streaming.prices(self._scheduleModel.country)
+            result = self._streaming.prices(self._scheduleModel.instrument)
             model.ask   = self._latest_ask = result["ask"]
             model.bid   = self._latest_bid = result["bid"]
             model.instrument    = result["instrument"]

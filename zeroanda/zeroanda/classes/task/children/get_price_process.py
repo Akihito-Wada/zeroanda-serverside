@@ -22,7 +22,7 @@ class GetPriceProcess(AbstractProcess):
 
     def _get_price(self):
         priceProxyModel = PricesProxyModel()
-        instrument = INSTRUMENTS[0][0] if settings.TEST else self._task.schedule.country
+        instrument = INSTRUMENTS[0][0] if settings.TEST else self._task.schedule.instrument
         self._task.set_price_model(priceProxyModel.get_price(instrument=instrument, trade_id=self._task.pool['trade_id']))
 
     def _is_condition(self):

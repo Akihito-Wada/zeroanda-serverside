@@ -27,9 +27,9 @@ class GetTransactionProcess(AbstractProcess):
 
     def _get_transactions(self):
         transactionProxyModel = TransactionsProxyModel()
-        instrument = INSTRUMENTS[0][0] if settings.TEST else self._task.schedule.country
+        instrument = INSTRUMENTS[0][0] if settings.TEST else self._task.schedule.instrument
         result = transactionProxyModel.get_transactions(account_id=self._task.pool["account_info_model"].account_id, instrument=instrument, count=2)
-
+        
         orderProxy = OrderProxyModel()
         if result.get_code() == 429:
             return
