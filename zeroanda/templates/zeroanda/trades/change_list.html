@@ -69,12 +69,31 @@
         <!--{{ cl.formset.non_form_errors }}-->
     <!--{% endif %}-->
     <!--<div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">-->
-
-      <ul>
+      <table>
+        <tr>
+          <th>trade id</th>
+          <th>title</th>
+          <th>country</th>
+          <th>priority</th>
+          <th>status</th>
+          <th>presentation_time</th>
+        </tr>
         {% for trade_model in trade_list %}
-          <li><a href="/zeroanda/transactions/{{trade_model.id}}">{{ trade_model.id }}</a> - {{ trade_model.created }}</li>
+        <tr>
+          <td><a href="/zeroanda/transactions/{{trade_model.id}}">{{ trade_model.id }}</a></td>
+          <td>{{ trade_model.schedule.title }} </td>
+          <td>{{ trade_model.schedule.country }} </td>
+          <td>{{ trade_model.schedule.priority }} </td>
+          <td>{{ trade_model.schedule.status }} </td>
+          <td>{{ trade_model.schedule.presentation_time }}</td>
+        </tr>
         {% endfor %}
-      </ul>
+      </table>
+      <!--<ul>-->
+        <!--{% for trade_model in trade_list %}-->
+          <!--<li><a href="/zeroanda/transactions/{{trade_model.id}}">{{ trade_model.id }}</a> - {{ trade_model.created }}</li>-->
+        <!--{% endfor %}-->
+      <!--</ul>-->
     </div>
   {% include 'zeroanda/admin/footer.html' %}
   </div>
