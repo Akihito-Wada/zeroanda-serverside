@@ -13,8 +13,10 @@ def test_api_trades(request):
 
     if request.method == 'GET':
         accountModel = AccountProxyModel().get_account()
+        trade_id = '10445368964'
         tradesProxyModel = TradesProxyModel();
-        tradesProxyModel.get_trades(accountModel)
+        result = tradesProxyModel.get_trades(accountModel, trade_id=trade_id)
+        utils.info(result)
 
         return HttpResponse('200')
     elif request.method == 'POST':

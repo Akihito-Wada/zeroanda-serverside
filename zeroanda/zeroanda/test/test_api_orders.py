@@ -15,8 +15,9 @@ def test_api_orders(request):
     if request.method == 'GET':
         try:
             accountModel = AccountProxyModel().get_account()
+            order_id=10445368947
             orderProxyModel = OrderProxyModel()
-            orderProxyModel.get_orders(accountModel.account_id)
+            orderProxyModel.get_orders(accountModel.account_id, orderId=order_id)
             return HttpResponse('200')
         except :
             return HttpResponse(403)

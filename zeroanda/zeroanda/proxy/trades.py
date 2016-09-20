@@ -8,8 +8,8 @@ class TradesProxyModel:
     def __init__(self):
         self._streaming = Streaming()
 
-    def get_trades(self, accountModel):
-        result = self._streaming.get_trades(accountModel, INSTRUMENTS[0][0])
+    def get_trades(self, accountModel, trade_id=0, maxId = 0, minId=0, count=0):
+        result = self._streaming.get_trades(accountModel, INSTRUMENTS[0][0], trade_id, maxId, minId, count)
         return result.get_body()
 
     def close_trades(self, accountModel, trade_id):

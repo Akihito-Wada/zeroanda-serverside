@@ -14,101 +14,7 @@ from zeroanda.classes.utils.loggerutils import Logger
 
 logger =logging.getLogger("django")
 
-from optparse import OptionParser
 from django.conf import settings
-
-#
-# def connect_to_stream(url):
-#     """
-#
-#     Environment           <Domain>
-#     fxTrade               stream-fxtrade.oanda.com
-#     fxTrade Practice      stream-fxpractice.oanda.com
-#     sandbox               stream-sandbox.oanda.com
-#     """
-#
-#     # Replace the following variables with your personal ones
-#     # domain = 'stream-fxpractice.oanda.com'
-#     # domain = 'api-sandbox.oanda.com'
-#     # access_token = 'ACCESS-TOKEN'
-#     # account_id = '1234567'
-#     # instruments = "EUR_USD,USD_CAD"
-#
-#     try:
-#         s = requests.Session()
-#         # url = "https://" + domain + "/v1/prices"
-#         headers = {'Authorization' : 'Bearer ' + settings.TOKEN,
-#                    'Content-type': 'application/x-www-form-urlencoded',
-#                    'X-Accept-Datetime-Format':'unix',
-#                    'Connection': 'keep-alive',
-#                    'Accept-Encoding': 'gzip,deflate',
-#                   }
-#         # params = {'instruments' : instruments, 'accountId' : account_id}
-#         params = {'instruments' : ','.join(settings.INSTRUMENTS)}
-#         req = requests.Request('GET', url, headers = headers, params = params)
-#         pre = req.prepare()
-#         resp = s.send(pre, stream = True, verify = False)
-#         return resp
-#     except Exception as e:
-#         s.close()
-#
-#         print("Caught exception when connecting to stream\n" + str(e))
-#
-# def demo(displayHeartbeat):
-#     url = "http://" + settings.DOMAIN + "/v1/prices"
-#     response = connect_to_stream(url)
-#     if response.status_code != 200:
-#         print(response.text)
-#         return
-#     test = json.loads(response.text)
-#     # print(test["prices"][0]["instrument"])
-#     print(test["prices"])
-#     # print(datetime.datetime.fromtimestamp(int(test["prices"][0]["time"])))
-#     # for line in response.iter_lines(1):
-#     #     if line:
-#     #         try:
-#     #             print(line)
-#     #             msg = json.loads(line)
-#     #         except Exception as e:
-#     #             print("Caught exception when converting message into json\n" + str(e))
-#     #             return
-#     #
-#     #         if displayHeartbeat:
-#     #             print(line)
-#     #         else:
-#     #             if msg.has_key("instrument") or msg.has_key("tick"):
-#     #                 print(line)
-#
-# def get_prices():
-#     utils.info("prices")
-#     url = settings.DOMAIN + "/v1/prices"
-#     response = connect_to_stream(url)
-#     if response.status_code != 200:
-#         print(response.text)
-#         return
-#     test = json.loads(response.text)
-#     print(test["prices"][0])
-#     milliseconds = test["prices"][0]["time"][10:]
-#     unixtime = test["prices"][0]["time"][0:10]
-#     return test["prices"][0]
-#
-# def main():
-#     usage = "usage: %prog [options]"
-#     parser = OptionParser(usage)
-#     parser.add_option("-b", "--displayHeartBeat", dest = "verbose", action = "store_true",
-#                         help = "Display HeartBeat in streaming data")
-#     displayHeartbeat = False
-#
-#     (options, args) = parser.parse_args()
-#     if len(args) > 1:
-#         parser.error("incorrect number of arguments")
-#     if options.verbose:
-#         displayHeartbeat = True
-#     demo(displayHeartbeat)
-#
-#
-# if __name__ == "__main__":
-#     main()
 
 from zeroanda.errors import ZeroandaError
 from zeroanda   import utils
@@ -169,8 +75,6 @@ class Streaming(object):
 
     def prices(self, instruments, priceModel = None):
         url = settings.DOMAIN + "/v1/prices"
-        # url = settings.STREAMING_DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/prices"
-        # url = settings.STREAMING_DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/prices"
         params = {'instruments' : instruments}
         result = self.get(url, self.get_headers(None, True), params)
         if result.get_status():
@@ -179,7 +83,6 @@ class Streaming(object):
             utils.error(result.get_body())
             raise ZeroandaError(result)
 
-    # http://developer.oanda.com/docs/jp/v1/rates/#retrieve-instrument-history
     def candles(self, instrument, candleFormat = "bidask", includeFirst = "true", dailyAlignment = 21, alignmentTimezone = "America/New_York", weeklyAlignment = "Friday", granularity = None, count = 10, start = None, end = None):
         url = settings.DOMAIN + "/v1/candles"
         params = {
@@ -204,22 +107,24 @@ class Streaming(object):
 
         result = self.get(url, self.get_headers(None, True), params)
         return result
-        # if result.get_status():
-        #     return result
-        # else:
-        #     utils.info(3)
-        #     utils.info(result)
-        #     utils.info(5)
-        #     if result != None:
-        #         utils.error(result.get_body())
-        #     raise ZeroandaError(result)
 
     '''
     ticket
     '''
-    def get_trades(self, accountModel, instruments, maxId = None, count=None):
+    def get_trades(self, accountModel, instruments, trade_id=0, maxId=0, minId=0, count=0):
         url = settings.DOMAIN + "/v1/accounts/" + str(accountModel.account_id) + "/trades"
-        params = {'instruments' : instruments}
+        if trade_id != 0:
+            params = {}
+            url = url + "/" + str(trade_id)
+            utils.info(url)
+        else:
+            params = {'instruments' : instruments}
+            if maxId != 0:
+                params["maxId"] = str(maxId)
+            if minId != 0:
+                params["minId"] = str(minId)
+            if count != 0:
+                params["count"] = str(count)
         result = self.get(url, self._compressed_headers, params)
         if result.get_status():
             return result
@@ -265,14 +170,8 @@ class Streaming(object):
                 params["maxId"] = max_id
             if min_id != None:
                 params["minId"] = min_id
-        # result = self.get(url, self.get_headers(etag), params)
         result = self.get(url, self._streaming_headers, params)
         return result
-        # if result.get_status():
-        #     return result
-        # else:
-        #     utils.error(result.get_body())
-        #     raise ZeroandaError(result)
     '''
     events
     '''
@@ -301,15 +200,26 @@ class Streaming(object):
     '''
     orders
     '''
-    def get_orders(self, account_id, instruments=None, maxId=None, count=None):
+    def get_orders(self, account_id, instruments=None, order_id=0, max_id=0, min_id=0, count=0):
+        utils.info(33333)
         url = settings.DOMAIN + "/v1/accounts/" + str(account_id) + "/orders"
-        result = self.get(url, self.get_headers())
-
-        if result.get_status():
-            return result
+        params = {}
+        if order_id != 0:
+            url = url + "/" + str(order_id)
         else:
-            utils.error(result.get_body())
-            raise ZeroandaError(result)
+            if instruments != None:
+                params["instruments"] = instruments
+            if max_id != 0:
+                params["maxId"] = str(max_id)
+            if min_id != 0:
+                params["minId"] = str(min_id)
+            if count != 0:
+                params["count"] = str(count)
+
+        # result = self.get(url, self.get_headers(), params)
+
+        result = self.get(url, self._streaming_headers, params)
+        return result
 
     def order_ifdoco(self, account_id, instruments, units, side, expiry, price, lowerBound, upperBound, takeProfit, stopLoss):
         payload = {'instrument': instruments,

@@ -43,9 +43,9 @@ class OrderProxyModel:
     '''
     ticket
     '''
-    def get_orders(self, account_id=None, trade_id=None, side=None):
+    def get_orders(self, account_id=None, orderId=0):
         if account_id != None:
-            result = self._streaming.get_orders(account_id)
+            result = self._streaming.get_orders(account_id, order_id=orderId)
             return result.get_body()
 
     def get_order_by_trade_id(self, trade_id, side):
