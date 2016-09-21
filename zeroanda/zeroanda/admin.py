@@ -105,7 +105,7 @@ class OrderModelAdmin(admin.ModelAdmin):
 
 class ScheduleModelAdmin(admin.ModelAdmin):
     change_form_template = 'zeroanda/admin/schedule/change_form.html'
-    list_display = ('title','presentation_time')
+    list_display = ('title', 'country', 'instrument', 'priority', 'status','presentation_time')
     # inlines = [OrderModelAdmin]
     def change_view(self, request, object_id, form_url='', extra_context=None):
         extra_context = extra_context or {}
