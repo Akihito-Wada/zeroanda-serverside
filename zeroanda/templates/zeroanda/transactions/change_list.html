@@ -216,12 +216,12 @@
       <h2>none</h2>
       {% endif %}
 
-      <h1>Order Models: Bid (Actual Order Models)</h1>
+      <h1>Order Models: Bid</h1>
       {% if order_model_sell != None %}
         <table>
           <tr>
               <th>actual order id</th>
-              <td>{{ order_model_sell.actual_model.actual_order_id }}</td>
+              <td>{{ order_model_sell.actual_order_id }}</td>
           </tr>
           <tr>
               <th>instruments</th>
@@ -229,7 +229,7 @@
           </tr>
           <tr>
               <th>units</th>
-              <td>{{ order_model_sell.units }} ( {{ order_model_sell.actual_model.units }} )</td>
+              <td>{{ order_model_sell.units }}</td>
           </tr>
           <tr>
               <th>side</th>
@@ -241,23 +241,23 @@
           </tr>
           <tr>
               <th>price</th>
-              <td>{{ order_model_sell.price }} ( {{ order_model_sell.actual_model.price }} )</td>
+              <td>{{ order_model_sell.price }}</td>
           </tr>
           <tr>
               <th>upperBound</th>
-              <td>{{ order_model_sell.upperBound }} ( {{ order_model_sell.actual_model.upperBound }} )</td>
+              <td>{{ order_model_sell.upperBound }}</td>
           </tr>
           <tr>
               <th>lowerBound</th>
-              <td>{{ order_model_sell.lowerBound }} ( {{ order_model_sell.actual_model.lowerBound }} )</td>
+              <td>{{ order_model_sell.lowerBound }}</td>
           </tr>
           <tr>
               <th>stopLoss</th>
-              <td>{{ order_model_sell.stopLoss }} ( {{ order_model_sell.actual_model.stopLoss }} )</td>
+              <td>{{ order_model_sell.stopLoss }}</td>
           </tr>
           <tr>
               <th>takeProfit</th>
-              <td>{{ order_model_sell.takeProfit }} ( {{ order_model_sell.actual_model.takeProfit }} )</td>
+              <td>{{ order_model_sell.takeProfit }}</td>
           </tr>
           <tr>
               <th>status</th>
@@ -265,7 +265,7 @@
           </tr>
           <tr>
               <th>error_code</th>
-              <td>{{ order_model_sell.actual_model.error_code }}</td>
+              <td>{{ order_model_sell.error_code }}</td>
           </tr>
           <tr>
               <th>transaction</th>
@@ -334,11 +334,11 @@
           </tr>
           <tr>
               <th>time</th>
-              <td>{{ order_model_sell.actual_model.time | date:"c" }}</td>
+              <td>{{ order_model_sell.time | date:"c" }}</td>
           </tr>
           <tr>
               <th>created</th>
-              <td>{{ order_model_sell.created | date:"c" }} ( {{ order_model_sell.actual_model.created | date:"c" }} )</td>
+              <td>{{ order_model_sell.created | date:"c" }}</td>
           </tr>
           <tr>
               <th>updated</th>
@@ -347,12 +347,12 @@
       </table>
       {% endif %}
 
-      <h1>Order Models: ASK (Actual Order Models)</h1>
+      <h1>Order Models: ASK</h1>
       {% if order_model_buy != None %}
             <table>
           <tr>
               <th>actual order id</th>
-              <td>{{ order_model_buy.actual_model.actual_order_id }}</td>
+              <td>{{ order_model_buy.actual_order_id }}</td>
           </tr>
           <tr>
               <th>instruments</th>
@@ -360,7 +360,7 @@
           </tr>
           <tr>
               <th>units</th>
-              <td>{{ order_model_buy.units }} ( {{ order_model_buy.actual_model.units }} )</td>
+              <td>{{ order_model_buy.units }}</td>
           </tr>
           <tr>
               <th>side</th>
@@ -372,23 +372,23 @@
           </tr>
           <tr>
               <th>price</th>
-              <td>{{ order_model_buy.price }} ( {{ order_model_buy.actual_model.price }} )</td>
+              <td>{{ order_model_buy.price }}</td>
           </tr>
           <tr>
               <th>upperBound</th>
-              <td>{{ order_model_buy.upperBound }} ( {{ order_model_buy.actual_model.upperBound }} )</td>
+              <td>{{ order_model_buy.upperBound }}</td>
           </tr>
           <tr>
               <th>lowerBound</th>
-              <td>{{ order_model_buy.lowerBound }} ( {{ order_model_buy.actual_model.lowerBound }} )</td>
+              <td>{{ order_model_buy.lowerBound }}</td>
           </tr>
           <tr>
               <th>stopLoss</th>
-              <td>{{ order_model_buy.stopLoss }} ( {{ order_model_buy.actual_model.stopLoss }} )</td>
+              <td>{{ order_model_buy.stopLoss }}</td>
           </tr>
           <tr>
               <th>takeProfit</th>
-              <td>{{ order_model_buy.takeProfit }} ( {{ order_model_buy.actual_model.takeProfit }} )</td>
+              <td>{{ order_model_buy.takeProfit }}</td>
           </tr>
           <tr>
               <th>status</th>
@@ -396,7 +396,7 @@
           </tr>
           <tr>
               <th>error_code</th>
-              <td>{{ order_model_buy.actual_model.error_code }}</td>
+              <td>{{ order_model_buy.error_code }}</td>
           </tr>
           <tr>
               <th>transaction</th>
@@ -465,11 +465,11 @@
           </tr>
           <tr>
               <th>time</th>
-              <td>{{ order_model_buy.actual_model.time | date:"c" }}</td>
+              <td>{{ order_model_buy.time | date:"c" }}</td>
           </tr>
           <tr>
               <th>created</th>
-              <td>{{ order_model_buy.created | date:"c" }} ( {{ order_model_buy.actual_model.created | date:"c" }} )</td>
+              <td>{{ order_model_buy.created | date:"c" }}</td>
           </tr>
           <tr>
               <th>updated</th>

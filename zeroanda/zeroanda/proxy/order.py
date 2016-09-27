@@ -8,7 +8,7 @@ from zeroanda.classes.net.streaming import Streaming
 from zeroanda.classes.utils import timeutils
 from zeroanda.constant import SIDE, TYPE, ACTUAL_ORDER_STATUS, ERROR_CODE, ORDER_STATUS
 from zeroanda.errors import ZeroandaError
-from zeroanda.models import OrderModel, ActualOrderModel
+from zeroanda.models import ActualOrderModel
 
 logger =logging.getLogger("django")
 
@@ -18,12 +18,11 @@ class OrderProxyModel:
     def __init__(self):
         self._streaming = Streaming()
 
-    def _add_actual_order(self, response, orderModel, scheduleModel = None):
+    def _add_actual_order(self, response, scheduleModel = None, trade_id=0):
         result = response.get_body()
         actualOrderModel = ActualOrderModel(
-            trade_id=orderModel.trade_id,
+            trade_id=trade_id,
             schedule= scheduleModel,
-            order = orderModel,
             actual_order_id=result["orderOpened"]["id"],
             instruments = result["instrument"],
             units = result["orderOpened"]["units"],
@@ -49,27 +48,15 @@ class OrderProxyModel:
             return result.get_body()
 
     def get_order_by_trade_id(self, trade_id, side):
-        models = OrderModel.objects.filter(trade_id=trade_id, side=side)
+        models = ActualOrderModel.objects.filter(trade_id=trade_id, side=side)
         if len(models) > 0:
-            utils.info(models[0].actual_model.actual_order_id)
+            utils.info(models[0].actual_order_id)
             return models[0]
         else:
             return None
 
-    def buy_market(self, accountModel, instruments, units, scheduleModel=None, expiry=None, upperBound=None, lowerBound=None):
+    def buy_market(self, accountModel, instruments, units, scheduleModel=None, expiry=None, upperBound=None, lowerBound=None, trade_id=0):
         try :
-            orderModel = OrderModel(
-                            schedule=scheduleModel,
-                            instruments = instruments,
-                            units = units,
-                            side = SIDE[1][0],
-                            type = TYPE[2][0],
-                            expiry = expiry,
-                            upperBound=upperBound,
-                            lowerBound=lowerBound,
-                            status=ORDER_STATUS[0][0]
-                            )
-            orderModel.save()
             response = self._streaming.order_market(
                 account_id=accountModel.account_id,
                 instruments=instruments,
@@ -80,34 +67,16 @@ class OrderProxyModel:
                 lowerBound=lowerBound
             )
             if response.get_code() == 201:
-                self._add_actual_order(response, orderModel, scheduleModel)
+                self._add_actual_order(response, scheduleModel, trade_id)
         except ZeroandaError as e:
             e.save()
-            orderModel.status = ORDER_STATUS[1][0]
-            orderModel.updated  = timeutils.get_now_with_jst()
-            orderModel.save()
             return
 
     def buy_ifdoco(self, target_price, upper_bound, lower_bound, take_profit, stop_loss, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None, trade_id=0):
         try :
             _instrument = instrument if instrument != None else scheduleModel.instrument
             _expiry = expiry if expiry != None else scheduleModel.presentation_time + timedelta(seconds=settings.EXPIRY_SECONDS)
-            orderModel = OrderModel(
-                            trade_id=trade_id,
-                            schedule=scheduleModel,
-                            instruments = _instrument,
-                            units = units,
-                            side = SIDE[1][0],
-                            type = TYPE[2][0],
-                            expiry = _expiry,
-                            price=target_price,
-                            upperBound=upper_bound,
-                            lowerBound=lower_bound,
-                            takeProfit=take_profit,
-                            stopLoss=stop_loss,
-                            status=ORDER_STATUS[0][0]
-                            )
-            orderModel.save()
+
             response = self._streaming.order_ifdoco(
                 account_id=accountId if accountId != None else accountModel.account_id,
                 instruments=_instrument,
@@ -121,35 +90,15 @@ class OrderProxyModel:
                 stopLoss=stop_loss
             )
             if response.get_code() == 201:
-                return self._add_actual_order(response, orderModel, scheduleModel)
+                return self._add_actual_order(response, scheduleModel, trade_id)
         except ZeroandaError as e:
             e.save()
-            orderModel.status = ORDER_STATUS[1][0]
-            orderModel.updated  = timeutils.get_now_with_jst()
-            orderModel.save()
             return
 
     def sell_ifdoco(self, target_price, upper_bound, lower_bound, take_profit, stop_loss, units, expiry = None, accountModel = None, scheduleModel = None, accountId = None, instrument = None, trade_id=0):
         _instrument = instrument if instrument != None else scheduleModel.instrument
         _expiry = expiry if expiry != None else scheduleModel.presentation_time + timedelta(seconds=settings.EXPIRY_SECONDS)
         try :
-            orderModel = OrderModel(
-                            trade_id=trade_id,
-                            schedule=scheduleModel,
-                            instruments = _instrument,
-                            units = units,
-                            side = SIDE[0][0],
-                            type = TYPE[2][0],
-                            expiry = _expiry,
-                            price=target_price,
-                            upperBound=upper_bound,
-                            lowerBound=lower_bound,
-                            takeProfit=take_profit,
-                            stopLoss=stop_loss,
-                            status=ORDER_STATUS[0][0]
-                            )
-            orderModel.save()
-
             response = self._streaming.order_ifdoco(
                 account_id=accountId if accountId != None else accountModel.account_id,
                 instruments=_instrument,
@@ -162,23 +111,11 @@ class OrderProxyModel:
                 takeProfit=take_profit,
                 stopLoss=stop_loss
             )
-            # response = self._streaming.order_ifdoco(accountModel, orderModel)
             if response.get_code() == 201:
-                return self._add_actual_order(response, orderModel, scheduleModel)
+                return self._add_actual_order(response, scheduleModel, trade_id)
         except ZeroandaError as e:
             e.save()
-            orderModel.status = ORDER_STATUS[1][0]
-            orderModel.updated  = timeutils.get_now_with_jst()
-            orderModel.save()
             return
-
-    # def traders(self, accountModel):
-    #     self._streaming.traders(accountModel, INSTRUMENTS[0][0])
-    #     # self._streaming.traders(accountModel, scheduleModel.instruments, INSTRUMENTS[0][0])
-
-    # def positions(self, accountModel):
-    #     result = self._streaming.positions(accountModel)
-    #     utils.info(result.get_body())
 
     def delete(self, accountModel, trade_id):
         try:

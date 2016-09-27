@@ -3,7 +3,7 @@ from datetime import timedelta
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 from django.views   import generic
 
 from operator import attrgetter
@@ -21,8 +21,6 @@ from zeroanda import utils
 
 class OrdersListView(generic.TemplateView):
     def get_context_data(self, **kwargs):
-        accountModel = AccountProxyModel().get_account()
-        orderClass = OrderProxyModel()
         context = super(OrdersListView, self).get_context_data(**kwargs)
         return context
 
@@ -103,7 +101,6 @@ def transaction_list(request, trade_id):
             priceModel = priceProxyModel.get_price(trade_id=trade_id)
 
             startdate = scheduleModel.presentation_time +  timedelta(seconds=settings.DURATION_IFDOCO_EXCUTE_TIME - 10)
-            # enddate = scheduleModel.presentation_time + timedelta(seconds=settings.EXPIRY_SECONDS + 1)
             enddate = scheduleModel.presentation_time + timedelta(seconds=SettingProxy.get_expire_time(scheduleModel.priority) + 20)
             price_list = priceProxyModel.get_candles(scheduleModel.instrument, timeutils.convert_rfc2unixtime(startdate), timeutils.convert_rfc2unixtime(enddate))
             if price_list is not None:
@@ -113,17 +110,21 @@ def transaction_list(request, trade_id):
             orderProxyModel = OrderProxyModel()
             orderModelSell = orderProxyModel.get_order_by_trade_id(trade_id=trade_id, side=SIDE[0][0])
             orderModelBuy = orderProxyModel.get_order_by_trade_id(trade_id=trade_id, side=SIDE[1][0])
-            min_id = orderModelBuy.actual_model.actual_order_id if orderModelBuy.actual_model.actual_order_id < orderModelSell.actual_model.actual_order_id else orderModelSell.actual_model.actual_order_id
             transactionModel = TransactionsProxyModel()
-            transactions = transactionModel.get_transactions(account_id=accountModel.account_id, instrument=scheduleModel.instrument, min_id=min_id)
-            if orderModelBuy != None and orderModelBuy.actual_model != None:
-                buy_transaction_list = __sort_out_transaction(transactions, orderModelBuy.actual_model.actual_order_id)
-            else:
-                buy_transaction_list = None
-            if orderModelSell != None and orderModelSell.actual_model != None:
-                sell_transaction_list = __sort_out_transaction(transactions, orderModelSell.actual_model.actual_order_id)
-            else:
-                sell_transaction_list = None
+
+            sell_transaction_list = None
+            buy_transaction_list = None
+            if orderModelSell != None and orderModelBuy != None:
+                min_id = orderModelBuy.actual_order_id if orderModelBuy.actual_order_id < orderModelSell.actual_order_id else orderModelSell.actual_order_id
+                utils.info('min_id')
+                utils.info(min_id)
+                transactions = transactionModel.get_transactions(account_id=accountModel.account_id,
+                                                                 instrument=scheduleModel.instrument, min_id=min_id)
+                utils.info('transactions')
+                utils.info(transactions)
+                buy_transaction_list = __sort_out_transaction(transactions, orderModelBuy.actual_order_id)
+                sell_transaction_list = __sort_out_transaction(transactions, orderModelSell.actual_order_id)
+
 
         transaction_list = TradeTransactionModel.objects.filter(trade_model_id=trade_id).order_by("created")
         return render(request, 'zeroanda/transactions/change_list.html',
