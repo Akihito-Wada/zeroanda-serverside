@@ -61,28 +61,9 @@ class PricesModel(models.Model):
     # elapsed     = models.CharField('経過時間', blank=True, null=True, max_length=20)
     created     = models.DateTimeField('DB生成時刻', auto_now_add=True)
 
-class OrderModel(models.Model):
-    trade_id    = models.IntegerField(default=0)
-    schedule    = models.ForeignKey(ScheduleModel, blank=True, null=True)
-    instruments = models.CharField(max_length=30, choices=INSTRUMENTS)
-    units       = models.IntegerField(default=0)
-    side        = models.CharField(max_length=4, choices=SIDE)
-    type        = models.CharField(max_length=20, choices=TYPE)
-    expiry      = models.DateTimeField(blank=True, null=True)
-    price       = models.FloatField(default=1, blank=True, null=True)
-    upperBound = models.FloatField("成立上限価格", blank=True, null=True)
-    lowerBound  = models.FloatField("成立下限価格", blank=True, null=True)
-    stopLoss    = models.FloatField(default=0, blank=True, null=True)
-    takeProfit  = models.FloatField(default=0, blank=True, null=True)
-    traillingStop   = models.FloatField(default=0, blank=True, null=True)
-    status      = models.IntegerField(choices=ORDER_STATUS, default=ORDER_STATUS[0][0])
-    created     = models.DateTimeField('登録時刻', auto_now_add=True)
-    updated     = models.DateTimeField('更新時刻', null=True, blank=True)
-
 class ActualOrderModel(models.Model):
     trade_id    = models.IntegerField(default=0)
     schedule    = models.ForeignKey(ScheduleModel, blank=True, null=True)
-    order       = models.OneToOneField(OrderModel, related_name='actual_model')
     actual_order_id    = models.BigIntegerField(default=0)
     instruments = models.CharField(max_length=200)
     units       = models.IntegerField(default=1)
