@@ -116,12 +116,8 @@ def transaction_list(request, trade_id):
             buy_transaction_list = None
             if orderModelSell != None and orderModelBuy != None:
                 min_id = orderModelBuy.actual_order_id if orderModelBuy.actual_order_id < orderModelSell.actual_order_id else orderModelSell.actual_order_id
-                utils.info('min_id')
-                utils.info(min_id)
                 transactions = transactionModel.get_transactions(account_id=accountModel.account_id,
                                                                  instrument=scheduleModel.instrument, min_id=min_id)
-                utils.info('transactions')
-                utils.info(transactions)
                 buy_transaction_list = __sort_out_transaction(transactions, orderModelBuy.actual_order_id)
                 sell_transaction_list = __sort_out_transaction(transactions, orderModelSell.actual_order_id)
 
