@@ -22,15 +22,6 @@ def test_api_transactions(request):
         # result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], id=id, etag=etag)
         # result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], ids=ids)
         # result = transactionModel.get_transactions(accountModel.account_id, INSTRUMENTS[0][0], ids=ids, etag=etag)
-        # utils.info(result.get_body())
-        # if result.get_code() == 429:
-        #     return HttpResponse('200')
-        # if 'transactions' not in result.get_body():
-        #     transactionModel.add(result.get_body())
-        # else:
-        #     transactions = result.get_body()["transactions"]
-        #     for transaction in transactions:
-        #         transactionModel.add(transaction)
         utils.info(result)
 
         return HttpResponse('200')
