@@ -9,6 +9,7 @@ from zeroanda.models import TradeTransactionModel
 from zeroanda.proxy.setting import SettingProxy
 from zeroanda.proxy.transactions import TransactionsProxyModel
 from zeroanda.proxy.order import OrderProxyModel
+from zeroanda.services.transaction.transaction_service import TransactionService
 from zeroanda import utils
 from zeroanda.classes.utils import timeutils
 
@@ -26,22 +27,10 @@ class GetTransactionProcess(AbstractProcess):
         self._jobs.append(Process(target=self._get_transactions))
 
     def _get_transactions(self):
-        transactionProxyModel = TransactionsProxyModel()
         instrument = INSTRUMENTS[0][0] if settings.TEST else self._task.schedule.instrument
-        result = transactionProxyModel.get_transactions(account_id=self._task.pool["account_info_model"].account_id, instrument=instrument, count=2)
-        
-        orderProxy = OrderProxyModel()
-        if result.get_code() == 429:
-            return
-        if 'transactions' not in result.get_body():
-            transaction = result.get_body()
-            actual_order_model = orderProxy.get_actual_order_model(actual_order_id=transaction["orderId"])
-            transactionProxyModel.add(transaction,schedule=self._task.schedule,trade_id=self._task.pool['trade_id'], actual_order_model=actual_order_model)
-        else:
-            transactions = result.get_body()["transactions"]
-            for transaction in transactions:
-                actual_order_model = orderProxy.get_actual_order_model(actual_order_id=transaction["orderId"])
-                transactionProxyModel.add(transaction, schedule=self._task.schedule, trade_id=self._task.pool['trade_id'],actual_order_model=actual_order_model)
+        min_id = self._task.get_min_actual_orders_id()
+        service = TransactionService()
+        service.get_and_add_transactions(account_id=self._task.pool["account_info_model"].account_id, instrument=instrument,schedule=self._task.schedule,min_id=min_id,ask_order_model=self._task.pool["actual_order_model_buy"],bid_order_model=self._task.pool["actual_order_model_sell"],trade_id=self._task.pool['trade_id'])
 
         # MailManager.send_finish_mail(self._task.schedule)
 
