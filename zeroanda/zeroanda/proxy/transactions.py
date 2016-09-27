@@ -4,7 +4,7 @@ from zeroanda.classes.net.streaming import Streaming
 from zeroanda.classes.utils import timeutils
 from zeroanda.constant import TRANSACTION_TYPE, TRANSACTION_REASON
 from zeroanda.models import TransactionModel
-
+from zeroanda import utils
 
 class TransactionsProxyModel:
     _streaming = None
@@ -54,27 +54,53 @@ class TransactionsProxyModel:
             return None
 
     def add(self, transaction, trade_id=0, schedule=None, actual_order_model=None):
-        transaction_model = TransactionModel(
-            actual_order_id=transaction["id"],
-            trade_id=trade_id,
-            schedule=schedule,
-            actual_order_model=actual_order_model,
-            instruments=None if "instrument" not in transaction else transaction["instrument"],
-            interest=0 if "interest" not in transaction else transaction["interest"],
-            order_id=0 if "order_id" not in transaction else transaction["order_id"],
-            pl=0 if "pl" not in transaction else transaction["pl"],
-            units=0 if "units" not in transaction else transaction["units"],
-            side=None if "side" not in transaction else transaction["side"],
-            expiry=None if "expiry" not in transaction else timeutils.convert_timestamp2datetime(transaction["expiry"]),
-            price=0 if "price" not in transaction else transaction["price"],
-            upperBound=0 if "upperBound" not in transaction else transaction["upperBound"],
-            lowerBound=0 if "lowerBound" not in transaction else transaction["lowerBound"],
-            stopLoss=0 if "stopLoss" not in transaction else transaction["stopLossPrice"],
-            type=self.__transaction_type_key(transaction["type"]),
-            reason=0 if "reason" not in transaction else self.__transaction_reason_key(transaction["reason"]),
-            time=timeutils.convert_timestamp2datetime(transaction["time"]),
-        )
+        if isinstance(transaction, TransactionValueObject):
+            transaction_model   = TransactionModel(
+                actual_order_id = transaction.id,
+                trade_id        = trade_id,
+                schedule        = schedule,
+                actual_order_model=actual_order_model,
+                instruments     = transaction.instrument,
+                interest        = transaction.interest,
+                order_id        = transaction.orderId,
+                pl              = transaction.pl,
+                units           = transaction.units,
+                side            = transaction.side,
+                expiry          = transaction.expiry,
+                price           = transaction.price,
+                account_balance=transaction.accountBalance,
+                take_profit_price=transaction.takeProfitPrice,
+                upper_bound      = transaction.upperBound,
+                lower_bound      = transaction.lowerBound,
+                stop_loss        = transaction.stopLossPrice,
+                type            = self.__transaction_type_key(transaction.type),
+                reason          = None if transaction.reason == None else self.__transaction_reason_key(transaction.reason),
+                time            = transaction.time,
+            )
+        else:
+            transaction_model = TransactionModel(
+                actual_order_id=transaction["id"],
+                trade_id=trade_id,
+                schedule=schedule,
+                actual_order_model=actual_order_model,
+                instruments=None if "instrument" not in transaction else transaction["instrument"],
+                interest=0 if "interest" not in transaction else transaction["interest"],
+                order_id=0 if "order_id" not in transaction else transaction["order_id"],
+                pl=0 if "pl" not in transaction else transaction["pl"],
+                units=0 if "units" not in transaction else transaction["units"],
+                side=None if "side" not in transaction else transaction["side"],
+                expiry=None if "expiry" not in transaction else timeutils.convert_timestamp2datetime(transaction["expiry"]),
+                price=0 if "price" not in transaction else transaction["price"],
+                upper_bound=0 if "upperBound" not in transaction else transaction["upperBound"],
+                lower_bound=0 if "lowerBound" not in transaction else transaction["lowerBound"],
+                stop_loss=0 if "stopLoss" not in transaction else transaction["stopLossPrice"],
+                type=self.__transaction_type_key(transaction["type"]),
+                reason=0 if "reason" not in transaction else self.__transaction_reason_key(transaction["reason"]),
+                time=timeutils.convert_timestamp2datetime(transaction["time"]),
+            )
+        utils.info('end')
         transaction_model.save()
+        utils.info('end1')
 
     def __transaction_type_key(self, value):
         for item in TRANSACTION_TYPE:
@@ -139,7 +165,7 @@ class TransactionValueObject:
         self.instrument  = None if "instrument" not in response else response["instrument"]
         self.side        = None if "side" not in response else response["side"]
         self.tradeId     = 0 if "tradeId" not in response else response["tradeId"]
-        self.expiry      = 0 if "expiry" not in response else timeutils.convert_timestamp2datetime(response["expiry"])
+        self.expiry      = None if "expiry" not in response else timeutils.convert_timestamp2datetime(response["expiry"])
         self.price       = 0 if "price" not in response else response["price"]
         self.interest    = 0 if "interest" not in response else response["interest"]
         self.pl          = 0 if "pl" not in response else response["pl"]
@@ -154,3 +180,6 @@ class TransactionValueObject:
         self.tradeReducedInterest    = 0 if "tradeReduced" not in response or "interest" not in response["tradeReduced"] else response["tradeReduced"]["interest"]
         self.tradeOpenedId           = 0 if "tradeOpened" not in response or "id" not in response["tradeOpened"] else response["tradeOpened"]["id"]
         self.tradeOpenedUnits        = 0 if "tradeOpened" not in response or "units" not in response["tradeOpened"] else response["tradeOpened"]["units"]
+
+    def __str__(self):
+        return "id: {id}, account_id:{account_id}, instrument:{instrument}, orderId:{orderId}, side:{side}, price:{price}, interest:{interest}, pl={pl}, units:{units}, upperBound:{upperBound}, lowerBound:{lowerBound}, takeProfitPrice: {takeProfitPrice}, stopLossPrice:{stopLossPrice}, expiry={expiry}, type:{type}, reason:{reason}, time:{time}".format(id=self.id, account_id=self.accountId, instrument=self.instrument, orderId=self.orderId, side=self.side, price=self.price, interest=self.interest, pl=self.pl, upperBound=self.upperBound, lowerBound=self.lowerBound, units=self.units, takeProfitPrice=self.takeProfitPrice, stopLossPrice=self.stopLossPrice, expiry=self.expiry, type=self.type, reason=self.reason, time=self.time)
