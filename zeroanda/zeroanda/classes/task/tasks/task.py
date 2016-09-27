@@ -75,3 +75,9 @@ class Task(IProcess):
 
     def set_actual_orders_model(self, side, model):
         self.pool["actual_order_model_" + side] = model
+
+    def get_min_actual_orders_id(self):
+        min_id = 0
+        if self.pool["actual_order_model_sell"] != None and self.pool["actual_order_model_buy"] != None:
+            min_id = self.pool["actual_order_model_sell"].actual_order_id if self.pool["actual_order_model_sell"].actual_order_id < self.pool["actual_order_model_buy"].actual_order_id else self.pool["actual_order_model_buy"].actual_order_id
+        return min_id
