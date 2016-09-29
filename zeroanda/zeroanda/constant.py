@@ -65,6 +65,7 @@ COUNTRY_LIST = (
     ("6", "Switzerland",     "CH", "CHF"),
     ("7", "United States",   "US", "USD"),
     ("8", "People's Republic of China",   "CN", "CNY"),
+    ("9", "European Central Bank",   "", "ECB"),
 )
 
 ERROR_CODE = (
