@@ -8,7 +8,6 @@ class TransactionService:
     def __init__(self):return
 
     def get_and_add_transactions(self, account_id, instrument, schedule, min_id, ask_order_model, bid_order_model, trade_id):
-        utils.info('get_and_add_transactions')
         transactionProxy = TransactionsProxyModel()
         transactions = transactionProxy.get_transactions(account_id = account_id, instrument = instrument, min_id = min_id)
         buy_transaction_list = self.__sort_out_transaction(transactions, bid_order_model.actual_order_id)
