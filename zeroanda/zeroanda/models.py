@@ -82,7 +82,7 @@ class ActualOrderModel(models.Model):
     updated     = models.DateTimeField('更新時刻', null=True, blank=True)
 
 class TransactionModel(models.Model):
-    actual_order_id= models.BigIntegerField(default=0)
+    transaction_id= models.BigIntegerField(default=0)
     accountBalance  = models.FloatField(default=0)
     trade_id    = models.IntegerField(default=0)
     schedule    = models.ForeignKey(ScheduleModel, blank=True, null=True)
@@ -90,6 +90,7 @@ class TransactionModel(models.Model):
     instruments = models.CharField(max_length=200, blank=True, null=True)
     interest    = models.FloatField(default=0)
     order_id    = models.BigIntegerField(default=0)
+    actual_trade_id = models.BigIntegerField(default=0)
     pl          = models.FloatField(default=0)
     units       = models.IntegerField(default=1)
     side        = models.CharField(max_length=200, choices=SIDE, blank=True, null=True)

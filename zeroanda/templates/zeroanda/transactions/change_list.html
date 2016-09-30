@@ -273,15 +273,15 @@
                   <table>
                       <tr>
                           <th>id</th>
-                          <th>accountId</th>
                           <th>type</th>
                           <th>time</th>
+                          <th>transactionId</th>
                           <th>orderId</th>
                           <th>reason</th>
                           <th>units</th>
                           <th>instrument</th>
                           <th>side</th>
-                          <th>tradeId</th>
+                          <th>actual_trade_id</th>
                           <th>expiry</th>
                           <th>price</th>
                           <th>interest</th>
@@ -291,41 +291,29 @@
                           <th>stopLossPrice</th>
                           <th>upperBound</th>
                           <th>lowerBound</th>
-                          <th>tradeReducedId</th>
-                          <th>tradeReducedPl</th>
-                          <th>tradeReducedUnits</th>
-                          <th>tradeReducedInterest</th>
-                          <th>tradeOpenedId</th>
-                          <th>tradeOpenedUnits</th>
                       </tr>
                       {% if sell_transaction_list != None %}
                       {% for transaction in sell_transaction_list %}
                       <tr>
                           <td>{{ transaction.id }}</td>
-                          <td>{{ transaction.accountId }}</td>
                           <td>{{ transaction.type }}</td>
                           <td>{{ transaction.time | date:"c" }}</td>
-                          <td>{{ transaction.orderId }}</td>
+                          <td>{{ transaction.transaction_id }}</td>
+                          <td>{{ transaction.order_id }}</td>
                           <td>{{ transaction.reason }}</td>
                           <td>{{ transaction.units }}</td>
                           <td>{{ transaction.instrument }}</td>
                           <td>{{ transaction.side }}</td>
-                          <td>{{ transaction.tradeId }}</td>
+                          <td>{{ transaction.actual_trade_id }}</td>
                           <td>{{ transaction.expiry | date:"c" }}</td>
                           <td>{{ transaction.price }}</td>
                           <td>{{ transaction.interest }}</td>
                           <td>{{ transaction.pl }}</td>
-                          <td>{{ transaction.accountBalance }}</td>
-                          <td>{{ transaction.takeProfitPrice }}</td>
-                          <td>{{ transaction.stopLossPrice }}</td>
-                          <td>{{ transaction.upperBound }}</td>
-                          <td>{{ transaction.lowerBound }}</td>
-                          <td>{{ transaction.tradeReducedId }}</td>
-                          <td>{{ transaction.tradeReducedPl }}</td>
-                          <td>{{ transaction.tradeReducedUnits }}</td>
-                          <td>{{ transaction.tradeReducedInterest }}</td>
-                          <td>{{ transaction.tradeOpenedId }}</td>
-                          <td>{{ transaction.tradeOpenedUnits }}</td>
+                          <td>{{ transaction.account_balance }}</td>
+                          <td>{{ transaction.take_profit_price }}</td>
+                          <td>{{ transaction.stop_loss }}</td>
+                          <td>{{ transaction.upper_bound }}</td>
+                          <td>{{ transaction.lower_bound }}</td>
                       </tr>
                       {% endfor %}
                       {% endif %}
@@ -404,15 +392,15 @@
                   <table>
                       <tr>
                           <th>id</th>
-                          <th>accountId</th>
                           <th>type</th>
                           <th>time</th>
+                          <th>transactionId</th>
                           <th>orderId</th>
                           <th>reason</th>
                           <th>units</th>
                           <th>instrument</th>
                           <th>side</th>
-                          <th>tradeId</th>
+                          <th>actual_trade_id</th>
                           <th>expiry</th>
                           <th>price</th>
                           <th>interest</th>
@@ -422,41 +410,29 @@
                           <th>stopLossPrice</th>
                           <th>upperBound</th>
                           <th>lowerBound</th>
-                          <th>tradeReducedId</th>
-                          <th>tradeReducedPl</th>
-                          <th>tradeReducedUnits</th>
-                          <th>tradeReducedInterest</th>
-                          <th>tradeOpenedId</th>
-                          <th>tradeOpenedUnits</th>
                       </tr>
                       {% if buy_transaction_list != None %}
                       {% for transaction in buy_transaction_list %}
                       <tr>
                           <td>{{ transaction.id }}</td>
-                          <td>{{ transaction.accountId }}</td>
                           <td>{{ transaction.type }}</td>
                           <td>{{ transaction.time | date:"c" }}</td>
-                          <td>{{ transaction.orderId }}</td>
+                          <td>{{ transaction.transaction_id }}</td>
+                          <td>{{ transaction.order_id }}</td>
                           <td>{{ transaction.reason }}</td>
                           <td>{{ transaction.units }}</td>
                           <td>{{ transaction.instrument }}</td>
                           <td>{{ transaction.side }}</td>
-                          <td>{{ transaction.tradeId }}</td>
+                          <td>{{ transaction.actual_trade_id }}</td>
                           <td>{{ transaction.expiry | date:"c" }}</td>
                           <td>{{ transaction.price }}</td>
                           <td>{{ transaction.interest }}</td>
                           <td>{{ transaction.pl }}</td>
-                          <td>{{ transaction.accountBalance }}</td>
-                          <td>{{ transaction.takeProfitPrice }}</td>
-                          <td>{{ transaction.stopLossPrice }}</td>
-                          <td>{{ transaction.upperBound }}</td>
-                          <td>{{ transaction.lowerBound }}</td>
-                          <td>{{ transaction.tradeReducedId }}</td>
-                          <td>{{ transaction.tradeReducedPl }}</td>
-                          <td>{{ transaction.tradeReducedUnits }}</td>
-                          <td>{{ transaction.tradeReducedInterest }}</td>
-                          <td>{{ transaction.tradeOpenedId }}</td>
-                          <td>{{ transaction.tradeOpenedUnits }}</td>
+                          <td>{{ transaction.account_balance }}</td>
+                          <td>{{ transaction.take_profit_price }}</td>
+                          <td>{{ transaction.stop_loss }}</td>
+                          <td>{{ transaction.upper_bound }}</td>
+                          <td>{{ transaction.lower_bound }}</td>
                       </tr>
                       {% endfor %}
                       {% endif %}

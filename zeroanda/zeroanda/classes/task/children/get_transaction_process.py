@@ -7,10 +7,7 @@ from zeroanda.constant import INSTRUMENTS
 from zeroanda.controller.mail_manager import MailManager
 from zeroanda.models import TradeTransactionModel
 from zeroanda.proxy.setting import SettingProxy
-from zeroanda.proxy.transactions import TransactionsProxyModel
-from zeroanda.proxy.order import OrderProxyModel
 from zeroanda.services.transaction.transaction_service import TransactionService
-from zeroanda import utils
 from zeroanda.classes.utils import timeutils
 
 from datetime import timedelta

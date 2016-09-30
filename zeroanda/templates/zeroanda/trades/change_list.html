@@ -69,6 +69,7 @@
         <!--{{ cl.formset.non_form_errors }}-->
     <!--{% endif %}-->
     <!--<div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">-->
+    {% if trade_list != None %}
       <table>
         <tr>
           <th>trade id</th>
@@ -76,19 +77,24 @@
           <th>country</th>
           <th>priority</th>
           <th>status</th>
+          <th>pl</th>
           <th>presentation_time</th>
         </tr>
         {% for trade_model in trade_list %}
         <tr>
-          <td><a href="/zeroanda/transactions/{{trade_model.id}}">{{ trade_model.id }}</a></td>
-          <td>{{ trade_model.schedule.title }} </td>
-          <td>{{ trade_model.schedule.country }} </td>
-          <td>{{ trade_model.schedule.priority }} </td>
-          <td>{{ trade_model.schedule.status }} </td>
-          <td>{{ trade_model.schedule.presentation_time }}</td>
+          <td><a href="/zeroanda/transactions/{{trade_model.trade.id}}">{{ trade_model.trade.id }}</a></td>
+          <td><a href="/zeroanda/transactions/{{trade_model.trade.id}}">{{ trade_model.trade.schedule.title }}</a></td>
+          <td>{{ trade_model.trade.schedule.country }} </td>
+          <td>{{ trade_model.trade.schedule.priority }} </td>
+          <td>{{ trade_model.trade.schedule.status }} </td>
+          <td>{{ trade_model.transaction.pl }} </td>
+          <td>{{ trade_model.trade.schedule.presentation_time }}</td>
         </tr>
         {% endfor %}
       </table>
+    {% else %}
+    No trade list.
+    {% endif %}
       <!--<ul>-->
         <!--{% for trade_model in trade_list %}-->
           <!--<li><a href="/zeroanda/transactions/{{trade_model.id}}">{{ trade_model.id }}</a> - {{ trade_model.created }}</li>-->

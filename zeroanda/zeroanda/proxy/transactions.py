@@ -1,6 +1,7 @@
 from operator import attrgetter
 
 from zeroanda.classes.net.streaming import Streaming
+from zeroanda.classes.utils.loggerutils import Logger
 from zeroanda.classes.utils import timeutils
 from zeroanda.constant import TRANSACTION_TYPE, TRANSACTION_REASON
 from zeroanda.models import TransactionModel
@@ -12,9 +13,17 @@ class TransactionsProxyModel:
     def __init__(self):
         self._streaming = Streaming()
 
-    def get_transactions(self, account_id=None, instrument=None, id = None, ids = None, count = None, max_id = None, min_id = None, etag = None, actual_order_model_id=None):
+    def get_transactions(self, account_id=None, instrument=None, id = None, ids = None, count = None, max_id = None, min_id = None, etag = None, actual_order_model_id=None, order_id=0, transaction_id=0, trade_id=0, actual_trade_id=0):
         if actual_order_model_id != None:
             return TransactionModel.objects.filter(actual_order_model_id=actual_order_model_id)
+        if order_id != 0:
+            return TransactionModel.objects.filter(order_id=order_id)
+        if transaction_id != 0:
+            return TransactionModel.objects.filter(transaction_id=transaction_id)
+        if trade_id != 0:
+            return TransactionModel.objects.filter(trade_id=trade_id)
+        if actual_trade_id != 0:
+            return TransactionModel.objects.filter(actual_trade_id=actual_trade_id)
         else:
             try:
                 transactionList = []
@@ -42,89 +51,74 @@ class TransactionsProxyModel:
     def get_latest_type(self, actual_order_model_id):
         try:
             model = TransactionModel.objects.filter(actual_order_model_id=actual_order_model_id).order_by('-id')[:1][0]
-            return self.__transaction_type_value(model.type)
+            return TransactionsProxyModel.transaction_type_value(model.type)
         except:
             return None
 
     def get_latest_transaction_reason_value(self, actual_order_model_id):
         try:
             model = TransactionModel.objects.filter(actual_order_model_id=actual_order_model_id).order_by('-id')[:1][0]
-            return self.__transaction_reason_value(model.reason)
+            return TransactionsProxyModel.transaction_reason_value(model.reason)
         except:
             return None
 
     def add(self, transaction, trade_id=0, schedule=None, actual_order_model=None):
-        if isinstance(transaction, TransactionValueObject):
-            transaction_model   = TransactionModel(
-                actual_order_id = transaction.id,
-                trade_id        = trade_id,
-                schedule        = schedule,
-                actual_order_model=actual_order_model,
-                instruments     = transaction.instrument,
-                interest        = transaction.interest,
-                order_id        = transaction.orderId,
-                pl              = transaction.pl,
-                units           = transaction.units,
-                side            = transaction.side,
-                expiry          = transaction.expiry,
-                price           = transaction.price,
-                account_balance=transaction.accountBalance,
-                take_profit_price=transaction.takeProfitPrice,
-                upper_bound      = transaction.upperBound,
-                lower_bound      = transaction.lowerBound,
-                stop_loss        = transaction.stopLossPrice,
-                type            = self.__transaction_type_key(transaction.type),
-                reason          = None if transaction.reason == None else self.__transaction_reason_key(transaction.reason),
-                time            = transaction.time,
-            )
-        else:
-            transaction_model = TransactionModel(
-                actual_order_id=transaction["id"],
-                trade_id=trade_id,
-                schedule=schedule,
-                actual_order_model=actual_order_model,
-                instruments=None if "instrument" not in transaction else transaction["instrument"],
-                interest=0 if "interest" not in transaction else transaction["interest"],
-                order_id=0 if "order_id" not in transaction else transaction["order_id"],
-                pl=0 if "pl" not in transaction else transaction["pl"],
-                units=0 if "units" not in transaction else transaction["units"],
-                side=None if "side" not in transaction else transaction["side"],
-                expiry=None if "expiry" not in transaction else timeutils.convert_timestamp2datetime(transaction["expiry"]),
-                price=0 if "price" not in transaction else transaction["price"],
-                upper_bound=0 if "upperBound" not in transaction else transaction["upperBound"],
-                lower_bound=0 if "lowerBound" not in transaction else transaction["lowerBound"],
-                stop_loss=0 if "stopLoss" not in transaction else transaction["stopLossPrice"],
-                type=self.__transaction_type_key(transaction["type"]),
-                reason=0 if "reason" not in transaction else self.__transaction_reason_key(transaction["reason"]),
-                time=timeutils.convert_timestamp2datetime(transaction["time"]),
-            )
-        utils.info('end')
+        transaction_model   = TransactionModel(
+            transaction_id = transaction.id,
+            trade_id        = trade_id,
+            schedule        = schedule,
+            actual_order_model=actual_order_model,
+            instruments     = transaction.instrument,
+            interest        = transaction.interest,
+            order_id        = transaction.orderId,
+            actual_trade_id = transaction.tradeId,
+            pl              = transaction.pl,
+            units           = transaction.units,
+            side            = transaction.side,
+            expiry          = transaction.expiry,
+            price           = transaction.price,
+            account_balance=transaction.accountBalance,
+            take_profit_price=transaction.takeProfitPrice,
+            upper_bound      = transaction.upperBound,
+            lower_bound      = transaction.lowerBound,
+            stop_loss        = transaction.stopLossPrice,
+            type            = TransactionsProxyModel.transaction_type_key(transaction.type),
+            reason          = 0 if transaction.reason == None else TransactionsProxyModel.transaction_reason_key(transaction.reason),
+            time            = transaction.time,
+        )
         transaction_model.save()
-        utils.info('end1')
 
-    def __transaction_type_key(self, value):
+    @staticmethod
+    def transaction_type_key(value):
         for item in TRANSACTION_TYPE:
             if item[1] == value:
                 return item[0]
-        raise Exception('no constant for type.')
+        Logger.error("'no constant for type. value:{value}'".format(value=value))
+        return TRANSACTION_TYPE[0][0]
 
-    def __transaction_reason_key(self, value):
+    @staticmethod
+    def transaction_reason_key(value):
         for item in TRANSACTION_REASON:
             if item[1] == value:
                 return item[0]
-        raise Exception('no constant for reason.')
+        Logger.error("'no constant for reason. value:{value}'".format(value=value))
+        return TRANSACTION_REASON[0][0]
 
-    def __transaction_type_value(self, key):
+    @staticmethod
+    def transaction_type_value(key):
         for item in TRANSACTION_TYPE:
             if item[0] == key:
                 return item[1]
-        raise Exception('no constant for type.')
+        Logger.error("'no constant for type. value:{value}'".format(value=key))
+        return TRANSACTION_TYPE[0][1]
 
-    def __transaction_reason_value(self, key):
+    @staticmethod
+    def transaction_reason_value(key):
         for item in TRANSACTION_REASON:
             if item[0] == key:
                 return item[1]
-        raise Exception('no constant for reason.')
+        Logger.error("'no constant for reason. value:{value}'".format(value=key))
+        return TRANSACTION_REASON[0][1]
 
 class TransactionValueObject:
     id          = None
@@ -182,4 +176,4 @@ class TransactionValueObject:
         self.tradeOpenedUnits        = 0 if "tradeOpened" not in response or "units" not in response["tradeOpened"] else response["tradeOpened"]["units"]
 
     def __str__(self):
-        return "id: {id}, account_id:{account_id}, instrument:{instrument}, orderId:{orderId}, side:{side}, price:{price}, interest:{interest}, pl={pl}, units:{units}, upperBound:{upperBound}, lowerBound:{lowerBound}, takeProfitPrice: {takeProfitPrice}, stopLossPrice:{stopLossPrice}, expiry={expiry}, type:{type}, reason:{reason}, time:{time}".format(id=self.id, account_id=self.accountId, instrument=self.instrument, orderId=self.orderId, side=self.side, price=self.price, interest=self.interest, pl=self.pl, upperBound=self.upperBound, lowerBound=self.lowerBound, units=self.units, takeProfitPrice=self.takeProfitPrice, stopLossPrice=self.stopLossPrice, expiry=self.expiry, type=self.type, reason=self.reason, time=self.time)
+        return "id: {id}, account_id:{account_id}, type:{type}, time:{time}, orderId:{orderId}, reason:{reason}, units:{units}, instrument:{instrument}, side:{side}, tradeId:{tradeId}, expiry={expiry}, price:{price}, interest:{interest}, pl={pl}, accountBalance:{accountBalance}, takeProfitPrice:{takeProfitPrice}, stopLossPrice:{stopLossPrice}, upperBound:{upperBound}, lowerBound:{lowerBound}".format(id=self.id, account_id=self.accountId, instrument=self.instrument, orderId=self.orderId, side=self.side, price=self.price, interest=self.interest, pl=self.pl, upperBound=self.upperBound, lowerBound=self.lowerBound, units=self.units, takeProfitPrice=self.takeProfitPrice, stopLossPrice=self.stopLossPrice, expiry=self.expiry, type=self.type, reason=self.reason, time=self.time, tradeId=self.tradeId, accountBalance=self.accountBalance)

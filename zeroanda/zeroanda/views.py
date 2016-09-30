@@ -10,12 +10,13 @@ from operator import attrgetter
 
 from zeroanda.classes.utils import timeutils
 from zeroanda.constant import SCHEDULE_STATUS, SCHEDULE_AVAILABLE, SIDE, INSTRUMENTS
-from zeroanda.models import TradeTransactionModel, TradeModel, ScheduleModel
+from zeroanda.models import TradeTransactionModel, TradeModel, ScheduleModel, TransactionModel
 from zeroanda.proxy.order import OrderProxyModel
 from zeroanda.proxy.account import AccountProxyModel
 from zeroanda.proxy.prices import PricesProxyModel
 from zeroanda.proxy.setting import SettingProxy
 from zeroanda.proxy.transactions import TransactionsProxyModel
+from zeroanda.services.transaction.transaction_service import TransactionService
 
 from zeroanda import utils
 
@@ -55,7 +56,15 @@ class TradeListView(generic.ListView):
     context_object_name = "trade_list"
 
     def get_queryset(self):
-        return TradeModel.objects.all().order_by("-created")
+        list = TradeModel.objects.all().order_by("-created")[0:30]
+        _list = []
+        for trade in list:
+            lists = TransactionModel.objects.filter(trade_id=trade.id).exclude(pl=0)
+            obj = {"trade": trade}
+            if len(lists) != 0:
+                obj["transaction"] = lists[0]
+            _list.append(obj)
+        return _list
 
     def get_template_names(self):
         return 'zeroanda/trades/change_list.html'
@@ -114,12 +123,17 @@ def transaction_list(request, trade_id):
 
             sell_transaction_list = None
             buy_transaction_list = None
-            if orderModelSell != None and orderModelBuy != None:
-                min_id = orderModelBuy.actual_order_id if orderModelBuy.actual_order_id < orderModelSell.actual_order_id else orderModelSell.actual_order_id
-                transactions = transactionModel.get_transactions(account_id=accountModel.account_id,
-                                                                 instrument=scheduleModel.instrument, min_id=min_id)
-                buy_transaction_list = __sort_out_transaction(transactions, orderModelBuy.actual_order_id)
-                sell_transaction_list = __sort_out_transaction(transactions, orderModelSell.actual_order_id)
+            service = TransactionService()
+            if orderModelSell != None:
+                sell_transaction_list = service.get_transactions_with_results(orderModelSell.actual_order_id)
+            if orderModelBuy != None:
+                buy_transaction_list = service.get_transactions_with_results(orderModelBuy.actual_order_id)
+            # if orderModelSell != None and orderModelBuy != None:
+            #     min_id = orderModelBuy.actual_order_id if orderModelBuy.actual_order_id < orderModelSell.actual_order_id else orderModelSell.actual_order_id
+            #     transactions = transactionModel.get_transactions(account_id=accountModel.account_id,
+            #                                                      instrument=scheduleModel.instrument, min_id=min_id)
+            #     buy_transaction_list = __sort_out_transaction(transactions, orderModelBuy.actual_order_id)
+            #     sell_transaction_list = __sort_out_transaction(transactions, orderModelSell.actual_order_id)
 
 
         transaction_list = TradeTransactionModel.objects.filter(trade_model_id=trade_id).order_by("created")
