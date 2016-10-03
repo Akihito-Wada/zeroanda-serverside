@@ -16,9 +16,11 @@ class EconomicIndicatorProxyModel:
             if models.count() == 0:
                 model = self.__save(result)
                 result.set_management_id(model.id)
+                return result
             else:
-                result.set_management_id(models[0].id)
-            return result
+                # result.set_management_id(models[0].id)
+                return None
+            # return result
         except Exception as e:
             utils.info(e)
             return None
