@@ -1,4 +1,4 @@
-from django.db.models import Max, Q
+import os
 from zeroanda.constant import ECONOMIC_INDICATOR_IMPORTANCE
 
 from zeroanda import utils
@@ -58,9 +58,9 @@ class EconomicIndicatorProxyModel:
             row.append(vo.get_importance())
             body.append(row)
 
-        csv.writer(backup_path, dto.get_unique_id(), body)
-        utils.info(latest_file_path)
-        csv.writer(latest_file_path, dto.get_unique_id(), body)
+        csv.writer(backup_path, body, dto.get_unique_id())
+        
+        csv.writer(latest_file_path, body)
 
     def __save(self, dto):
         eim_model = EconomicIndicatorManagementModel(

@@ -19,9 +19,12 @@ class GoolgleCalendarCSV(CSV):
     header          = ['Subject', 'Start Date', 'Start Time', 'End Date', 'End Time', 'All Day Event', 'Description', 'Location', 'Private', 'Currency', 'Importance']
 
     @classmethod
-    def writer(cls, path, target_file_name, body):
+    def writer(cls, path, body, suffix = None):
         os.makedirs(path, exist_ok=True)
-        target_file = os.path.join(path, "{calendar_name}_{target_file_name}.csv".format(calendar_name=cls.calendar_name, target_file_name=target_file_name))
+        if suffix != None:
+            target_file = os.path.join(path, "{calendar_name}_{suffix}.csv".format(calendar_name=cls.calendar_name, suffix=suffix))
+        else:
+            target_file = os.path.join(path, "{calendar_name}.csv".format(calendar_name=cls.calendar_name)
 
         with open(target_file, 'w') as f:
             writer = csv.writer(f)  # writerオブジェクトを作成
