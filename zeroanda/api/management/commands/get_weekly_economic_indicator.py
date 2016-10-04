@@ -8,4 +8,4 @@ class Command(BaseCommand):
     help = 'get economic-indicator process.'
     def handle(self, *args, **options):
         action = Action()
-        action.WatchSchedule()
+        action.WatchEconomicIndicator()
