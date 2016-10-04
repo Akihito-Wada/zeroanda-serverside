@@ -59,7 +59,7 @@ class EconomicIndicatorProxyModel:
             body.append(row)
 
         csv.writer(backup_path, body, dto.get_unique_id())
-        
+
         csv.writer(latest_file_path, body)
 
     def __save(self, dto):

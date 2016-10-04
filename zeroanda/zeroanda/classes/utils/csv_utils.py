@@ -24,7 +24,7 @@ class GoolgleCalendarCSV(CSV):
         if suffix != None:
             target_file = os.path.join(path, "{calendar_name}_{suffix}.csv".format(calendar_name=cls.calendar_name, suffix=suffix))
         else:
-            target_file = os.path.join(path, "{calendar_name}.csv".format(calendar_name=cls.calendar_name)
+            target_file = os.path.join(path, "{calendar_name}.csv".format(calendar_name=cls.calendar_name))
 
         with open(target_file, 'w') as f:
             writer = csv.writer(f)  # writerオブジェクトを作成
