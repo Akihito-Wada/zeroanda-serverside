@@ -188,7 +188,10 @@ EMAIL_USE_TLS = False
 DEFAULT_FROM_EMAIL = 'system@zeroanda.com'
 
 # csv files path
-ECONOMIC_INDICATOR_CSV_FILES = os.path.join(BASE_DIR, 'zeroanda', 'files', 'csv')
+ECONOMIC_INDICATOR_CSV_FILE = os.path.join(BASE_DIR, 'static', 'zeroanda', 'csv')
+
+# csv files path for backup
+ECONOMIC_INDICATOR_CSV_BACKUP_FILES = os.path.join(BASE_DIR, 'zeroanda', 'files', 'csv')
 
 TEST = True
 
