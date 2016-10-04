@@ -1,7 +1,9 @@
 import requests
+from zeroanda import utils
 
 class Http:
     def get_csv_file(self, url):
+        utils.info("Http.url: " + url)
         with requests.Session() as s:
             download = s.get(url)
 
