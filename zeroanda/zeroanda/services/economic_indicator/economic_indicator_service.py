@@ -3,18 +3,24 @@ from zeroanda.services.schedule.schedule_service import ScheduleService
 from zeroanda import utils
 
 class EconomicInidcatorService:
-    def __init__(self): return
+    proxy   = None
+    def __init__(self):
+        self.proxy = EconomicIndicatorProxyModel()
 
-    def getsom(self):
-
-        proxy = EconomicIndicatorProxyModel()
-        dto = proxy.get_latest_economic_indicator()
+    def add(self):
+        dto = self.proxy.get_new_economic_indicator()
         if dto == None:
             return
-        proxy.save_as_csv(dto)
+        self.proxy.save_as_csv(dto)
 
-        list = proxy.get_unique_economic_indicator_model_list(dto)
-
+        list = self.proxy.get_unique_economic_indicator_model_list(dto)
 
         scheduleService = ScheduleService()
         scheduleService.set_highest_priority_schedule(list)
+
+    def create_csv_file(self):
+        dto = self.proxy.get_latest_economic_indicator()
+        if dto == None:
+            return False
+        self.proxy.save_as_csv(dto)
+        return True

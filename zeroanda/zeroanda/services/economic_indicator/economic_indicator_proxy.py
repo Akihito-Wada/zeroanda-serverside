@@ -9,6 +9,20 @@ from zeroanda.classes.utils.csv_utils import CSVFactory
 
 
 class EconomicIndicatorProxyModel:
+    def get_new_economic_indicator(self):
+        try:
+            result = EconomicIndicatorApiServiceFactory.create().get_next_week_economic_indicator()
+            models = EconomicIndicatorManagementModel.objects.filter(unique_id=result.get_unique_id())
+            if models.count() == 0:
+                model = self.__save(result)
+                result.set_management_id(model.id)
+                return result
+            else:
+                return None
+        except Exception as e:
+            utils.info(e)
+            return None
+
     def get_latest_economic_indicator(self):
         try:
             result = EconomicIndicatorApiServiceFactory.create().get_latest_economic_indicator()
@@ -16,18 +30,17 @@ class EconomicIndicatorProxyModel:
             if models.count() == 0:
                 model = self.__save(result)
                 result.set_management_id(model.id)
-                return result
             else:
-                # result.set_management_id(models[0].id)
-                return None
-            # return result
+                result.set_management_id(models[0].id)
+            return result
         except Exception as e:
             utils.info(e)
             return None
 
     def save_as_csv(self, dto):
         csv = CSVFactory.create()
-        directory = dto.get_csv_path()
+        latest_file_path = dto.get_csv_path()
+        backup_path = dto.get_backup_csv_path()
         body = []
         for vo in dto.get_economic_indicator_list():
             if vo.date == None or vo.event == None: continue
@@ -44,7 +57,10 @@ class EconomicIndicatorProxyModel:
             row.append(vo.currency)
             row.append(vo.get_importance())
             body.append(row)
-        csv.writer(directory, dto.get_unique_id(), body)
+
+        csv.writer(backup_path, dto.get_unique_id(), body)
+        utils.info(latest_file_path)
+        csv.writer(latest_file_path, dto.get_unique_id(), body)
 
     def __save(self, dto):
         eim_model = EconomicIndicatorManagementModel(
@@ -76,9 +92,6 @@ class EconomicIndicatorProxyModel:
     def get_unique_economic_indicator_model_list(self, dto):
         models = EconomicIndicatorModel.objects.filter(management_model=dto.get_management_id()).order_by('date', '-importance')
 
-        # directory = dto.get_csv_path()
-        # csv = CSVFactory.create()
-        # body = []
         target_model = None
         _list = []
         for model in models:
@@ -90,21 +103,6 @@ class EconomicIndicatorProxyModel:
                 continue
             _list.append(model)
             target_model = model
-            # row = []
-            # date = timeutils.convert_aware_datetime_from_utc_to_jst(model.date)
-            # row.append(model.event)
-            # row.append(csv.format_date(date))
-            # row.append(csv.format_time(date))
-            # row.append(csv.format_date(date))
-            # row.append(csv.format_time(date))
-            # row.append("False")
-            # row.append("")
-            # row.append("")
-            # row.append("True")
-            # row.append(model.currency)
-            # row.append(self.get_importance(model.importance))
-        #     body.append(row)
-        # csv.writer(directory, "test", body=body)
         return _list
 
     def get_importance(self, value):
