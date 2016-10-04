@@ -17,10 +17,18 @@ def test_api_calender(request):
 
 
 @csrf_exempt
-def test_api_csv(request):
+def test_api_add_csv(request):
+    utils.info(2)
     service = EconomicInidcatorService()
-    service.getsom()
+    service.add()
     # proxy = ScheduleProxyModel()
     # result = proxy.get_economic_indicator()
     return HttpResponse('200')
+
+@csrf_exempt
+def test_api_recreate_csv(request):
+    service = EconomicInidcatorService()
+    result = service.create_csv_file()
+    return HttpResponse('200') if result == True else HttpResponse("test", status=404)
+
 
