@@ -20,10 +20,25 @@ $(function(){
     $("#testGetCsv").click(function() {
         $.ajax({
             type: "GET",
-            url: "http://" + location.host + "/zeroanda/test/csv",
+            url: "http://" + location.host + "/zeroanda/test/csv/add",
             success: function(msg){
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
+            }
+        });
+    });
+})
+
+$(function(){
+    $("#testUpdateCsv").click(function() {
+        $.ajax({
+            type: "GET",
+            url: "http://" + location.host + "/zeroanda/test/csv/update",
+            success: function(msg){
+                // alert(msg);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("error")
             }
         });
     });
