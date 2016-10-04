@@ -3,6 +3,7 @@ from zeroanda.controller.mail_manager import MailManager
 from zeroanda.classes.task.tasks.task import Task
 from zeroanda.classes.task.tick_tack import TickTack
 from zeroanda.classes.utils.loggerutils import Logger
+from zeroanda.services.economic_indicator.economic_indicator_service import EconomicInidcatorService
 from zeroanda import utils
 
 class Action:
@@ -25,3 +26,8 @@ class Action:
         tickTack.tickTack(Task.create_task(schedule))
 
         self.__proxy.update_status_complete(schedule)
+
+    def WatchEconomicIndicator(self):
+        service = EconomicInidcatorService()
+        service.add()
+
